@@ -5,18 +5,135 @@ The main purpose of this repository is to provide PL test harness that help AIE 
 Vitis allows compiling an AIE graph using a precompiled .xsa as an input platform to skip v++ link stage and directly go to v++ package stage.
 This will save the most time consuming part of compiling and generate the final .xclbin file for on-board tests.
 
-This repository test harness design on PL to feed data to and fetch data from AIE, including:
+The test harness consists of three parts:
 
-1. Source file of test harness, which helps to do sw emulation and hw emulation.
-2. Precompiled .xsa of test harness, which helps to do fast packaging.
-3. Software APIs, which helps to drive test harness on PL and user application on AIE.
+1.	An HLS based test harness design on PL. It can feed data to AIE application or fetch data from AIE application via AXI-stream.
+2.	An ADF dummy graph design on AIE. If user AIE application did not utilize all PLIO provided by test harness, it would occupy the unused PLIO to help pass v++ package stage.
+3.	A suite of Software APIs on host side to help initialize device and run tests.
 
-## Hardware Features
+## Features
 
-## Sotware Features
+### Test Harness on PL
+
+Test harness on PL consist of 32 channels, 16 of them feed data to AIE and the rest 16 fetch data from AIE.
+Each channel contains its own URAM buffer which is 128bits x 8192 and its own AXI-stream port for input or output.
+
+The input channel works in steps below:
+
+1. All input channels will load input data for AIE from DDR and store them in URAM buffer.
+2. After all data has been stored in URAM buffer, each channel will start to do its own count down. This allows input channels start to send data to AIE at different cycles.
+3. Each channel load from URAM buffer and send desired amount of data to AIE. Each of them can repeat the sending with a specified rounds.
+4. Each channel can record the latency between cycle that it starts to send data to AIE and cycle that it finishes all sendings.
+
+The output channels works in steps below:
+
+1. Each channel will start to do its own count down. This allows output channels start to fetch data from AIE at different cycles.
+2. Each channel fetch desired amout of data from AIE and store them in URAM buffer. Each of them can repeat the fetching with a specified rounds.
+3. After all output channels finished all fetchings, they will write output data on URAM to DDR.
+4. Each channel can record the latency between cycle that it starts to fetch data from AIE and cycle that it finishes all fetchings.
+
+The data sizes to feed to/fetch from AIE, count-down cycles and repetition number of each channel are all set by config buffer on DDR which is set by software API.
+The latency cycles of each channels will be stored to DDR and fetch back and displayed by software API.
+
+### Dummy Graph on AIE
+
+Test harness on PL provide 16 PLIO for input and 16 PLIO for output. If user graph does not utlize all of them, it will lead to package error.
+Dummy graph can be used to occupy all dangling PLIOs. The dummy graph won't do anything but help packaging.
+To help dummy graph identify all dangling PLIO, user graph needs to register all used PLIOs.
+For details, please take reference from "How to Use" section below.
+
+### Software APIs
+
+We provide software APIs to make 3-steps onboard run:
+
+1. Initialize device and load xclbin.
+2. Set data which will be fed to AIE and data which will be fetch from AIE.
+3. Run user graph.
 
 ## How to Use
 
-### Emulation flow
+### How to build new AIE design
 
-### On-board flow
+Build new AIE design with test harness need additional modification on user graph:
+
+1. Include the test harness graph header to your own graph header.
+
+```
+    #include "vck190_test_harness_graph.hpp"
+```
+
+2. When creating PLIOs, declare them using one of the PLIO names predefined in the harness.
+
+```
+    pl_in0 = input_plio::create("Column_12_TO_AIE"  , adf::plio_128_bits, "DataIn0.txt");
+    pl_in1 = input_plio::create("Column_13_TO_AIE"  , adf::plio_128_bits, "DataIn1.txt");
+    pl_out = output_plio::create("Column_28_FROM_AIE", adf::plio_128_bits, "DataOut0.txt");
+```
+
+3. Register all used PLIO with their names.
+
+```
+    register_input_plio("Column_12_TO_AIE");
+    register_input_plio("Column_13_TO_AIE");
+    register_output_plio("Column_28_FROM_AIE") ; 
+```
+
+4. Put dummy graph to your `graph.cpp`
+
+```
+    userGraph usr_gr;
+    graphUnusedPLIO dummygraph; 
+```
+
+### How to design host to drive test
+
+1. Include test harness manager header to your own host source code.
+
+```
+    #include "ocl.hpp"
+```
+
+2. Init device
+
+```
+    test_harness_mgr mgr(0, "krnl_adder.xclbin", {"addergraph"}); 
+```
+
+3. Set up channels that feed or fetch from user graph on AIE.
+
+```
+    std::vector<test_harness_args> args;
+    for (int i = 0; i < 12; i++) {
+        args.push_back({channel_index(Column_12_TO_AIE + i), num * sizeof(int), 4, 25, (char*)dataInput});
+        args.push_back({channel_index(Column_28_FROM_AIE + i), num * sizeof(int), 4, 25, (char*)dataOutput});
+    }
+```
+
+4. Run test harness
+
+```
+    mgr.runTestHarness(args);
+```
+
+5. Run user graph
+
+```
+    mgr.runGraph(0, 1);
+```
+
+6. Wait for graph to finish
+
+```
+    mgr.waitForRes(10000);
+```
+
+For details of software API, please take reference from example and `ocl.hpp`
+
+### How to package new AIE design with precompiled .xsa
+
+1. Download precompiled .xsa from Xilinx.com
+2. Run package script
+
+```
+   ./bin/package.sh <path to user libadf.a> <host application and other files to be packaged> 
+```
