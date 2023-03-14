@@ -1,0 +1,196 @@
+{
+  "NodeConstraints": {
+    "Column_12_TO_AIE": {
+      "shim": {
+        "column": 12,
+        "channel": 0
+      }
+    },
+    "Column_28_FROM_AIE": {
+      "shim": {
+        "column": 28,
+        "channel": 2
+      }
+    },
+    "Column_13_TO_AIE": {
+      "shim": {
+        "column": 13,
+        "channel": 0
+      }
+    },
+    "Column_29_FROM_AIE": {
+      "shim": {
+        "column": 29,
+        "channel": 2
+      }
+    },
+    "Column_14_TO_AIE": {
+      "shim": {
+        "column": 14,
+        "channel": 0
+      }
+    },
+    "Column_30_FROM_AIE": {
+      "shim": {
+        "column": 30,
+        "channel": 2
+      }
+    },    
+    "Column_15_TO_AIE": {
+      "shim": {
+        "column": 15,
+        "channel": 0
+      }
+    },
+    "Column_31_FROM_AIE": {
+      "shim": {
+        "column": 31,
+        "channel": 2
+      }
+    },    
+    "Column_16_TO_AIE": {
+      "shim": {
+        "column": 16,
+        "channel": 0
+      }
+    },
+    "Column_32_FROM_AIE": {
+      "shim": {
+        "column": 32,
+        "channel": 2
+      }
+    },
+    "Column_17_TO_AIE": {
+      "shim": {
+        "column": 17,
+        "channel": 0
+      }
+    },    
+    "Column_33_FROM_AIE": {
+      "shim": {
+        "column": 33,
+        "channel": 2
+      }
+    },
+    "Column_18_TO_AIE": {
+      "shim": {
+        "column": 18,
+        "channel": 0
+      }
+    },
+    "Column_34_FROM_AIE": {
+      "shim": {
+        "column": 34,
+        "channel": 2
+      }
+    },
+    "Column_19_TO_AIE": {
+      "shim": {
+        "column": 19,
+        "channel": 0
+      }
+    },
+    "Column_35_FROM_AIE": {
+      "shim": {
+        "column": 35,
+        "channel": 2
+      }
+    },
+    "Column_20_TO_AIE": {
+      "shim": {
+        "column": 20,
+        "channel": 0
+      }
+    },
+    "Column_36_FROM_AIE": {
+      "shim": {
+        "column": 36,
+        "channel": 2
+      }
+    },
+    "Column_21_TO_AIE": {
+      "shim": {
+        "column": 21,
+        "channel": 0
+      }
+    },
+    "Column_37_FROM_AIE": {
+      "shim": {
+        "column": 37,
+        "channel": 2
+      }
+    },
+    "Column_22_TO_AIE": {
+      "shim": {
+        "column": 22,
+        "channel": 0
+      }
+    },
+    "Column_38_FROM_AIE": {
+      "shim": {
+        "column": 38,
+        "channel": 2
+      }
+    },
+    "Column_23_TO_AIE": {
+      "shim": {
+        "column": 23,
+        "channel": 0
+      }
+    },
+    "Column_39_FROM_AIE": {
+      "shim": {
+        "column": 39,
+        "channel": 2
+      }
+    },
+    "Column_24_TO_AIE": {
+      "shim": {
+        "column": 24,
+        "channel": 0
+      }
+    },
+    "Column_40_FROM_AIE": {
+      "shim": {
+        "column": 40,
+        "channel": 2
+      }
+    },
+    "Column_25_TO_AIE": {
+      "shim": {
+        "column": 25,
+        "channel": 0
+      }
+    },
+    "Column_41_FROM_AIE": {
+      "shim": {
+        "column": 41,
+        "channel": 2
+      }
+    },
+    "Column_26_TO_AIE": {
+      "shim": {
+        "column": 26,
+        "channel": 0
+      }
+    },
+    "Column_42_FROM_AIE": {
+      "shim": {
+        "column": 42,
+        "channel": 2
+      }
+    },
+    "Column_27_TO_AIE": {
+      "shim": {
+        "column": 27,
+        "channel": 0
+      }
+    },
+    "Column_43_FROM_AIE": {
+      "shim": {
+        "column": 43,
+        "channel": 2
+      }
+    }       
+  }
+}
