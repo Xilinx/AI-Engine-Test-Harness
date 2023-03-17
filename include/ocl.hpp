@@ -19,8 +19,6 @@
 
 #include <CL/cl.h>
 #include <CL/cl_ext_xilinx.h>
-#include "utils.hpp"
-#include "ocl_multi.hpp"
 
 #include "xrt/xrt_device.h"
 #include "xrt/xrt_kernel.h"
@@ -36,6 +34,8 @@
 #include "xrt.h"
 #include "xrt/xrt_kernel.h"
 #include "xrt/xrt_graph.h"
+
+namespace vck190_test_harness {
 
 struct plKernelArg {
     unsigned int arg_idx;
@@ -301,5 +301,5 @@ class test_harness_mgr : public fastXM {
     char* from_aie_ptr;
     std::vector<test_harness_args> args_rec;
 };
-
+}
 #endif

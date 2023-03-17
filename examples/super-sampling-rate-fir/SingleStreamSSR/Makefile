@@ -131,6 +131,9 @@ AIE_CONTAINER = $(TEMP_DIR)/libadf.a
 AIE_WORK_DIR = $(CUR_DIR)/Work
 AIE_PKG_DIR = $(AIE_WORK_DIR)
 AIE_CXXFLAGS += -I $(CUR_DIR)/aie
+AIE_CXXFLAGS += -I $(CUR_DIR)/../../../include
+AIE_CXXFLAGS += -I $(CUR_DIR)/../../../src/aie
+AIE_CXXFLAGS += --constraints=../../../cfg/aie_constraints.json
 $(AIE_WORK_DIR)/ps/c_rts/aie_control_xrt.cpp: $(AIE_CONTAINER)
 
 EXE_FILE_DEPS += $(AIE_CONTAINER)
@@ -155,41 +158,43 @@ ifeq (,$(findstring opencv,$(CXXFLAGS)))
 CXXFLAGS += $(XRT_CXXFLAGS)
 endif
 
-EXE_NAME := aie_adder
+EXE_NAME := host_elf
 EXE_FILE := $(BUILD_DIR)/$(EXE_NAME)
 EXE_FILE_DEPS := $(HOST_SRCS) $(INSTANCE_FILES)  $(EXE_FILE_DEPS)
 
-HOST_ARGS := $(BUILD_DIR)/krnl_adder.xclbin
+HOST_ARGS := $(BUILD_DIR)/vck190_test_harness.xclbin
 ifneq ($(HOST_ARCH), x86)
 PKG_HOST_ARGS = $(foreach args,$(HOST_ARGS),$(subst $(dir $(patsubst %/,%,$(args))),,$(args)))
 endif
 
 ########################## Kernel compiler global settings ##########################
-VPP_LDFLAGS +=   --config $(CUR_DIR)/system.cfg
+VPP_FLAGS +=  -I $(CUR_DIR)/../../../include
+VPP_LDFLAGS +=   --config ../../../cfg/system.cfg
 VPP_PACKAGE +=   --package.defer_aie_run
 
 ######################### binary container global settings ##########################
+VPP_FLAGS_vck190_test_harness += --hls.clock 250000000:vck190_test_harness
 
 ifneq ($(SD_CARD_NEEDED), on)
-BINARY_CONTAINERS += $(BUILD_DIR)/krnl_adder.xclbin
+BINARY_CONTAINERS += $(BUILD_DIR)/vck190_test_harness.xclbin
 else
-BINARY_CONTAINERS += $(BUILD_DIR)/krnl_adder_pkg.$(LINK_TARGET_FMT)
-BINARY_CONTAINERS_PKG += $(BUILD_DIR)/krnl_adder.xclbin
+BINARY_CONTAINERS += $(BUILD_DIR)/vck190_test_harness_pkg.$(LINK_TARGET_FMT)
+BINARY_CONTAINERS_PKG += $(BUILD_DIR)/vck190_test_harness.xclbin
 endif
 
 # ################ Setting Rules for Binary Containers (Building Kernels) ################
-$(TEMP_DIR)/vck190_test_harness.xo: $(CUR_DIR)/pl_kernels/test_harness.cpp 
+$(TEMP_DIR)/vck190_test_harness.xo: $(CUR_DIR)/../../../src/pl/test_harness.cpp 
 	$(ECHO) "Compiling Kernel: vck190_test_harness"
 	mkdir -p $(TEMP_DIR)
 	$(VPP) -c $(VPP_FLAGS_vck190_test_harness) $(VPP_FLAGS) -k vck190_test_harness -I'$(<D)' --temp_dir $(TEMP_DIR) --report_dir $(TEMP_REPORT_DIR) -o $@ $^
-BINARY_CONTAINER_krnl_adder_OBJS += $(TEMP_DIR)/vck190_test_harness.xo
-BINARY_CONTAINERS_DEPS += $(BINARY_CONTAINER_krnl_adder_OBJS)
+BINARY_CONTAINER_vck190_test_harness_OBJS += $(TEMP_DIR)/vck190_test_harness.xo
+BINARY_CONTAINERS_DEPS += $(BINARY_CONTAINER_vck190_test_harness_OBJS)
 $(BINARY_CONTAINERS): $(BINARY_CONTAINERS_DEPS)
 	mkdir -p $(BUILD_DIR)
-	$(VPP) -l $(VPP_FLAGS) --temp_dir $(TEMP_DIR) --report_dir $(BUILD_REPORT_DIR)/krnl_adder $(VPP_LDFLAGS)  $(VPP_LDFLAGS_krnl_adder) $(AIE_LDFLAGS)   -o $@ $^
+	$(VPP) -l $(VPP_FLAGS) --temp_dir $(TEMP_DIR) --report_dir $(BUILD_REPORT_DIR)/vck190_test_harness $(VPP_LDFLAGS)  $(VPP_LDFLAGS_vck190_test_harness) $(AIE_LDFLAGS)   -o $@ $^
 
 ############################## Setting Rules for AIE (Building Kernels) ##################
-$(AIE_CONTAINER): $(CUR_DIR)/aie/aie_graph.cpp  $(INST_FILES) 
+$(AIE_CONTAINER): $(CUR_DIR)/aie/SSgraph.cpp  $(INST_FILES) 
 	$(ECHO) "Compiling: libadf.a"
 	mkdir -p $(dir $@)
 	$(AIECXX) $(AIE_CXXFLAGS) $^
@@ -226,7 +231,7 @@ endif
 	@echo 'fi' >> $(RUN_SCRIPT)
 	@echo 'echo "INFO: Embedded host run completed."' >> $(RUN_SCRIPT)
 	@echo 'exit $$return_code' >> $(RUN_SCRIPT)
-DATA_FILE := $(custom_data_file)
+DATA_FILE := $(CUR_DIR)//data/PhaseIn_3.txt $(CUR_DIR)//data/PhaseIn_2.txt $(CUR_DIR)//data/PhaseIn_1.txt $(CUR_DIR)//data/PhaseIn_0.txt $(custom_data_file)
 DATA_DIR := $(custom_data_dir)
 SD_FILES += $(RUN_SCRIPT)
 SD_FILES += $(EXE_FILE)
@@ -335,7 +340,7 @@ endif
 #hw
 ifeq ($(TARGET), hw)
 ifneq (,$(findstring aws-vu9p-f1, $(PLATFORM_NAME)))
-ifeq (,$(wildcard $(BUILD_DIR)/krnl_adder.awsxclbin))
+ifeq (,$(wildcard $(BUILD_DIR)/vck190_test_harness.awsxclbin))
 	$(ECHO) "This makefile does not directly support converting .xclbin to .awsxclbin, please refer https://github.com/aws/aws-fpga/blob/master/Vitis/README.md for next operations"
 else
 	$(ECHO) "Running HW using generated .awsxclbin"

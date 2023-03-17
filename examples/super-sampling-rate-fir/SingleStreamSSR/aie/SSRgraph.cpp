@@ -14,18 +14,18 @@
  * limitations under the License.
  *
  */
- #include <adf.h>
+#include <adf.h>
 #include "system_settings.h"
 
 #include "SSRgraph.h"
 
 TopGraph G;
+vck190_test_harness::graphUnusedPLIO dummyGraph;
 
-int main()
-{
-	G.init();
-	G.run(NFRAMES);
-	G.end();
+int main() {
+    G.init();
+    G.run(NFRAMES);
+    G.end();
 
-	return(0);
+    return (0);
 }

@@ -32,7 +32,7 @@
         "OpenCL"
     ], 
     "host": {
-       "host_exe": "aie_adder",
+       "host_exe": "host_elf",
         "compiler": {
             "sources": [
                 "./ps/host.cpp",
@@ -40,7 +40,8 @@
             ], 
             "includepaths": [
                 "./",
-                "LIB_DIR/L1/include",
+                "./aie",
+                "../../../include",
                 "$(SYSROOT)/usr/include/xrt/"                
             ],
             "options": "--sysroot=$(SYSROOT)"
@@ -49,7 +50,12 @@
     "aiecompiler": {
         "compiler": {
             "includepaths": [
-                "./aie"
+                "./aie",
+                "../../../include",
+                "../../../src/aie"
+            ],
+            "clflags": [
+                "--constraints=../../../cfg/aie_constraints.json"
             ]
         }
     },
@@ -57,24 +63,26 @@
         {
             "accelerators": [
                 {
-                    "location": "./aie/aie_graph.cpp",
+                    "location": "./aie/graph.cpp",
                     "pl-freq": 100,
                     "workdir": "./Work",
-                    "name": "libadf.a",
-                    "aie_kernel_files":["./aie/aie_adder.cc"]
+                    "name": "libadf.a"
                 }
             ]
         }
     ],
     "data": [
-        "PROJECT/data/golden.txt",
-        "PROJECT/data/input0.txt",
-        "PROJECT/data/input1.txt"
+        "PROJECT/data/PROJECT/data/PhaseIn_0.txt"
     ],
     "v++": {
+        "compiler" : {
+            "includepaths": [
+                "../../../include"
+            ]
+        },
         "linker": {
                     "cflags": [
-                        "--config PROJECT/system.cfg"
+                        "--config ../../../cfg/system.cfg"
                     ]
                 },
         "package": {
@@ -89,16 +97,18 @@
             "accelerators": [
                 {
                     "name": "vck190_test_harness", 
-                    "location": "pl_kernels/test_harness.cpp",
+                    "frequency": 250,
+                    "location": "../../../src/pl/test_harness.cpp",
                     "num_compute_units": "1"
                 }
-            ], 
-            "name": "krnl_adder"
+            ],
+            "frequency": 250,
+            "name": "test_harness"
         }
     ],
     "launch": [
         {
-            "cmd_args": "BUILD/krnl_adder.xclbin", 
+            "cmd_args": "BUILD/vck190_test_harness.xclbin", 
             "name": "generic launch for all flows"
         }
     ],

@@ -14,18 +14,27 @@
  * limitations under the License.
  *
  */
- #include <adf.h>
+#include <adf.h>
 #include "system_settings.h"
 
 #include "SSRgraph.h"
 
 TopGraph G;
+vck190_test_harness::graphUnusedPLIO dummyGraph;
 
-int main()
-{
-	G.init();
-	G.run(NFRAMES);
-	G.end();
+int main() {
+    std::cout << "used_pl_in_name.size = " << used_pl_in_name.size() << std::endl;
+    for (int i = 0; i < used_pl_in_name.size(); i++) {
+        std::cout << i << " : " << used_pl_in_name[i] << std::endl;
+    }
+    std::cout << "used_pl_out_name.size = " << used_pl_out_name.size() << std::endl;
+    for (int i = 0; i < used_pl_out_name.size(); i++) {
+        std::cout << i << " : " << used_pl_out_name[i] << std::endl;
+    }
 
-	return(0);
+    G.init();
+    G.run(NFRAMES);
+    G.end();
+
+    return (0);
 }

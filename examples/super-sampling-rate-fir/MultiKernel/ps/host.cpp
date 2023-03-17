@@ -23,6 +23,8 @@
 
 #define DATA_SIZE 16
 
+using namespace vck190_test_harness;
+
 int main(int argc, char** argv) {
     // Prepare data
     const int num = DATA_SIZE;
