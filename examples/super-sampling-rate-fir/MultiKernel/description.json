@@ -55,7 +55,8 @@
                 "../../../src/aie"
             ],
             "clflags": [
-                "--constraints=../../../cfg/aie_constraints.json"
+                "--constraints=../../../cfg/aie_constraints.json",
+                "--event-trace=runtime --event-trace-port=gmio"
             ]
         }
     },

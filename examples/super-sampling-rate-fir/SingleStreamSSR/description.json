@@ -40,7 +40,6 @@
             ], 
             "includepaths": [
                 "./",
-                "LIB_DIR/L1/include",
                 "$(SYSROOT)/usr/include/xrt/"                
             ],
             "options": "--sysroot=$(SYSROOT)"
@@ -54,7 +53,8 @@
                 "../../../src/aie"
             ],
             "clflags": [
-                "--constraints=../../../cfg/aie_constraints.json"
+                "--constraints=../../../cfg/aie_constraints.json",
+                "--event-trace=runtime --event-trace-port=gmio"
             ]
         }
     },
@@ -62,7 +62,7 @@
         {
             "accelerators": [
                 {
-                    "location": "./aie/SSgraph.cpp",
+                    "location": "./aie/SSRgraph.cpp",
                     "pl-freq": 100,
                     "workdir": "./Work",
                     "name": "libadf.a"
@@ -104,7 +104,7 @@
                     "num_compute_units": "1"
                 }
             ],
-            "freqeuency": 250,
+            "frequency": 250,
             "name": "vck190_test_harness"
         }
     ],

@@ -18,9 +18,9 @@
 #include "system_settings.h"
 
 #include "graph.h"
-vck190_test_harness::graphUnusedPLIO dummyGraph;
 
 TopGraph G;
+vck190_test_harness::graphUnusedPLIO dummyGraph;
 
 int main() {
     G.init();

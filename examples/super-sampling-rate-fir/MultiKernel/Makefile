@@ -134,6 +134,7 @@ AIE_CXXFLAGS += -I $(CUR_DIR)/aie
 AIE_CXXFLAGS += -I $(CUR_DIR)/../../../include
 AIE_CXXFLAGS += -I $(CUR_DIR)/../../../src/aie
 AIE_CXXFLAGS += --constraints=../../../cfg/aie_constraints.json
+AIE_CXXFLAGS += --event-trace=runtime --event-trace-port=gmio
 $(AIE_WORK_DIR)/ps/c_rts/aie_control_xrt.cpp: $(AIE_CONTAINER)
 
 EXE_FILE_DEPS += $(AIE_CONTAINER)

@@ -58,12 +58,13 @@ class TopGraph : public adf::graph {
    public:
     FIRGraph_OneKernel G1;
 
-    input_plio plin = input_plio::create(vck190_test_harness::in_names[0], plio_64_bits, "data/PhaseIn_0.txt", 500);
-    output_plio plout = output_plio::create(vck190_test_harness::out_names[0], plio_64_bits, "data/Output_0.txt", 500);
-    vck190_test_harness::register_input_plio(vck190_test_harness::in_names[0]);
-    vck190_test_harness::register_output_plio(vck190_test_harness::out_names[0]);
-
     TopGraph() {
+        input_plio plin = input_plio::create(vck190_test_harness::in_names[0], plio_64_bits, "data/PhaseIn_0.txt", 500);
+        output_plio plout =
+            output_plio::create(vck190_test_harness::out_names[0], plio_64_bits, "data/Output_0.txt", 500);
+        vck190_test_harness::register_input_plio(vck190_test_harness::in_names[0]);
+        vck190_test_harness::register_output_plio(vck190_test_harness::out_names[0]);
+
         connect<>(plin.out[0], G1.in);
         connect<>(G1.out, plout.in[0]);
     }

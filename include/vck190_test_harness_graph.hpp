@@ -26,10 +26,10 @@
 using namespace adf;
 using namespace std;
 
-namespace vck190_test_harness {
-
 void dummy_out(output_stream_int32* out);
 void dummy_in(input_stream_int32* in);
+
+namespace vck190_test_harness {
 
 class graphUnusedPLIO : public graph {
    public:

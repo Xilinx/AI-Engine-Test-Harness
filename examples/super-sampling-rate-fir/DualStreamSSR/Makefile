@@ -131,9 +131,10 @@ AIE_CONTAINER = $(TEMP_DIR)/libadf.a
 AIE_WORK_DIR = $(CUR_DIR)/Work
 AIE_PKG_DIR = $(AIE_WORK_DIR)
 AIE_CXXFLAGS += -I $(CUR_DIR)/aie
-AIE_CXXFLAGS += -I $(CUR_DIR)/../../../include/
+AIE_CXXFLAGS += -I $(CUR_DIR)/../../../include
 AIE_CXXFLAGS += -I $(CUR_DIR)/../../../src/aie
 AIE_CXXFLAGS += --constraints=../../../cfg/aie_constraints.json
+AIE_CXXFLAGS += --event-trace=runtime --event-trace-port=gmio
 $(AIE_WORK_DIR)/ps/c_rts/aie_control_xrt.cpp: $(AIE_CONTAINER)
 
 EXE_FILE_DEPS += $(AIE_CONTAINER)
@@ -145,11 +146,11 @@ AIESIMFLAGS += $(EXTRA_AIESIMFLAGS)
 #Inclue Required Host Source Files
 ifeq ($(ps_on_x86), on)
 HOST_SRCS += $(CUR_DIR)/ps/host.cpp $(CUR_DIR)/Work/ps/c_rts/aie_control_xrt.cpp 
-CXXFLAGS +=  -I $(CUR_DIR) -I $(CUR_DIR)/aie -I $(CUR_DIR)/../../../include/ -I $(SYSROOT)/usr/include/xrt/
+CXXFLAGS +=  -I $(CUR_DIR) -I $(CUR_DIR)/aie -I $(CUR_DIR)/../../../include -I $(SYSROOT)/usr/include/xrt/
 CXXFLAGS += --sysroot=$(SYSROOT)
 else
 HOST_SRCS += $(CUR_DIR)/ps/host.cpp $(CUR_DIR)/Work/ps/c_rts/aie_control_xrt.cpp 
-CXXFLAGS +=  -I $(CUR_DIR) -I $(CUR_DIR)/aie -I $(CUR_DIR)/../../../include/ -I $(SYSROOT)/usr/include/xrt/
+CXXFLAGS +=  -I $(CUR_DIR) -I $(CUR_DIR)/aie -I $(CUR_DIR)/../../../include -I $(SYSROOT)/usr/include/xrt/
 CXXFLAGS += --sysroot=$(SYSROOT)
 endif
 

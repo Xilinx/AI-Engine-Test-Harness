@@ -134,6 +134,7 @@ AIE_CXXFLAGS += -I $(CUR_DIR)/aie
 AIE_CXXFLAGS += -I $(CUR_DIR)/../../../include
 AIE_CXXFLAGS += -I $(CUR_DIR)/../../../src/aie
 AIE_CXXFLAGS += --constraints=../../../cfg/aie_constraints.json
+AIE_CXXFLAGS += --event-trace=runtime --event-trace-port=gmio
 $(AIE_WORK_DIR)/ps/c_rts/aie_control_xrt.cpp: $(AIE_CONTAINER)
 
 EXE_FILE_DEPS += $(AIE_CONTAINER)
@@ -145,11 +146,11 @@ AIESIMFLAGS += $(EXTRA_AIESIMFLAGS)
 #Inclue Required Host Source Files
 ifeq ($(ps_on_x86), on)
 HOST_SRCS += $(CUR_DIR)/ps/host.cpp $(CUR_DIR)/Work/ps/c_rts/aie_control_xrt.cpp 
-CXXFLAGS +=  -I $(CUR_DIR) -I $(XFLIB_DIR)/L1/include -I $(SYSROOT)/usr/include/xrt/
+CXXFLAGS +=  -I $(CUR_DIR) -I $(SYSROOT)/usr/include/xrt/
 CXXFLAGS += --sysroot=$(SYSROOT)
 else
 HOST_SRCS += $(CUR_DIR)/ps/host.cpp $(CUR_DIR)/Work/ps/c_rts/aie_control_xrt.cpp 
-CXXFLAGS +=  -I $(CUR_DIR) -I $(XFLIB_DIR)/L1/include -I $(SYSROOT)/usr/include/xrt/
+CXXFLAGS +=  -I $(CUR_DIR) -I $(SYSROOT)/usr/include/xrt/
 CXXFLAGS += --sysroot=$(SYSROOT)
 endif
 
@@ -174,6 +175,11 @@ VPP_PACKAGE +=   --package.defer_aie_run
 
 ######################### binary container global settings ##########################
 VPP_FLAGS_vck190_test_harness += --hls.clock 250000000:vck190_test_harness
+ifneq ($(HOST_ARCH_temp), x86)
+VPP_LDFLAGS_vck190_test_harness += --clock.defaultFreqHz 250000000
+else
+VPP_LDFLAGS_vck190_test_harness += --kernel_frequency 250
+endif
 
 ifneq ($(SD_CARD_NEEDED), on)
 BINARY_CONTAINERS += $(BUILD_DIR)/vck190_test_harness.xclbin
@@ -194,7 +200,7 @@ $(BINARY_CONTAINERS): $(BINARY_CONTAINERS_DEPS)
 	$(VPP) -l $(VPP_FLAGS) --temp_dir $(TEMP_DIR) --report_dir $(BUILD_REPORT_DIR)/vck190_test_harness $(VPP_LDFLAGS)  $(VPP_LDFLAGS_vck190_test_harness) $(AIE_LDFLAGS)   -o $@ $^
 
 ############################## Setting Rules for AIE (Building Kernels) ##################
-$(AIE_CONTAINER): $(CUR_DIR)/aie/SSgraph.cpp  $(INST_FILES) 
+$(AIE_CONTAINER): $(CUR_DIR)/aie/SSRgraph.cpp  $(INST_FILES) 
 	$(ECHO) "Compiling: libadf.a"
 	mkdir -p $(dir $@)
 	$(AIECXX) $(AIE_CXXFLAGS) $^

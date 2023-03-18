@@ -19,7 +19,7 @@
 
 using namespace adf;
 
-graphUnusedPLIO dummygraph;
+vck190_test_harness::graphUnusedPLIO dummygraph;
 
 #if defined(__AIESIM__) || defined(__X86SIM__)
 int main(int argc, char** argv) {
