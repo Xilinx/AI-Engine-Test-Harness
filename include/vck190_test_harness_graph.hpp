@@ -55,7 +55,7 @@ class graphUnusedPLIO : public graph {
         pl_out.resize(unused_pl_out_name.size());
 
         for (int i = 0; i < pl_in.size(); i++) {
-            pl_in[i] = input_plio::create(unused_pl_in_name[i], adf::plio_128_bits, unused_pl_in_name[i] + ".txt", 250);
+            pl_in[i] = input_plio::create(unused_pl_in_name[i], adf::plio_128_bits, "data/dummy.txt", 250);
             k_in[i] = kernel::create(dummy_in);
             source(k_in[i]) = "dummy_kernel.cc";
             runtime<ratio>(k_in[i]) = 0.01;
@@ -63,8 +63,7 @@ class graphUnusedPLIO : public graph {
         }
 
         for (int i = 0; i < pl_out.size(); i++) {
-            pl_out[i] =
-                output_plio::create(unused_pl_out_name[i], adf::plio_128_bits, unused_pl_out_name[i] + ".txt", 250);
+            pl_out[i] = output_plio::create(unused_pl_out_name[i], adf::plio_128_bits, "data/dummy.txt", 250);
             k_out[i] = kernel::create(dummy_out);
             source(k_out[i]) = "dummy_kernel.cc";
             runtime<ratio>(k_out[i]) = 0.01;

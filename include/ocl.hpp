@@ -17,9 +17,6 @@
 #ifndef _OCL_HPP_
 #define _OCL_HPP_
 
-#include <CL/cl.h>
-#include <CL/cl_ext_xilinx.h>
-
 #include "xrt/xrt_device.h"
 #include "xrt/xrt_kernel.h"
 #include "xrt/xrt_bo.h"
