@@ -22,22 +22,22 @@ The input channel works in steps below:
 
 1. All input channels will load input data for AIE from DDR and store them in URAM buffer.
 2. After all data has been stored in URAM buffer, each channel will start to do its own count down. This allows input channels start to send data to AIE at different cycles.
-3. Each channel load from URAM buffer and send desired amount of data to AIE. Each of them can repeat the sending with a specified rounds.
-4. Each channel can record the latency between cycle that it starts to send data to AIE and cycle that it finishes all sendings.
+3. Each channel load from URAM buffer and send desired amount of data to AIE. Each of them can repeat the sending with specified rounds.
+4. Each channel can record the latency between the cycle in which it starts to send data to AIE and the cycle in which it finishes all sendings.
 
 The output channels works in steps below:
 
 1. Each channel will start to do its own count down. This allows output channels start to fetch data from AIE at different cycles.
-2. Each channel fetch desired amout of data from AIE and store them in URAM buffer. Each of them can repeat the fetching with a specified rounds.
+2. Each channel fetch desired amout of data from AIE and store them in URAM buffer. Each of them can repeat the fetching with specified rounds.
 3. After all output channels finished all fetchings, they will write output data on URAM to DDR.
-4. Each channel can record the latency between cycle that it starts to fetch data from AIE and cycle that it finishes all fetchings.
+4. Each channel can record the latency between the cycle in which it starts to fetch data from AIE and the cycle in which it finishes all fetchings.
 
 The data sizes to feed to/fetch from AIE, count-down cycles and repetition number of each channel are all set by config buffer on DDR which is set by software API.
 The latency cycles of each channels will be stored to DDR and fetch back and displayed by software API.
 
 ### Dummy Graph on AIE
 
-Test harness on PL provide 16 PLIO for input and 16 PLIO for output. If user graph does not utlize all of them, it will lead to package error.
+Test harness on PL provides 16 PLIO for input and 16 PLIO for output. If user graph does not utilize all of them, it will lead to package error.
 Dummy graph can be used to occupy all dangling PLIOs. The dummy graph won't do anything but help packaging.
 To help dummy graph identify all dangling PLIO, user graph needs to register all used PLIOs.
 For details, please take reference from "How to Use" section below.
