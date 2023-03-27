@@ -98,14 +98,12 @@ class TopGraph : public adf::graph {
 
     TopGraph() {
         for (int i = 0; i < 4; i++) {
-            in[i] = input_plio::create(vck190_test_harness::in_names[i], plio_64_bits,
+            in[i] = input_plio::create(vck190_test_harness::in_names[i], plio_128_bits,
                                        "data/PhaseIn_" + std::to_string(0) + ".txt", 500);
             connect<>(in[i].out[0], G1.in[i]);
-            vck190_test_harness::register_input_plio(vck190_test_harness::in_names[i]);
         }
 
-        out = output_plio::create(vck190_test_harness::out_names[0], plio_64_bits, "data/Output_0.txt", 500);
+        out = output_plio::create(vck190_test_harness::out_names[0], plio_128_bits, "data/Output_0.txt", 500);
         connect<>(G1.out, out.in[0]);
-        vck190_test_harness::register_output_plio(vck190_test_harness::out_names[0]);
     }
 };

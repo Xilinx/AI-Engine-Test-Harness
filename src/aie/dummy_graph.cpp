@@ -18,8 +18,10 @@
 #include "vck190_test_harness_graph.hpp"
 
 using namespace adf;
+std::vector<std::string> empty_in;
+std::vector<std::string> empty_out;
 
-vck190_test_harness::graphUnusedPLIO dummygraph;
+vck190_test_harness::occupyUnusedPLIO<0, 0> dummygraph(empty_in, empty_out);
 
 #if defined(__AIESIM__) || defined(__X86SIM__)
 int main(int argc, char** argv) {

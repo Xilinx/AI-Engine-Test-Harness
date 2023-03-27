@@ -158,19 +158,15 @@ class TopGraph : public adf::graph {
 
     TopGraph() {
         for (int i = 0; i < 8; i++) {
-            plin[2 * i] = input_plio::create(vck190_test_harness::in_names[i * 2], plio_64_bits,
+            plin[2 * i] = input_plio::create(vck190_test_harness::in_names[i * 2], plio_128_bits,
                                              "data/PhaseIn_" + std::to_string(i) + "_0.txt", 500);
-            plin[2 * i + 1] = input_plio::create(vck190_test_harness::in_names[i * 2 + 1], plio_64_bits,
+            plin[2 * i + 1] = input_plio::create(vck190_test_harness::in_names[i * 2 + 1], plio_128_bits,
                                                  "data/PhaseIn_" + std::to_string(i) + "_1.txt", 500);
 
-            plout[2 * i] = output_plio::create(vck190_test_harness::out_names[i * 2], plio_64_bits,
+            plout[2 * i] = output_plio::create(vck190_test_harness::out_names[i * 2], plio_128_bits,
                                                "data/PhaseOut_" + std::to_string(i) + "_0.txt", 500);
-            plout[2 * i + 1] = output_plio::create(vck190_test_harness::out_names[i * 2 + 1], plio_64_bits,
+            plout[2 * i + 1] = output_plio::create(vck190_test_harness::out_names[i * 2 + 1], plio_128_bits,
                                                    "data/PhaseOut_" + std::to_string(i) + "_1.txt", 500);
-            vck190_test_harness::register_input_plio(vck190_test_harness::in_names[i * 2]);
-            vck190_test_harness::register_input_plio(vck190_test_harness::in_names[i * 2 + 1]);
-            vck190_test_harness::register_output_plio(vck190_test_harness::out_names[i * 2]);
-            vck190_test_harness::register_output_plio(vck190_test_harness::out_names[i * 2 + 1]);
 
             connect<>(plin[2 * i].out[0], G1.in[2 * i]);
             connect<>(plin[2 * i + 1].out[0], G1.in[2 * i + 1]);

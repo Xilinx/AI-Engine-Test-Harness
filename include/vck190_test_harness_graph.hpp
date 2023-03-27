@@ -31,43 +31,44 @@ void dummy_in(input_stream_int32* in);
 
 namespace vck190_test_harness {
 
-class graphUnusedPLIO : public graph {
+template <int used_in_plio, int used_out_plio>
+class occupyUnusedPLIO : public graph {
    public:
-    std::vector<kernel> k_in;
-    std::vector<kernel> k_out;
-    std::vector<input_plio> pl_in;
-    std::vector<output_plio> pl_out;
+    kernel k_in[16 - used_in_plio];
+    kernel k_out[16 - used_out_plio];
+    input_plio pl_in[16 - used_in_plio];
+    output_plio pl_out[16 - used_out_plio];
 
-    graphUnusedPLIO() {
-        std::vector<std::string> unused_pl_in_name(0);
-        std::vector<std::string> unused_pl_out_name(0);
-        for (int i = 0; i < 16; i++) {
-            if (std::count(used_pl_in_name.begin(), used_pl_in_name.end(), vck190_test_harness::in_names[i]) == 0) {
-                unused_pl_in_name.push_back(vck190_test_harness::in_names[i]);
-            }
-            if (std::count(used_pl_out_name.begin(), used_pl_out_name.end(), vck190_test_harness::out_names[i]) == 0) {
-                unused_pl_out_name.push_back(vck190_test_harness::out_names[i]);
+    occupyUnusedPLIO(std::vector<std::string> used_in_plio_names, std::vector<std::string> used_out_plio_names) {
+        {
+            int k = 0;
+            for (int i = 0; i < 16; i++) {
+                if (std::count(used_in_plio_names.begin(), used_in_plio_names.end(),
+                               vck190_test_harness::in_names[i]) == 0) {
+                    pl_in[k] =
+                        input_plio::create(vck190_test_harness::in_names[i], adf::plio_128_bits, "data/dummy.txt", 250);
+                    k_in[k] = kernel::create(dummy_in);
+                    source(k_in[k]) = "dummy_kernel.cc";
+                    runtime<ratio>(k_in[k]) = 0.01;
+                    connect<stream> net(pl_in[k].out[0], k_in[k].in[0]);
+                    k++;
+                }
             }
         }
-        k_in.resize(unused_pl_in_name.size());
-        k_out.resize(unused_pl_out_name.size());
-        pl_in.resize(unused_pl_in_name.size());
-        pl_out.resize(unused_pl_out_name.size());
-
-        for (int i = 0; i < pl_in.size(); i++) {
-            pl_in[i] = input_plio::create(unused_pl_in_name[i], adf::plio_128_bits, "data/dummy.txt", 250);
-            k_in[i] = kernel::create(dummy_in);
-            source(k_in[i]) = "dummy_kernel.cc";
-            runtime<ratio>(k_in[i]) = 0.01;
-            connect<stream> net(pl_in[i].out[0], k_in[i].in[0]);
-        }
-
-        for (int i = 0; i < pl_out.size(); i++) {
-            pl_out[i] = output_plio::create(unused_pl_out_name[i], adf::plio_128_bits, "data/dummy.txt", 250);
-            k_out[i] = kernel::create(dummy_out);
-            source(k_out[i]) = "dummy_kernel.cc";
-            runtime<ratio>(k_out[i]) = 0.01;
-            connect<stream> net(k_out[i].out[0], pl_out[i].in[0]);
+        {
+            int k = 0;
+            for (int i = 0; i < 16; i++) {
+                if (std::count(used_out_plio_names.begin(), used_out_plio_names.end(),
+                               vck190_test_harness::out_names[i]) == 0) {
+                    pl_out[k] = output_plio::create(vck190_test_harness::out_names[i], adf::plio_128_bits,
+                                                    "data/dummy.txt", 250);
+                    k_out[k] = kernel::create(dummy_out);
+                    source(k_out[k]) = "dummy_kernel.cc";
+                    runtime<ratio>(k_out[k]) = 0.01;
+                    connect<stream> net(k_out[k].out[0], pl_out[k].in[0]);
+                    k++;
+                }
+            }
         }
     }
 };

@@ -19,8 +19,12 @@
 
 #include "SSRgraph.h"
 
+std::vector<std::string> cust_in = {"Column_12_TO_AIE", "Column_13_TO_AIE", "Column_14_TO_AIE", "Column_15_TO_AIE"};
+std::vector<std::string> cust_out = {"Column_28_FROM_AIE", "Column_29_FROM_AIE", "Column_30_FROM_AIE",
+                                     "Column_31_FROM_AIE"};
+
 TopGraph G;
-vck190_test_harness::graphUnusedPLIO dummyGraph;
+vck190_test_harness::occupyUnusedPLIO<4, 4> dummyGraph(cust_in, cust_out);
 
 int main() {
     G.init();

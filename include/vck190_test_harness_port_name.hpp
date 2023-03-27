@@ -35,13 +35,5 @@ static std::vector<std::string> out_names = {
     "Column_32_FROM_AIE", "Column_33_FROM_AIE", "Column_34_FROM_AIE", "Column_35_FROM_AIE",
     "Column_36_FROM_AIE", "Column_37_FROM_AIE", "Column_38_FROM_AIE", "Column_39_FROM_AIE",
     "Column_40_FROM_AIE", "Column_41_FROM_AIE", "Column_42_FROM_AIE", "Column_43_FROM_AIE"};
-
-static void register_input_plio(std::string s) {
-    used_pl_in_name.push_back(s);
-}
-
-static void register_output_plio(std::string s) {
-    used_pl_out_name.push_back(s);
-}
 }
 #endif

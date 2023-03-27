@@ -20,7 +20,6 @@
 #include "SSRgraph.h"
 
 TopGraph G;
-vck190_test_harness::graphUnusedPLIO dummyGraph;
 
 int main() {
     G.init();
