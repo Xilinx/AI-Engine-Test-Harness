@@ -19,8 +19,11 @@
 
 #include "graph.h"
 
+static std::vector<std::string> cust_in = {"Column_12_TO_AIE"};
+static std::vector<std::string> cust_out = {"Column_28_FROM_AIE"};
+
 TopGraph G;
-vck190_test_harness::graphUnusedPLIO dummyGraph;
+vck190_test_harness::occupyUnusedPLIO<1, 1> dummyGraph(cust_in, cust_out);
 
 int main() {
     G.init();

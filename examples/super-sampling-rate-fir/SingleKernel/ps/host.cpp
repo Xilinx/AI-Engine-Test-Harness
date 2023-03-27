@@ -19,7 +19,7 @@
 //#include <stdint.h>
 //#include <fstream>
 
-#include "ocl.hpp"
+#include "vck190_test_harness_mgr.hpp"
 
 #define DATA_SIZE 16
 
@@ -53,42 +53,34 @@ void load_input(string fname, vector<int>& data) {
 
 int main(int argc, char** argv) {
     // Prepare data
-    char* in_data[16];
-    int in_size[16];
-    char* out_data[16];
+    const int in_ch = 1;
+    const int out_ch = 1;
+    int in_sz = 512 * 4 * 4;
+    int out_sz = 512 * 4 * 4;
+    char* in_data[in_ch];
+    char* out_data[out_ch];
 
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 2; j++) {
-            vector<int> raw;
-            string fname("data/PhaseIn_" + to_string(i) + "_" + to_string(j) + ".txt");
-            load_input(fname, raw);
-            std::cout << "data.size = " << raw.size() << std::endl;
-
-            in_size[i * 2 + j] = raw.size();
-            in_data[i * 2 + j] = (char*)malloc(vector.size() * 2);
-            out_data[i * 2 + j] = (char*)malloc(vector.size() * 2);
-            for (int k = 0; k < raw.size(); k++) {
-                int tmp = raw[k];
-                memcpy(in_data[i * 2 + j] + k * 2, &tmp, 2);
-            }
-        }
+    for (int i = 0; i < in_ch; i++) {
+        in_data[i] = (char*)malloc(in_sz);
     }
-
+    for (int i = 0; i < out_ch; i++) {
+        out_data[i] = (char*)malloc(out_sz);
+    }
     // run test with test harness
-    test_harness_mgr mgr(0, "vck190_test_harness.xclbin", {"G"});
+    test_harness_mgr mgr(0, argv[1], {"G"});
     std::vector<test_harness_args> args;
-    for (int i = 0; i < 16; i++) {
-        args.push_back({channel_index(Column_12_TO_AIE + i), in_size[i] * 2, 1, 0, (char*)in_data[i]});
-        args.push_back({channel_index(Column_28_FROM_AIE + i), out_size[i] * 2, 1, 0, (char*)out_data[i]});
-    }
+    args.push_back({channel_index(Column_12_TO_AIE), in_sz, 1, 0, (char*)in_data[0]});
+    args.push_back({channel_index(Column_28_FROM_AIE), out_sz, 1, 0, (char*)out_data[0]});
+    mgr.runGraph(0, 4);
     mgr.runTestHarness(args);
-    mgr.runGraph(0, 1);
     mgr.waitForRes(10000);
 
     //
-    for (int i = 0; i < 16; i++) {
-        free(in_data);
-        free(out_data);
+    for (int i = 0; i < in_ch; i++) {
+        free(in_data[i]);
+    }
+    for (int i = 0; i < out_ch; i++) {
+        free(out_data[i]);
     }
 
     return 0;

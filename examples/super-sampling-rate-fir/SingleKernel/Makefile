@@ -1,3 +1,4 @@
+# w
 # Copyright 2019-2022 Xilinx, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,393 +14,104 @@
 # limitations under the License.
 # vitis makefile-generator v2.0.8
 
-############################## Help Section ##############################
-.PHONY: help
-
-help::
-	$(ECHO) "Makefile Usage:"
-	$(ECHO) "  make all TARGET=<hw_build/hw_emu/sw_emu/> PLATFORM=<FPGA platform>"
-	$(ECHO) "      Command to generate the design for specified Target and Shell."
-	$(ECHO) ""
-	$(ECHO) "  make run TARGET=<hw_build/hw_emu/sw_emu/> PLATFORM=<FPGA platform>"
-	$(ECHO) "      Command to run application in emulation."
-	$(ECHO) ""
-	$(ECHO) "  make xclbin TARGET=<hw_build/hw_emu/sw_emu/> PLATFORM=<FPGA platform>"
-	$(ECHO) "      Command to build xclbin application."
-	$(ECHO) ""
-	$(ECHO) "  make host TARGET=<hw_build/hw_emu/sw_emu/>"
-	$(ECHO) "      Command to build host application."
-	$(ECHO) ""
-	$(ECHO) "  NOTE: For embedded devices, e.g. zcu102/zcu104/vck190, HOST_ARCH is either aarch32 or aarch64."
-	$(ECHO) "      a.IF Download the platform, and common-image from Xilinx Download Center(Suggested):"
-	$(ECHO) "        Run the sdk.sh script from the common-image directory to install sysroot using the command : ./sdk.sh -y -d ./ -p "
-	$(ECHO) "        Unzip the rootfs file : gunzip ./rootfs.ext4.gz"
-	$(ECHO) "        export SYSROOT=< path-to-platform-sysroot >"
-	$(ECHO) "      b.User could also define SYSROOT, K_IMAGE and ROOTFS by themselves: "
-	$(ECHO) "        export SYSROOT=< path-to-platform-sysroot >"
-	$(ECHO) "        export K_IMAGE=< path-to-Image-files >"
-	$(ECHO) "        export ROOTFS=< path-to-rootfs >"
-	$(ECHO) ""
-	$(ECHO) "  make clean "
-	$(ECHO) "      Command to remove the generated non-hardware files."
-	$(ECHO) ""
-	$(ECHO) "  make cleanall TARGET=<hw_build/hw_emu/sw_emu/>"
-	$(ECHO) "      Command to remove all the generated files."
-	$(ECHO) ""
-
-############################## Setting up Project Variables ##############################
-
-MK_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
-XF_PROJ_ROOT ?= $(shell bash -c 'export MK_PATH=$(MK_PATH); echo $${MK_PATH%//*}')
-CUR_DIR := $(patsubst %/,%,$(dir $(MK_PATH)))
-XFLIB_DIR = $(XF_PROJ_ROOT)
-
-# setting devault value
-TARGET ?= sw_emu
-HOST_ARCH ?= aarch64
-
-#setting PLATFORM
-ifeq ($(PLATFORM),)
-PLATFORM := $(DEVICE)
+##################### Check Vitis Setup ######################
+.PHONY: check_setup
+check_setup:
+ifeq (,$(wildcard $(XILINX_VITIS)/bin/v++))
+	@echo "Cannot locate Vitis installation. Please set XILINX_VITIS variable." && false
 endif
-ifeq ($(PLATFORM),)
-PLATFORM := xilinx_vck190_base_202310_1
+ifeq (,$(wildcard $(XILINX_XRT)/lib/libxilinxopencl.so))
+	@echo "Cannot locate XRT installation. Please set XILINX_XRT variable." && false
 endif
 
-# #################### Checking if PLATFORM in whitelist ############################
-PLATFORM_ALLOWLIST +=  vck190
-PLATFORM_BLOCKLIST +=  zc aws-vu9p-f1 samsung u2_ vck5000 dma
-
-include ./utils.mk
-TEMP_DIR := _x_temp.$(TARGET).$(PLATFORM_NAME)
-TEMP_REPORT_DIR := $(CUR_DIR)/reports/_x.$(TARGET).$(PLATFORM_NAME)
-BUILD_DIR := build_dir.$(TARGET).$(PLATFORM_NAME)
-ifneq ($(RESULT_DIR),)
-BUILD_DIR = $(RESULT_DIR)
-endif
-BUILD_REPORT_DIR := $(CUR_DIR)/reports/_build.$(TARGET).$(PLATFORM_NAME)
-EMCONFIG := $(BUILD_DIR)/emconfig.json
-XCLBIN_DIR := $(CUR_DIR)/$(BUILD_DIR)
-export XCL_BINDIR = $(XCLBIN_DIR)
-
-EXE_FILE_DEPS :=
-BINARY_CONTAINERS_DEPS :=
-RUN_DEPS :=
-
-# get global setting
-ifeq ($(HOST_ARCH), x86)
-CXXFLAGS += -fmessage-length=0 -I$(CUR_DIR)/src/ -I$(XILINX_XRT)/include -I$(XILINX_HLS)/include -std=c++14 -O3 -Wall -Wno-unknown-pragmas -Wno-unused-label 
-LDFLAGS += -pthread -L$(XILINX_XRT)/lib -L$(XILINX_HLS)/lnx64/tools/fpo_v7_1 -Wl,--as-needed -lOpenCL -lxrt_coreutil -lgmp -lmpfr -lIp_floating_point_v7_1_bitacc_cmodel 
-VPP_FLAGS += -t $(TARGET) --platform $(XPLATFORM) --save-temps 
-VPP_LDFLAGS += --optimize 2 -R 2 
-else ifeq ($(HOST_ARCH), aarch64)
-CXXFLAGS += -I$(CUR_DIR)/src/ -fmessage-length=0 --sysroot=$(SYSROOT)  -I$(SYSROOT)/usr/include/xrt -I$(XILINX_HLS)/include -std=c++14 -O3 -Wall -Wno-unknown-pragmas -Wno-unused-label 
-LDFLAGS += -pthread -L$(SYSROOT)/usr/lib -Wl,--as-needed -lxilinxopencl -lxrt_coreutil 
-VPP_FLAGS += -t $(TARGET) --platform $(XPLATFORM) --save-temps 
-VPP_LDFLAGS += --optimize 2 -R 2 
-endif
-CXXFLAGS += $(EXTRA_CXXFLAGS)
-VPP_FLAGS += $(EXTRA_VPP_FLAGS)
-
-# aie template
-XILINX_VITIS_AIETOOLS := $(XILINX_VITIS)/aietools
-ifeq ($(HOST_ARCH), x86)
-AIE_CXXFLAGS_INC +=  -I $(XILINX_VITIS)/aietools/include 
-AIE_LDFLAGS_LD += -L $(XILINX_VITIS)/aietools/lib/lnx64.o -ladf_api_xrt 
-else
-AIE_CXXFLAGS_INC +=  -I $(XILINX_VITIS)/aietools/include 
-AIE_LDFLAGS_LD += -L $(XILINX_VITIS)/aietools/lib/aarch64.o  -ladf_api_xrt 
-endif
-CXXFLAGS += $(AIE_CXXFLAGS_INC)
-LDFLAGS += $(AIE_LDFLAGS_LD)
-
-AIE_WORK_DIR ?= Work
-AIE_PKG_DIR ?= Work
-
-# Setting customized_params in aiecompiler
-
-############################ setting AIE Compiler ###########################
-ifneq ($(filter aiesim hw_emu hw, $(TARGET)),)
-AIETARGET := hw
-else
+##################### Project Variables ######################
+TARGET := sw_emu
+ifneq ($(filter x86sim sw_emu, $(TARGET)),)
 AIETARGET := x86sim
-endif
-
-AIE_CXXFLAGS += --target=$(AIETARGET) --platform=$(XPLATFORM) --pl-freq=100 
-AIE_CXXFLAGS += $(AIE_CXXFLAGS_INC)
-AIE_CONTAINER = $(TEMP_DIR)/libadf.a
-AIE_WORK_DIR = $(CUR_DIR)/Work
-AIE_PKG_DIR = $(AIE_WORK_DIR)
-AIE_CXXFLAGS += -I $(CUR_DIR)/aie
-AIE_CXXFLAGS += -I $(CUR_DIR)/../../../include
-AIE_CXXFLAGS += -I $(CUR_DIR)/../../../src/aie
-AIE_CXXFLAGS += --constraints=../../../cfg/aie_constraints.json
-AIE_CXXFLAGS += --event-trace=runtime --event-trace-port=gmio
-$(AIE_WORK_DIR)/ps/c_rts/aie_control_xrt.cpp: $(AIE_CONTAINER)
-
-EXE_FILE_DEPS += $(AIE_CONTAINER)
-BINARY_CONTAINERS_DEPS += $(AIE_CONTAINER)
-AIESIMFLAGS += $(EXTRA_AIESIMFLAGS)
-
-########################## Setting up Host Variables ##########################
-
-#Inclue Required Host Source Files
-ifeq ($(ps_on_x86), on)
-HOST_SRCS += $(CUR_DIR)/ps/host.cpp $(CUR_DIR)/Work/ps/c_rts/aie_control_xrt.cpp 
-CXXFLAGS +=  -I $(CUR_DIR) -I $(CUR_DIR)/aie -I $(CUR_DIR)/../../../include -I $(SYSROOT)/usr/include/xrt/
-CXXFLAGS += --sysroot=$(SYSROOT)
+CXX := g++
 else
-HOST_SRCS += $(CUR_DIR)/ps/host.cpp $(CUR_DIR)/Work/ps/c_rts/aie_control_xrt.cpp 
-CXXFLAGS +=  -I $(CUR_DIR) -I $(CUR_DIR)/aie -I $(CUR_DIR)/../../../include -I $(SYSROOT)/usr/include/xrt/
-CXXFLAGS += --sysroot=$(SYSROOT)
+AIETARGET := hw
+CXX := $(XILINX_VITIS)/gnu/aarch64/lin/aarch64-linux/bin/aarch64-linux-gnu-g++
 endif
 
-# workaround for opencv
-ifeq (,$(findstring opencv,$(CXXFLAGS)))
-CXXFLAGS += $(XRT_CXXFLAGS)
+ifneq ($(findstring 2023.1, $(XILINX_VITIS)), )
+TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202310_1/xilinx_vck190_base_dfx_202310_1.xpfm
+TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202310_1.xpfm
+PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202310_1.xpfm
 endif
-
-EXE_NAME := host_elf
-EXE_FILE := $(BUILD_DIR)/$(EXE_NAME)
-EXE_FILE_DEPS := $(HOST_SRCS) $(INSTANCE_FILES)  $(EXE_FILE_DEPS)
-
-HOST_ARGS := $(BUILD_DIR)/vck190_test_harness.xclbin
-ifneq ($(HOST_ARCH), x86)
-PKG_HOST_ARGS = $(foreach args,$(HOST_ARGS),$(subst $(dir $(patsubst %/,%,$(args))),,$(args)))
+ifneq ($(findstring 2022.2, $(XILINX_VITIS)), )
+TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202220_1/xilinx_vck190_base_dfx_202220_1.xpfm
+TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202220_1.xpfm
+PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202220_1.xpfm
 endif
+PRE_BUILD_DIR := ../../../bin
 
-########################## Kernel compiler global settings ##########################
-VPP_FLAGS +=  -I $(CUR_DIR)/../../../include
-VPP_LDFLAGS +=   --config ../../../cfg/system.cfg
-VPP_PACKAGE +=   --package.defer_aie_run
-
-######################### binary container global settings ##########################
-VPP_FLAGS_vck190_test_harness += --hls.clock 250000000:vck190_test_harness
-ifneq ($(HOST_ARCH_temp), x86)
-VPP_LDFLAGS_test_harness += --clock.defaultFreqHz 250000000
-else
-VPP_LDFLAGS_test_harness += --kernel_frequency 250
-endif
-
-ifneq ($(SD_CARD_NEEDED), on)
-BINARY_CONTAINERS += $(BUILD_DIR)/test_harness.xclbin
-else
-BINARY_CONTAINERS += $(BUILD_DIR)/test_harness_pkg.$(LINK_TARGET_FMT)
-BINARY_CONTAINERS_PKG += $(BUILD_DIR)/test_harness.xclbin
-endif
-
-# ################ Setting Rules for Binary Containers (Building Kernels) ################
-$(TEMP_DIR)/vck190_test_harness.xo: $(CUR_DIR)/../../../src/pl/test_harness.cpp 
-	$(ECHO) "Compiling Kernel: vck190_test_harness"
-	mkdir -p $(TEMP_DIR)
-	$(VPP) -c $(VPP_FLAGS_vck190_test_harness) $(VPP_FLAGS) -k vck190_test_harness -I'$(<D)' --temp_dir $(TEMP_DIR) --report_dir $(TEMP_REPORT_DIR) -o $@ $^
-BINARY_CONTAINER_test_harness_OBJS += $(TEMP_DIR)/vck190_test_harness.xo
-BINARY_CONTAINERS_DEPS += $(BINARY_CONTAINER_test_harness_OBJS)
-$(BINARY_CONTAINERS): $(BINARY_CONTAINERS_DEPS)
-	mkdir -p $(BUILD_DIR)
-	$(VPP) -l $(VPP_FLAGS) --temp_dir $(TEMP_DIR) --report_dir $(BUILD_REPORT_DIR)/test_harness $(VPP_LDFLAGS)  $(VPP_LDFLAGS_test_harness) $(AIE_LDFLAGS)   -o $@ $^
-
-############################## Setting Rules for AIE (Building Kernels) ##################
-$(AIE_CONTAINER): $(CUR_DIR)/aie/graph.cpp  $(INST_FILES) 
-	$(ECHO) "Compiling: libadf.a"
+##################### Build AIE ##############################
+AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include
+AIE_CXX_FLAGS += -I ./aie -I ../../../include -I ../../../src/aie
+AIE_CXX_FLAGS += --target=$(AIETARGET) --platform=$(TEST_HARNESS_PLATFORM) --pl-freq=250 --constraints=../../../cfg/aie_constraints.json 
+#AIE_CXX_FLAGS += --event-trace=runtime --event-trace-port=gmio
+AIE_EXE := $(TEMP_DIR)/libadf.a
+$(AIE_EXE): ./aie/graph.cpp
+	@echo "Compiling: libadf.a"
 	mkdir -p $(dir $@)
-	$(AIECXX) $(AIE_CXXFLAGS) $^
-	mv ./libadf.a $(AIE_CONTAINER)
+	aiecompiler $(AIE_CXX_FLAGS) -workdir=./Work $^ 
+	cp ./libadf.a $(TEMP_DIR)/libadf.a
 
-############################## Setting Rules for Host (Building Host Executable) ##############################
-$(EXE_FILE): $(EXE_FILE_DEPS)
-	mkdir -p $(BUILD_DIR)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
+##################### Build Host #############################
+./Work/ps/c_rts/aie_control_xrt.cpp: $(AIE_EXE)
+HOST_SRC := ps/host.cpp ./Work/ps/c_rts/aie_control_xrt.cpp
 
-$(EMCONFIG):
-	emconfigutil --platform $(XPLATFORM) --od $(BUILD_DIR)
+HOST_CXX_FLAGS := -I ./ -I ./aie -I ../../../include 
+HOST_CXX_FLAGS += -I $(XILINX_VITIS)/aietools/include -I $(XILINX_XRT)/include
+HOST_CXX_FLAGS += -fmessage-length=0 --sysroot=$(SYSROOT) -std=c++14 -O3 -Wall 
 
-############################## Preparing sdcard folder ##############################
-ifeq ($(SD_CARD_NEEDED), on)
-RUN_SCRIPT := $(BUILD_DIR)/run_script.sh
-$(RUN_SCRIPT):
-	rm -rf $(RUN_SCRIPT)
-	@echo 'export LD_LIBRARY_PATH=/mnt:/tmp:$(LIBRARY_PATH)' >> $(RUN_SCRIPT)
-ifneq ($(filter sw_emu hw_emu, $(TARGET)),)
-	@echo 'export XCL_EMULATION_MODE=$(TARGET)' >> $(RUN_SCRIPT)
-endif
-	@echo 'export XILINX_VITIS=/mnt' >> $(RUN_SCRIPT)
-	@echo 'export XILINX_XRT=/usr' >> $(RUN_SCRIPT)
-	@echo 'if [ -f platform_desc.txt  ]; then' >> $(RUN_SCRIPT)
-	@echo '        cp platform_desc.txt /etc/xocl.txt' >> $(RUN_SCRIPT)
-	@echo 'fi' >> $(RUN_SCRIPT)
-	@echo './$(EXE_NAME) $(PKG_HOST_ARGS)' >> $(RUN_SCRIPT)
-	@echo 'return_code=$$?' >> $(RUN_SCRIPT)
-	@echo 'if [ $$return_code -ne 0 ]; then' >> $(RUN_SCRIPT)
-	@echo '        echo "ERROR: TEST FAILED, RC=$$return_code"' >> $(RUN_SCRIPT)
-	@echo 'else' >> $(RUN_SCRIPT)
-	@echo '        echo "INFO: TEST PASSED, RC=0"' >> $(RUN_SCRIPT)
-	@echo 'fi' >> $(RUN_SCRIPT)
-	@echo 'echo "INFO: Embedded host run completed."' >> $(RUN_SCRIPT)
-	@echo 'exit $$return_code' >> $(RUN_SCRIPT)
-DATA_FILE := $(custom_data_file)
-DATA_DIR := $(custom_data_dir)
-SD_FILES += $(RUN_SCRIPT)
-SD_FILES += $(EXE_FILE)
-SD_FILES += $(EMCONFIG)
-SD_FILES += xrt.ini
-SD_FILES += $(DATA_FILE)# where define DATAFILE in json
-SD_FILES_WITH_PREFIX = $(foreach sd_file,$(SD_FILES), $(if $(filter $(sd_file),$(wildcard $(sd_file))), --package.sd_file $(sd_file)))
-SD_DIRS_WITH_PREFIX = $(foreach sd_dir,$(DATA_DIR),--package.sd_dir $(sd_dir))
-PACKAGE_FILES := $(BINARY_CONTAINERS)
-PACKAGE_FILES += $(AIE_CONTAINER)
-SD_CARD := $(CUR_DIR)/package_$(TARGET)
-$(SD_CARD): host xclbin $(RUN_SCRIPT) $(EMCONFIG) check_kimage check_rootfs
-	@echo "Generating sd_card folder...."
-	mkdir -p $(SD_CARD)
-	chmod a+rx $(BUILD_DIR)/run_script.sh
-# 1. DFX HW Flow
-ifeq ($(dfx_hw), on)
-	$(VPP) -t $(TARGET) --platform $(XPLATFORM) -p $(PACKAGE_FILES) $(VPP_PACKAGE) -o $(BINARY_CONTAINERS_PKG)
-	$(VPP) -t $(TARGET) --platform $(XPLATFORM) -p --package.out_dir  $(SD_CARD) --package.rootfs $(ROOTFS) --package.kernel_image $(K_IMAGE) --package.boot_mode sd  $(SD_FILES_WITH_PREFIX) $(SD_DIRS_WITH_PREFIX) --package.sd_file $(BINARY_CONTAINERS_PKG)
-	@echo "### ***** sd_card generation done! ***** ###"
-endif
-# 2. PS_ON_X86 - From 2022.2, Target:sw_emu
-ifeq ($(ps_on_x86), on)
-	@echo "### ***** running PS X86 SE_EMU ***** ###"
-	$(VPP) -t $(TARGET) --platform $(XPLATFORM) -o $(BINARY_CONTAINERS_PKG) -p $(PACKAGE_FILES) $(VPP_PACKAGE) --package.out_dir $(SD_CARD) --package.emu_ps x86
-endif
-# 3. AIE_ON_X86 Flow
-ifeq ($(pcie_aie), on)
-	@echo "### ***** running AIE ON_X86 ***** ###"
-	${VPP} -p $(VPP_PACKAGE) -t ${TARGET} -f ${XPLATFORM} ${AIE_CONTAINER} ${BINARY_CONTAINERS} -o $(BINARY_CONTAINERS_PKG) --package.boot_mode ospi
-	@echo "### ***** sd_card generation done! ***** ###"
-endif
-# 4. General Embeded flow
-ifeq ($(dfx_hw), off)
-ifeq ($(ps_on_x86), off)
-ifeq ($(pcie_aie), off)
-	$(VPP) -t $(TARGET) --platform $(XPLATFORM) -o $(BINARY_CONTAINERS_PKG) -p $(PACKAGE_FILES) $(VPP_PACKAGE) --package.out_dir  $(SD_CARD) --package.rootfs $(ROOTFS) --package.kernel_image $(K_IMAGE) --package.boot_mode sd  $(SD_FILES_WITH_PREFIX) $(SD_DIRS_WITH_PREFIX)
-	@echo "### ***** sd_card generation done! ***** ###"
-endif
-endif
-endif
-
-.PHONY: sd_card
-sd_card: $(SD_CARD)
-endif
-############################## Setting Essential Checks and Building Rules ##############################
-ifneq (,$(filter x86sim aiesim, $(TARGET)))
-RUN_DEPS += $(AIE_CONTAINER)
+ifneq ($(filter x86sim sw_emu, $(TARGET)),)
+HOST_LD_FLAGS := -L $(XILINX_VITIS)/aietools/lib/lnx64.o -L $(XILINX_XRT)/lib
 else
-RUN_DEPS += host xclbin $(EMCONFIG)
-RUN_DEPS += $(SD_CARD)
+HOST_LD_FLAGS := -L $(XILINX_VITIS)/aietools/lib/aarch64.o 
 endif
+HOST_LD_FLAGS += -pthread -L $(SYSROOT)/usr/lib -lxrt_coreutil -ladf_api_xrt
+HOST_EXE := $(TEMP_DIR)/host_elf
 
-.PHONY: mkflag all run
-mkflag:
-	mkdir -p $(BUILD_DIR)
-	rm -rf $(BUILD_DIR)/makefile_args.txt
-	@for var in $(MAKEFLAGS); do echo $$var >> $(BUILD_DIR)/makefile_args.txt; done
+$(HOST_EXE): $(HOST_SRC) $(AIE_EXE)
+	mkdir -p $(dir $@)
+	$(CXX) -o $@ $^ $(HOST_CXX_FLAGS) $(HOST_LD_FLAGS)
 
-all: check_device check_vpp check_platform mkflag $(RUN_DEPS)
-
-run: all
-#x86sim
-ifeq ($(TARGET), x86sim)
-	$(X86SIMULATOR) --pkg-dir=$(AIE_PKG_DIR) 
-	
+##################### Determine What To Build ################
+RUN_DEPS := $(TEMP_DIR)/libadf.a
+ifeq ($(TARGET), sw_emu)
+RUN_DEPS += $(HOST_EXE)
 endif
-#aiesim
-ifeq ($(TARGET), aiesim)
-	$(AIESIMULATOR) --pkg-dir=$(AIE_PKG_DIR) --profile  $(AIESIMFLAGS)
-	
-endif
-#hw_emu
-ifneq (,$(filter hw_emu, $(TARGET)))
-ifeq ($(HOST_ARCH), x86)
-ifeq ($(pcie_aie), on)
-	cp $(AIE_WORK_DIR)/reports/dma_lock_report.json ./
-	cp $(AIE_WORK_DIR)/ps/c_rts/aie_control_config.json ./
-	LD_LIBRARY_PATH=$(LIBRARY_PATH):$$LD_LIBRARY_PATH \
-	XCL_EMULATION_MODE=$(TARGET) $(EXE_FILE) $(HOST_ARGS) $(BINARY_CONTAINERS_PKG)
-	
-endif
-	LD_LIBRARY_PATH=$(LIBRARY_PATH):$$LD_LIBRARY_PATH \
-	XCL_EMULATION_MODE=$(TARGET) $(EXE_FILE) $(HOST_ARGS)
-	
-else
-	@echo $(RUN_DEPS)
-	$(SD_CARD)/launch_$(TARGET).sh -no-reboot -run-app $(notdir $(RUN_SCRIPT))  2>&1 | tee $(SD_CARD)/qemu_stdout.log
-	grep "TEST PASSED, RC=0" $(SD_CARD)/qemu_stdout.log || exit 1
-	
-endif
-endif
-#sw_emu
-ifneq (,$(filter sw_emu, $(TARGET)))
-ifeq ($(HOST_ARCH), x86)
-	LD_LIBRARY_PATH=$(LIBRARY_PATH):$$LD_LIBRARY_PATH \
-	XCL_EMULATION_MODE=$(TARGET) $(EXE_FILE) $(HOST_ARGS) 
-	
-else
-	@echo $(RUN_DEPS)
-	$(SD_CARD)/launch_$(TARGET).sh -no-reboot -run-app $(notdir $(RUN_SCRIPT))  2>&1 | tee $(SD_CARD)/qemu_stdout.log
-	grep "TEST PASSED, RC=0" $(SD_CARD)/qemu_stdout.log || exit 1
-	
-endif
-endif
-#hw
 ifeq ($(TARGET), hw)
-ifneq (,$(findstring aws-vu9p-f1, $(PLATFORM_NAME)))
-ifeq (,$(wildcard $(BUILD_DIR)/test_harness.awsxclbin))
-	$(ECHO) "This makefile does not directly support converting .xclbin to .awsxclbin, please refer https://github.com/aws/aws-fpga/blob/master/Vitis/README.md for next operations"
-else
-	$(ECHO) "Running HW using generated .awsxclbin"
+RUN_DEPS += $(HOST_EXE)
+endif
+
+##################### Package  ###############################
+package: $(RUN_DEPS)
+ifeq ($(TARGET), sw_emu)
+	${TEST_HARNESS_REPO_PATH}/test_harness/package_sw_emu.sh ${PKG_DIR} ${AIE_EXE} ${HOST_EXE}
+endif
+ifeq ($(TARGET), hw)
+    ${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${PKG_DIR} ${AIE_EXE} ${HOST_EXE}
+endif
+
+##################### Build All + Run Emulation ##############
+all: check_setup $(RUN_DEPS) package
+run: all
+ifeq ($(TARGET), x86sim)
+	x86simulator --pkg-dir=./Work
+endif
+ifeq ($(TARGET), aiesim)
+	aiesimulator --pkg-dir=./Work
+endif
+ifeq ($(TARGET), sw_emu)
 	LD_LIBRARY_PATH=$(LIBRARY_PATH):$$LD_LIBRARY_PATH \
-	$(EXE_FILE) $(subst .xclbin,.awsxclbin,$(HOST_ARGS))
-	
+	XCL_EMULATION_MODE=sw_emu $(PKG_DIR)/host_elf $(PKG_DIR)/vck190_test_harness.xclbin
 endif
-else ifeq ($(HOST_ARCH), x86)
-	LD_LIBRARY_PATH=$(LIBRARY_PATH):$$LD_LIBRARY_PATH \
-	$(EXE_FILE) $(HOST_ARGS)
-	
-else
-	$(ECHO) "Please copy the content of sd_card folder and data to an SD Card and run on the board"
-endif
+ifeq ($(TARGET), hw_emu)
 endif
 
-############################## Setting Targets ##############################
-
-.PHONY: clean cleanall emconfig
-emconfig: $(EMCONFIG)
-
-.PHONY: host
-ifeq ($(HOST_ARCH), x86)
-host: check_xrt   $(EXE_FILE)
-else
-host: check_sysroot   $(EXE_FILE)
-endif
-
-.PHONY: xclbin
-ifeq ($(HOST_ARCH), x86)
-xclbin: check_vpp check_xrt  $(BINARY_CONTAINERS)
-else
-xclbin: check_vpp check_sysroot  $(BINARY_CONTAINERS)
-endif
-
-gen_instances: $(INSTANCE_FILES)
-	@echo "Nothing to generate."
-
-valid_params:
-	@echo "Nothing to validate."
-
-############################## Cleaning Rules ##############################
-cleanh:
-	-$(RMDIR) $(EXE_FILE)  vitis_* TempConfig system_estimate.xtxt *.rpt .run/  $(INST_TB_FILES)
-	-$(RMDIR) src/*.ll _xocc_* .Xil dltmp* xmltmp* *.log *.jou *.wcfg *.wdb sample_link.ini sample_compile.ini obj*  bin* *.csv *.jpg *.jpeg *.png *.db
-
-cleank:
-	-$(RMDIR) $(BUILD_DIR)/*.xclbin _vimage *xclbin.run_summary qemu-memory-_* emulation/ _vimage/ pl*start_simulation. sh *.xclbin
-	-$(RMDIR) _x_temp.* _x* $(INST_FILES)
-
-cleanall: cleanh cleank
-	-$(RMDIR) $(BUILD_DIR) sd_card* emconfig.json *.html $(TEMP_DIR) $(CUR_DIR)/reports *.csv *.run_summary  $(CUR_DIR)/*.raw package_*   $(BUILD_DIR)/run_script.sh .ipcache *.str
-	-$(RMDIR) $(AIE_CONTAINER) aiesimulator_output .AIE_SIM_CMD_LINE_OPTIONS x86simulator_output $(AIE_WORK_DIR) $(AIE_PKG_DIR) $(CUR_DIR)/*.xpe $(CUR_DIR)/hw.o $(CUR_DIR)/*.xsa $(CUR_DIR)/xnwOut
-	-$(RMDIR)  *.html $(INSTANCE_FILES)
-
-clean: cleanh
+#################### Clean ###################################
+cleanall:
+	rm -rf AIECompiler.log Work $(TEMP_DIR) $(PKG_DIR) x86simulator_output xcd.log .Xil AIESimulator.log Map_Report.csv aiesimulator_output/ diag_report.log pl_sample_counts sol.db xsc_report.log v++*log _x libadf.a _sw_emu_package_build/ _hw_package_build

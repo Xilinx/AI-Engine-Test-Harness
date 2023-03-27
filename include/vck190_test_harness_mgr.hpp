@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#ifndef _OCL_HPP_
-#define _OCL_HPP_
+#ifndef _VCK190_TEST_HARNESS_MGR_HPP_
+#define _VCK190_TEST_HARNESS_MGR_HPP_
 
 #include "xrt/xrt_device.h"
 #include "xrt/xrt_kernel.h"
