@@ -21,7 +21,5 @@ for (( c=2; c<$#; c++ ))
 do
   PACKAGE_SD_FILE="${PACKAGE_SD_FILE} --package.sd_file $(realpath ${arglist[$c]})"
 done
-echo ${PACKAGE_SD_FILE}
 
-#make sd_card -f ${TEST_HARNESS_REPO_PATH}/test_harness/hw.mk BUILD_DIR=$(realpath ${HW_TEMP_DIR}) AIE_EXE=${AIE_EXE_PATH} OTHER_FILE=${PACKAGE_SD_FILE}
-make sd_card -f ${TEST_HARNESS_REPO_PATH}/test_harness/hw.mk BUILD_DIR=$(realpath ${HW_TEMP_DIR}) AIE_EXE=${AIE_EXE_PATH}
+make sd_card -f ${TEST_HARNESS_REPO_PATH}/test_harness/hw.mk BUILD_DIR=$(realpath ${HW_TEMP_DIR}) AIE_EXE=${AIE_EXE_PATH} OTHER_FILE="${PACKAGE_SD_FILE}"

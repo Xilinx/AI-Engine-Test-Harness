@@ -12,4 +12,4 @@ ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa:
 
 sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa
 	v++ -p -t hw -o ${BUILD_DIR}/vck190_test_harness.xclbin ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} ${AIE_EXE}
-	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} --package.rootfs ${EDGE_COMMON_SW}/rootfs.ext4 --package.kernel_image ${EDGE_COMMON_SW}/Image --package.boot_mode=sd --package.image_format=ext4 --package.sd_file ${BUILD_DIR}/vck190_test_harness.xclbin 
+	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} --package.rootfs ${EDGE_COMMON_SW}/rootfs.ext4 --package.kernel_image ${EDGE_COMMON_SW}/Image --package.boot_mode=sd --package.image_format=ext4 --package.sd_file ${BUILD_DIR}/vck190_test_harness.xclbin ${OTHER_FILE}
