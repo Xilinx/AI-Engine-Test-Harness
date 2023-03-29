@@ -71,7 +71,13 @@ class fastXM {
         pl_k_r_hdl.resize(pl_k_hdl.size());
 
         for (int i = 0; i < graph_name.size(); i++) {
-            g_hdl.push_back(xrtGraphOpen(d_hdl, uuid, graph_name[i].c_str()));
+            xrtGraphHandle tmp = xrtGraphOpen(d_hdl, uuid, graph_name[i].c_str());
+            if (tmp == NULL) {
+                std::cout << graph_name[i] << " not found!" << std::endl;
+                exit(1);
+            } else {
+                g_hdl.push_back(tmp);
+            }
         }
     }
 
@@ -192,10 +198,6 @@ class test_harness_mgr : public fastXM {
    public:
     test_harness_mgr(unsigned int device_index, std::string xclbin_file_path, std::vector<std::string> graph_name)
         : fastXM(device_index, xclbin_file_path, {"vck190_test_harness"}, graph_name) {
-        N = 16;
-        W = 16;
-        D = 8192;
-
         cfg_ptr = (uint64_t*)malloc(N * 2 * 3 * sizeof(uint64_t));
         to_aie_ptr = (char*)malloc(N * W * D);
         from_aie_ptr = (char*)malloc(N * W * D);
@@ -217,36 +219,47 @@ class test_harness_mgr : public fastXM {
     void runTestHarness(std::vector<test_harness_args> args) {
         reset_cfg();
 
+        bool frame_size_valid = true;
         for (int i = 0; i < args.size(); i++) {
-            args_rec.push_back(args[i]);
-            {
-                int bias = 0;
-                int chn = 0;
-                if (args[i].idx <= Column_27_TO_AIE) {
-                    bias = 0;
-                    chn = args[i].idx - Column_12_TO_AIE;
-                } else {
-                    bias = 3;
-                    chn = args[i].idx - Column_28_FROM_AIE;
-                }
-
-                cfg_ptr[N * bias + 0 * N + chn] = args[i].delay;
-                cfg_ptr[N * bias + 1 * N + chn] = args[i].size_in_byte / W;
-                cfg_ptr[N * bias + 2 * N + chn] = args[i].repetition;
-            }
-
-            {
-                if (args[i].idx <= Column_27_TO_AIE) {
-                    int bias = (args[i].idx - Column_12_TO_AIE) * W * D;
-                    memcpy(to_aie_ptr + bias, args[i].data, args[i].size_in_byte);
-                }
+            if (!check_frame_size(args[i].size_in_byte)) {
+                frame_size_valid = false;
             }
         }
 
-        this->runPL(0, {{0, true, N * 2 * 3 * sizeof(uint64_t), (char*)cfg_ptr, 0},
-                        {1, true, N * 2 * sizeof(uint64_t), (char*)perf_ptr, 0},
-                        {2, true, N * W * D, to_aie_ptr, 0},
-                        {3, true, N * W * D, from_aie_ptr, 0}});
+        if (frame_size_valid) {
+            for (int i = 0; i < args.size(); i++) {
+                args_rec.push_back(args[i]);
+                {
+                    int bias = 0;
+                    int chn = 0;
+                    if (args[i].idx <= Column_27_TO_AIE) {
+                        bias = 0;
+                        chn = args[i].idx - Column_12_TO_AIE;
+                    } else {
+                        bias = 3;
+                        chn = args[i].idx - Column_28_FROM_AIE;
+                    }
+
+                    cfg_ptr[N * bias + 0 * N + chn] = args[i].delay;
+                    cfg_ptr[N * bias + 1 * N + chn] = args[i].size_in_byte / W;
+                    cfg_ptr[N * bias + 2 * N + chn] = args[i].repetition;
+                }
+
+                {
+                    if (args[i].idx <= Column_27_TO_AIE) {
+                        int bias = (args[i].idx - Column_12_TO_AIE) * W * D;
+                        memcpy(to_aie_ptr + bias, args[i].data, args[i].size_in_byte);
+                    }
+                }
+            }
+
+            this->runPL(0, {{0, true, N * 2 * 3 * sizeof(uint64_t), (char*)cfg_ptr, 0},
+                            {1, true, N * 2 * sizeof(uint64_t), (char*)perf_ptr, 0},
+                            {2, true, N * W * D, to_aie_ptr, 0},
+                            {3, true, N * W * D, from_aie_ptr, 0}});
+        } else {
+            std::cout << "Arguments for test harness is not valid, won't run test harness!" << std::endl;
+        }
     }
 
     void runAIEGraph(unsigned int g_idx, unsigned int iters) { runGraph(g_idx, iters); }
@@ -288,14 +301,27 @@ class test_harness_mgr : public fastXM {
     }
 
    private:
-    unsigned int N;
-    unsigned int W;
-    unsigned int D;
+    static const unsigned int N = 16;
+    static const unsigned int W = 16;
+    static const unsigned int D = 8192;
     uint64_t* cfg_ptr;
     uint64_t* perf_ptr;
     char* to_aie_ptr;
     char* from_aie_ptr;
     std::vector<test_harness_args> args_rec;
+
+    bool check_frame_size(unsigned int sz) {
+        std::cout << "N = " << N << ", W = " << W << ", D = " << D << std::endl;
+        if (sz > (W * D)) {
+            std::cout << "frame size " << sz << " > " << D * W << ", beyond capacity of one channel" << std::endl;
+            return false;
+        }
+        if (sz % W != 0) {
+            std::cout << "frame size = " << sz << ", not divisible by 16" << std::endl;
+            return false;
+        }
+        return true;
+    }
 };
 }
 #endif
