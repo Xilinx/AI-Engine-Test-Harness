@@ -92,7 +92,7 @@ ifeq ($(TARGET), sw_emu)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_sw_emu.sh ${PKG_DIR} ${AIE_EXE} ${HOST_EXE}
 endif
 ifeq ($(TARGET), hw)
-    ${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${PKG_DIR} ${AIE_EXE} ${HOST_EXE}
+	${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${PKG_DIR} ${AIE_EXE} ${HOST_EXE}
 endif
 
 ##################### Build All + Run Emulation ##############

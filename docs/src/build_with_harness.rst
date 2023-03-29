@@ -25,8 +25,11 @@ Environment setup
 ------------------
 
 To build with test harness, developer needs to install:
+
 * 1. Vitis tools (https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html)
+
 * 2. Xilinx Runtime (https://www.xilinx.com/products/design-tools/vitis/xrt.html#gettingstarted)
+
 * 3. Versal common image for Vitis embedded platforms (https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html)
 
 Before start building, you need to source ``setup.sh`` and export ``EDGE_COMMON_SW`` according to your installation of Versal common image for Vitis embedded platforms.
@@ -35,7 +38,9 @@ Build AI Engine application (libadf.a)
 ---------------------------------------
 
 To build with test harness, developer needs modify two parts:
+
 * 1. Modify all the PLIO in user graph to ``plio_128_bits`` to match with test harness and use the names specify in ``include/vck190_test_harness_port_name.hpp``. The ``vck190_test_harness::in_names`` is the list of PLIO names that can be used to send data to AI Engine and The ``out_names`` is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.
+
 * 2. In case your desgin does not use all PLIO ports, you need to put in an instance ``vck190_test_harness::occupyUnusedPLIO`` aside your original design. This instance will help occupy all the rest PLIOs. ``vck190_test_harness::occupyUnusedPLIO`` is a template graph, template arugment ``used_in_plio`` is the number of used PLIO to send data to AI Engine and ``used_out_plio`` is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of ``vck190_test_harness::occupyUnusedPLIO``.
 
 .. code-block::
@@ -71,4 +76,4 @@ Package flow for hardware is slightly different than software emulation. You nee
 
 .. code-block:: shell
 
-   test_harness/package_hw.sh <path for sw_emu package files> <your libadf.a> <your host exe> <other files needed for test>
+   test_harness/package_hw.sh <path for hw package files> <your libadf.a> <your host exe> <other files needed for test>
