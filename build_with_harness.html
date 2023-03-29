@@ -337,17 +337,36 @@ function OptanonWrapper() { }
 <h1>Build With Test Harness<a class="headerlink" href="#build-with-test-harness" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="environment-setup">
 <h2>Environment setup<a class="headerlink" href="#environment-setup" title="Permalink to this headline">¶</a></h2>
-<p>To build with test harness, developer needs to install:
-* 1. Vitis tools (<a class="reference external" href="https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html">https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html</a>)
-* 2. Xilinx Runtime (<a class="reference external" href="https://www.xilinx.com/products/design-tools/vitis/xrt.html#gettingstarted">https://www.xilinx.com/products/design-tools/vitis/xrt.html#gettingstarted</a>)
-* 3. Versal common image for Vitis embedded platforms (<a class="reference external" href="https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html">https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html</a>)</p>
+<p>To build with test harness, developer needs to install:</p>
+<ul class="simple">
+<li><ol class="first arabic">
+<li>Vitis tools (<a class="reference external" href="https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html">https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html</a>)</li>
+</ol>
+</li>
+<li><ol class="first arabic" start="2">
+<li>Xilinx Runtime (<a class="reference external" href="https://www.xilinx.com/products/design-tools/vitis/xrt.html#gettingstarted">https://www.xilinx.com/products/design-tools/vitis/xrt.html#gettingstarted</a>)</li>
+</ol>
+</li>
+<li><ol class="first arabic" start="3">
+<li>Versal common image for Vitis embedded platforms (<a class="reference external" href="https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html">https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html</a>)</li>
+</ol>
+</li>
+</ul>
 <p>Before start building, you need to source <code class="docutils literal notranslate"><span class="pre">setup.sh</span></code> and export <code class="docutils literal notranslate"><span class="pre">EDGE_COMMON_SW</span></code> according to your installation of Versal common image for Vitis embedded platforms.</p>
 </div>
 <div class="section" id="build-ai-engine-application-libadf-a">
 <h2>Build AI Engine application (libadf.a)<a class="headerlink" href="#build-ai-engine-application-libadf-a" title="Permalink to this headline">¶</a></h2>
-<p>To build with test harness, developer needs modify two parts:
-* 1. Modify all the PLIO in user graph to <code class="docutils literal notranslate"><span class="pre">plio_128_bits</span></code> to match with test harness and use the names specify in <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>. The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::in_names</span></code> is the list of PLIO names that can be used to send data to AI Engine and The <code class="docutils literal notranslate"><span class="pre">out_names</span></code> is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.
-* 2. In case your desgin does not use all PLIO ports, you need to put in an instance <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> aside your original design. This instance will help occupy all the rest PLIOs. <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> is a template graph, template arugment <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> is the number of used PLIO to send data to AI Engine and <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code>.</p>
+<p>To build with test harness, developer needs modify two parts:</p>
+<ul class="simple">
+<li><ol class="first arabic">
+<li>Modify all the PLIO in user graph to <code class="docutils literal notranslate"><span class="pre">plio_128_bits</span></code> to match with test harness and use the names specify in <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>. The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::in_names</span></code> is the list of PLIO names that can be used to send data to AI Engine and The <code class="docutils literal notranslate"><span class="pre">out_names</span></code> is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.</li>
+</ol>
+</li>
+<li><ol class="first arabic" start="2">
+<li>In case your desgin does not use all PLIO ports, you need to put in an instance <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> aside your original design. This instance will help occupy all the rest PLIOs. <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> is a template graph, template arugment <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> is the number of used PLIO to send data to AI Engine and <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code>.</li>
+</ol>
+</li>
+</ul>
 <pre class="highlight literal-block">
 <span></span><span class="n">template</span> <span class="o">&lt;</span><span class="nb">int</span> <span class="n">used_in_plio</span><span class="p">,</span> <span class="nb">int</span> <span class="n">used_out_plio</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">occupyUnusedPLIO</span><span class="p">;</span>
@@ -375,7 +394,7 @@ function OptanonWrapper() { }
 </ol>
 <p>Package flow for hardware is slightly different than software emulation. You need download the pre-compiled <code class="docutils literal notranslate"><span class="pre">vck190_test_harness.xsa</span></code> from Xilinx or go to <code class="docutils literal notranslate"><span class="pre">test_harness</span></code> and build it locally before packaging for hardware. Package flow for hardware will generate SD card image to run on board.</p>
 <pre class="highlight literal-block">
-<span></span>test_harness/package_hw.sh &lt;path <span class="k">for</span> sw_emu package files&gt; &lt;your libadf.a&gt; &lt;your host exe&gt; &lt;other files needed <span class="k">for</span> test&gt;
+<span></span>test_harness/package_hw.sh &lt;path <span class="k">for</span> hw package files&gt; &lt;your libadf.a&gt; &lt;your host exe&gt; &lt;other files needed <span class="k">for</span> test&gt;
 </pre>
 </div>
 </div>
@@ -409,7 +428,7 @@ function OptanonWrapper() { }
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on March 28, 2023.
+        Last updated on March 29, 2023.
       </span>
 
     </p>
