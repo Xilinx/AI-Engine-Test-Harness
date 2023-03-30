@@ -339,7 +339,7 @@ function OptanonWrapper() { }
 <p>We provide 4 cases from Vitis-Tutorials to demonstrate how to use test harness to with AI Engine. We will take <code class="docutils literal notranslate"><span class="pre">examples/super-sampling-rate-fir/SingleKernel</span></code> as an example.</p>
 <div class="section" id="adopt-correct-plio">
 <h2>1. Adopt correct PLIO<a class="headerlink" href="#adopt-correct-plio" title="Permalink to this headline">¶</a></h2>
-<p>This case uses 1x input_plio and 1x output_plio. We pick “Column_12_TO_AIE” to send data to AI Engine and “Column_28_FROM_AIE” to receive data from AI Engine. “Column_XX” in PLIO names is actually the shim tile coordinate we used for certain PLIO. In case your design failed during mapping, please try other PLIO ports. All valid PLIO names can be found from <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>.</p>
+<p>This case uses 1x input_plio and 1x output_plio. We pick “Column_12_TO_AIE” to send data to AI Engine and “Column_28_FROM_AIE” to receive data from AI Engine. “Column_XX” in PLIO names is the shim tile coordinate we used for certain PLIO. In case your design failed during mapping, please try other PLIO ports. All valid PLIO names can be found from <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>.</p>
 <pre class="highlight literal-block">
 <span></span><span class="n">TopGraph</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">input_plio</span> <span class="n">plin</span> <span class="o">=</span>
@@ -367,8 +367,8 @@ function OptanonWrapper() { }
 <p>To drive test harness and AI Engine application from PS side, we need to instantiate one instance of <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::test_harness_mgr</span></code>.
 We want to load <code class="docutils literal notranslate"><span class="pre">in_sz</span></code> bytes of data to channel <code class="docutils literal notranslate"><span class="pre">Column_12_TO_AIE</span></code> and receive <code class="docutils literal notranslate"><span class="pre">out_sz</span></code> bytes of data from channel <code class="docutils literal notranslate"><span class="pre">Column_28_FROM_AIE</span></code>.
 We know that each iteration of graph “G” can consume <code class="docutils literal notranslate"><span class="pre">in_sz</span></code> bytes of data and generate <code class="docutils literal notranslate"><span class="pre">out_sz</span></code> bytes of data.
-To support multiple run of graph “G”, we set the repetition count of <code class="docutils literal notranslate"><span class="pre">test_harness_arg</span></code> to 4, same as total iteration of graph run.
-In order to measure total latency of each channels, we strongly recommend to call <code class="docutils literal notranslate"><span class="pre">runGraph</span></code> before <code class="docutils literal notranslate"><span class="pre">runTestHarness</span></code>.</p>
+To support multiple runs of graph “G”, we set the repetition count of <code class="docutils literal notranslate"><span class="pre">test_harness_arg</span></code> to 4, same as total iteration of graph run.
+In order to measure total latency of each channel, we strongly recommend to call <code class="docutils literal notranslate"><span class="pre">runGraph</span></code> before <code class="docutils literal notranslate"><span class="pre">runTestHarness</span></code>.</p>
 <pre class="highlight literal-block">
 <span></span><span class="n">test_harness_mgr</span> <span class="nf">mgr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">{</span><span class="s">&quot;G&quot;</span><span class="p">});</span>
 <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">test_harness_args</span><span class="o">&gt;</span> <span class="n">args</span><span class="p">;</span>
@@ -381,7 +381,7 @@ In order to measure total latency of each channels, we strongly recommend to cal
 </div>
 <div class="section" id="run-software-emulation">
 <h2>4. Run software emulation<a class="headerlink" href="#run-software-emulation" title="Permalink to this headline">¶</a></h2>
-<p>After we got libadf.a (x86sim targeted) and PS executable, we can run software emualation for quick verification.</p>
+<p>After we got libadf.a (x86sim targeted) and PS executable, we can run software emulation for quick verification.</p>
 <pre class="highlight literal-block">
 <span></span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/test_harness/package_sw_emu.sh <span class="si">${</span><span class="nv">PKG_DIR</span><span class="si">}</span> <span class="si">${</span><span class="nv">AIE_EXE</span><span class="si">}</span> <span class="si">${</span><span class="nv">HOST_EXE</span><span class="si">}</span>
 <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="k">$(</span>LIBRARY_PATH<span class="k">)</span>:<span class="nv">$$</span>LD_LIBRARY_PATH <span class="nv">XCL_EMULATION_MODE</span><span class="o">=</span>sw_emu <span class="k">$(</span>PKG_DIR<span class="k">)</span>/host_elf <span class="k">$(</span>PKG_DIR<span class="k">)</span>/vck190_test_harness.xclbin
@@ -389,7 +389,7 @@ In order to measure total latency of each channels, we strongly recommend to cal
 </div>
 <div class="section" id="package-sd-card-image">
 <h2>5. Package SD card image<a class="headerlink" href="#package-sd-card-image" title="Permalink to this headline">¶</a></h2>
-<p>After we got libadf.a (hw targeted), PS executable and vck190_test_harness.xsa, we can pacakge SD card image for on-board running.</p>
+<p>After we got libadf.a (hw targeted), PS executable and vck190_test_harness.xsa, we can package SD card image for on-board running.</p>
 <pre class="highlight literal-block">
 <span></span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/test_harness/package_hw.sh <span class="si">${</span><span class="nv">PKG_DIR</span><span class="si">}</span> <span class="si">${</span><span class="nv">AIE_EXE</span><span class="si">}</span> <span class="si">${</span><span class="nv">HOST_EXE</span><span class="si">}</span>
 </pre>
@@ -425,7 +425,7 @@ In order to measure total latency of each channels, we strongly recommend to cal
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on March 29, 2023.
+        Last updated on March 30, 2023.
       </span>
 
     </p>
