@@ -41,7 +41,7 @@ To build with test harness, developer needs modify two parts:
 
 * 1. Modify all the PLIO in user graph to ``plio_128_bits`` to match with test harness and use the names specify in ``include/vck190_test_harness_port_name.hpp``. The ``vck190_test_harness::in_names`` is the list of PLIO names that can be used to send data to AI Engine and The ``out_names`` is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.
 
-* 2. In case your desgin does not use all PLIO ports, you need to put in an instance ``vck190_test_harness::occupyUnusedPLIO`` aside your original design. This instance will help occupy all the rest PLIOs. ``vck190_test_harness::occupyUnusedPLIO`` is a template graph, template arugment ``used_in_plio`` is the number of used PLIO to send data to AI Engine and ``used_out_plio`` is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of ``vck190_test_harness::occupyUnusedPLIO``.
+* 2. In case your design does not use all PLIO ports, you need to put in an instance ``vck190_test_harness::occupyUnusedPLIO`` aside your original design. This instance will help occupy all the rest PLIOs. ``vck190_test_harness::occupyUnusedPLIO`` is a template graph, template arugment ``used_in_plio`` is the number of used PLIO to send data to AI Engine and ``used_out_plio`` is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of ``vck190_test_harness::occupyUnusedPLIO``.
 
 .. code-block::
 
@@ -55,12 +55,12 @@ To build with test harness, developer needs modify two parts:
 Build PS application
 ---------------------
 
-To build ps application, you need source Xilinx Runtime before compling. The rest is regular c++ coding.
+To build ps application, you need source Xilinx Runtime before compiling. The rest is regular c++ coding.
 
 Package
 --------
 
-Test harness provide support packaging for software emulation and hardware. To be notice that software emulation need AI Engine application to be complied under target ``x86sim``. Please take reference from examples cases for details. You need source Vitis and Xilinx Runtime setup.sh before packaging, and setup proper ``SYSROOT`` and ``EDGE_COMMON_SW`` according to build environment.
+Test harness provide support packaging for software emulation and hardware. To be notice that software emulation needs AI Engine application to be complied under target ``x86sim``. Please take reference from examples cases for details. You need source Vitis and Xilinx Runtime setup.sh before packaging, and setup proper ``SYSROOT`` and ``EDGE_COMMON_SW`` according to build environment.
 
 1. Software emulation: 
 

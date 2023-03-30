@@ -26,7 +26,7 @@ We provide 4 cases from Vitis-Tutorials to demonstrate how to use test harness t
 1. Adopt correct PLIO
 ----------------------
 
-This case uses 1x input_plio and 1x output_plio. We pick "Column_12_TO_AIE" to send data to AI Engine and "Column_28_FROM_AIE" to receive data from AI Engine. "Column_XX" in PLIO names is actually the shim tile coordinate we used for certain PLIO. In case your design failed during mapping, please try other PLIO ports. All valid PLIO names can be found from ``include/vck190_test_harness_port_name.hpp``.
+This case uses 1x input_plio and 1x output_plio. We pick "Column_12_TO_AIE" to send data to AI Engine and "Column_28_FROM_AIE" to receive data from AI Engine. "Column_XX" in PLIO names is the shim tile coordinate we used for certain PLIO. In case your design failed during mapping, please try other PLIO ports. All valid PLIO names can be found from ``include/vck190_test_harness_port_name.hpp``.
 
 .. code-block:: c++
 
@@ -58,8 +58,8 @@ Because this case does not used all PLIOs, we need to put a dummy graph to occup
 To drive test harness and AI Engine application from PS side, we need to instantiate one instance of ``vck190_test_harness::test_harness_mgr``.
 We want to load ``in_sz`` bytes of data to channel ``Column_12_TO_AIE`` and receive ``out_sz`` bytes of data from channel ``Column_28_FROM_AIE``.
 We know that each iteration of graph "G" can consume ``in_sz`` bytes of data and generate ``out_sz`` bytes of data.
-To support multiple run of graph "G", we set the repetition count of ``test_harness_arg`` to 4, same as total iteration of graph run.
-In order to measure total latency of each channels, we strongly recommend to call ``runGraph`` before ``runTestHarness``.
+To support multiple runs of graph "G", we set the repetition count of ``test_harness_arg`` to 4, same as total iteration of graph run.
+In order to measure total latency of each channel, we strongly recommend to call ``runGraph`` before ``runTestHarness``.
 
 .. code-block:: c++
 
@@ -74,7 +74,7 @@ In order to measure total latency of each channels, we strongly recommend to cal
 4. Run software emulation
 --------------------------
 
-After we got libadf.a (x86sim targeted) and PS executable, we can run software emualation for quick verification.
+After we got libadf.a (x86sim targeted) and PS executable, we can run software emulation for quick verification.
 
 .. code-block:: shell
 
@@ -84,7 +84,7 @@ After we got libadf.a (x86sim targeted) and PS executable, we can run software e
 5. Package SD card image
 -------------------------
 
-After we got libadf.a (hw targeted), PS executable and vck190_test_harness.xsa, we can pacakge SD card image for on-board running.
+After we got libadf.a (hw targeted), PS executable and vck190_test_harness.xsa, we can package SD card image for on-board running.
 
 .. code-block:: shell
 

@@ -21,7 +21,7 @@
 Overview
 =========
 
-This repository provides a test harness to help AI Engine developers easily build and test their application on board. With minor modifications and a few minutes to build, developers can turn their AIE simulation project into SD card image for hardware run. The test harness consists of three major components: 
+This repository provides a test harness to help AI Engine developers easily build and test their application on VCK190. With minor modifications and a few minutes to build, developers can turn their AIE simulation project into SD card image for hardware run. The test harness consists of three major components: 
  
 
 * Test harness on PL, including 16 output channels to send data to AI Engine and 16 input channels, to load data from AI Engine. We provided a pre-built implementation of test harness (A .xsa file which needs to be downloaded from Xilinx) to save the trouble to build. 

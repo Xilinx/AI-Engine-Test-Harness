@@ -21,5 +21,6 @@
 Limitation
 ===========
 
-* Capacity of each test harness channel is 128KB. For longer input / output, you need to utlize the "replay" function.
-* Input / Output size in bytes for each channel has to be multiple of 16.
+* Currently test harness only support VCK190.
+* Capacity of each test harness channel is 128KB. For longer input / output, you need to utilize the "replay" function.
+* Input / Output size in bytes for each channel must be multiple of 16.
