@@ -21,7 +21,7 @@
 Software API
 =============
 
-To run test harness with developer's AI Engine applications on board, we need software APIs to help PS programs to initialize device and setup parameters to run PL and AIE. You can find them in ``include/vck190_test_harness_mgr.hpp``. Bascially you can instantiate an instance of ``test_harness_mgr`` and call its member functions.
+To run test harness with developer's AI Engine applications on board, we need software APIs to help PS programs to initialize device and setup parameters to run PL and AIE. You can find them in ``include/vck190_test_harness_mgr.hpp``. Basically, you can instantiate an instance of ``test_harness_mgr`` and call its member functions.
 
 Constructor
 ------------
