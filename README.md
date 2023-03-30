@@ -1,6 +1,6 @@
 # AIE Test Harness
 
-The main purpose of this repository is to provide PL test harness that help AIE application designers to do quick build and on-board tests.
+The main purpose of this repository is to provide PL test harness that help AIE application designers to do quick build and on-board tests with VCK190.
 
 Vitis allows compiling an AIE graph using a precompiled .xsa as an input platform to skip v++ link stage and directly go to v++ package stage.
 This will save the most time consuming part of compiling and generate the final .xclbin file for on-board tests.
