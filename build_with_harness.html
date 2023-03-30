@@ -363,7 +363,7 @@ function OptanonWrapper() { }
 </ol>
 </li>
 <li><ol class="first arabic" start="2">
-<li>In case your desgin does not use all PLIO ports, you need to put in an instance <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> aside your original design. This instance will help occupy all the rest PLIOs. <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> is a template graph, template arugment <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> is the number of used PLIO to send data to AI Engine and <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code>.</li>
+<li>In case your design does not use all PLIO ports, you need to put in an instance <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> aside your original design. This instance will help occupy all the rest PLIOs. <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> is a template graph, template arugment <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> is the number of used PLIO to send data to AI Engine and <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code>.</li>
 </ol>
 </li>
 </ul>
@@ -377,11 +377,11 @@ function OptanonWrapper() { }
 </div>
 <div class="section" id="build-ps-application">
 <h2>Build PS application<a class="headerlink" href="#build-ps-application" title="Permalink to this headline">¶</a></h2>
-<p>To build ps application, you need source Xilinx Runtime before compling. The rest is regular c++ coding.</p>
+<p>To build ps application, you need source Xilinx Runtime before compiling. The rest is regular c++ coding.</p>
 </div>
 <div class="section" id="package">
 <h2>Package<a class="headerlink" href="#package" title="Permalink to this headline">¶</a></h2>
-<p>Test harness provide support packaging for software emulation and hardware. To be notice that software emulation need AI Engine application to be complied under target <code class="docutils literal notranslate"><span class="pre">x86sim</span></code>. Please take reference from examples cases for details. You need source Vitis and Xilinx Runtime setup.sh before packaging, and setup proper <code class="docutils literal notranslate"><span class="pre">SYSROOT</span></code> and <code class="docutils literal notranslate"><span class="pre">EDGE_COMMON_SW</span></code> according to build environment.</p>
+<p>Test harness provide support packaging for software emulation and hardware. To be notice that software emulation needs AI Engine application to be complied under target <code class="docutils literal notranslate"><span class="pre">x86sim</span></code>. Please take reference from examples cases for details. You need source Vitis and Xilinx Runtime setup.sh before packaging, and setup proper <code class="docutils literal notranslate"><span class="pre">SYSROOT</span></code> and <code class="docutils literal notranslate"><span class="pre">EDGE_COMMON_SW</span></code> according to build environment.</p>
 <ol class="arabic simple">
 <li>Software emulation:</li>
 </ol>
