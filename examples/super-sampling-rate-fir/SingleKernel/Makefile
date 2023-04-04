@@ -90,8 +90,10 @@ ifeq ($(TARGET), hw)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${PKG_DIR} ${AIE_EXE} ${HOST_EXE}
 endif
 
+sd_card: package
+
 ##################### Build All + Run Emulation ##############
-all: check_setup $(RUN_DEPS) package
+all: check_setup $(RUN_DEPS) sd_card
 run: all
 ifeq ($(TARGET), x86sim)
 	x86simulator --pkg-dir=./Work
