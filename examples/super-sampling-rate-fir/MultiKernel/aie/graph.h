@@ -99,13 +99,15 @@ class TopGraph : public adf::graph {
     output_plio out;
 
     TopGraph() {
+        in[0] = input_plio::create("Column_12_TO_AIE", plio_128_bits, "data/PhaseIn_0.txt", 500);
+        in[1] = input_plio::create("Column_13_TO_AIE", plio_128_bits, "data/PhaseIn_0.txt", 500);
+        in[2] = input_plio::create("Column_14_TO_AIE", plio_128_bits, "data/PhaseIn_0.txt", 500);
+        in[3] = input_plio::create("Column_15_TO_AIE", plio_128_bits, "data/PhaseIn_0.txt", 500);
+        out = output_plio::create("Column_28_FROM_AIE", plio_128_bits, "data/Output_0.txt", 500);
+
         for (int i = 0; i < 4; i++) {
-            in[i] = input_plio::create(vck190_test_harness::in_names[i], plio_128_bits,
-                                       "data/PhaseIn_" + std::to_string(0) + ".txt", 500);
             connect<>(in[i].out[0], G1.in[i]);
         }
-
-        out = output_plio::create(vck190_test_harness::out_names[0], plio_128_bits, "data/Output_0.txt", 500);
         connect<>(G1.out, out.in[0]);
     }
 };

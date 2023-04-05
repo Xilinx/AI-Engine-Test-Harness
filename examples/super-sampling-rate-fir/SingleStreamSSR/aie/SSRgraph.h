@@ -138,12 +138,16 @@ class TopGraph : public adf::graph {
     output_plio out[4];
 
     TopGraph() {
+        in[0] = input_plio::create("Column_12_TO_AIE", plio_128_bits, "data/PhaseIn_0.txt", 500);
+        in[1] = input_plio::create("Column_13_TO_AIE", plio_128_bits, "data/PhaseIn_1.txt", 500);
+        in[2] = input_plio::create("Column_14_TO_AIE", plio_128_bits, "data/PhaseIn_2.txt", 500);
+        in[3] = input_plio::create("Column_15_TO_AIE", plio_128_bits, "data/PhaseIn_3.txt", 500);
+        out[0] = output_plio::create("Column_28_FROM_AIE", plio_128_bits, "data/PhaseOut_0.txt", 500);
+        out[1] = output_plio::create("Column_29_FROM_AIE", plio_128_bits, "data/PhaseOut_1.txt", 500);
+        out[2] = output_plio::create("Column_30_FROM_AIE", plio_128_bits, "data/PhaseOut_2.txt", 500);
+        out[3] = output_plio::create("Column_31_FROM_AIE", plio_128_bits, "data/PhaseOut_3.txt", 500);
         for (int i = 0; i < 4; i++) {
-            in[i] = input_plio::create(vck190_test_harness::in_names[i], plio_128_bits,
-                                       "data/PhaseIn_" + std::to_string(i) + ".txt", 500);
             connect<>(in[i].out[0], G1.in[i]);
-            out[i] = output_plio::create(vck190_test_harness::out_names[i], plio_128_bits,
-                                         "data/output_" + std::to_string(i) + ".txt", 500);
             connect<>(G1.out[i], out[i].in[0]);
         }
     }
