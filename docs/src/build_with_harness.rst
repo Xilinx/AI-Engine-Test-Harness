@@ -28,7 +28,7 @@ To build with test harness, developer needs to install:
 
 * 3. Versal common image for Vitis embedded platforms (https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html)
 
-Before start building, you need to source ``setup.sh`` and export ``EDGE_COMMON_SW`` according to your installation of Versal common image for Vitis embedded platforms.
+Before start building, you need to source ``setup.sh`` and export ``SDKTARGETSYSROOT`` according to your installation of Versal common image for Vitis embedded platforms.
 
 Build AI Engine application (libadf.a)
 ---------------------------------------
@@ -56,7 +56,7 @@ To build ps application, you need source Xilinx Runtime before compiling. The re
 Package
 --------
 
-Test harness provide support packaging for software emulation and hardware. To be notice that software emulation needs AI Engine application to be complied under target ``x86sim``. Please take reference from examples cases for details. You need source Vitis and Xilinx Runtime setup.sh before packaging, and setup proper ``SYSROOT`` and ``EDGE_COMMON_SW`` according to build environment.
+Test harness provide support packaging for software emulation and hardware. To be notice that software emulation needs AI Engine application to be complied under target ``x86sim``. Please take reference from examples cases for details. You need source Vitis and Xilinx Runtime setup.sh before packaging, and setup proper ``SDKTARGETSYSROOT`` according to build environment.
 
 1. Software emulation: 
 

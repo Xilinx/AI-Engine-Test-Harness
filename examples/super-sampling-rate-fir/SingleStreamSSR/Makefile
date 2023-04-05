@@ -59,14 +59,14 @@ HOST_SRC := ps/host.cpp ./Work/ps/c_rts/aie_control_xrt.cpp
 
 HOST_CXX_FLAGS := -I ./ -I ./aie -I ../../../include 
 HOST_CXX_FLAGS += -I $(XILINX_VITIS)/aietools/include -I $(XILINX_XRT)/include
-HOST_CXX_FLAGS += -fmessage-length=0 --sysroot=$(SYSROOT) -std=c++14 -O3 -Wall 
+HOST_CXX_FLAGS += -fmessage-length=0 --sysroot=$(SDKTARGETSYSROOT) -std=c++14 -O3 -Wall 
 
 ifneq ($(filter x86sim sw_emu, $(TARGET)),)
 HOST_LD_FLAGS := -L $(XILINX_VITIS)/aietools/lib/lnx64.o -L $(XILINX_XRT)/lib
 else
 HOST_LD_FLAGS := -L $(XILINX_VITIS)/aietools/lib/aarch64.o 
 endif
-HOST_LD_FLAGS += -pthread -L $(SYSROOT)/usr/lib -lxrt_coreutil -ladf_api_xrt
+HOST_LD_FLAGS += -pthread -L $(SDKTARGETSYSROOT)/usr/lib -lxrt_coreutil -ladf_api_xrt
 HOST_EXE := $(TEMP_DIR)/host_elf
 
 $(HOST_EXE): $(HOST_SRC) $(AIE_EXE)

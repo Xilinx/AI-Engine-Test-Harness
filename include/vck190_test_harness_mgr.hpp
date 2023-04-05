@@ -19,10 +19,6 @@
 #ifndef _VCK190_TEST_HARNESS_MGR_HPP_
 #define _VCK190_TEST_HARNESS_MGR_HPP_
 
-#include "xrt/xrt_device.h"
-#include "xrt/xrt_kernel.h"
-#include "xrt/xrt_bo.h"
-
 /*
  * xrt native api based manager
  */
@@ -30,7 +26,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string>
+#include <cstring>
 #include "xrt.h"
+#include "xrt/xrt_device.h"
+#include "xrt/xrt_kernel.h"
+#include "xrt/xrt_bo.h"
 #include "xrt/xrt_kernel.h"
 #include "xrt/xrt_graph.h"
 

@@ -84,17 +84,17 @@ class FIRGraph_SSR4 : public adf::graph {
         k[1][0] = kernel::create_object<SingleStream::FIR_MultiKernel_cout<NUM_SAMPLES, SHIFT> >(taps4_p2, 0);
         k[1][1] = kernel::create_object<SingleStream::FIR_MultiKernel_cincout<NUM_SAMPLES, SHIFT> >(taps4_p1, 0);
         k[1][2] = kernel::create_object<SingleStream::FIR_MultiKernel_cincout<NUM_SAMPLES, SHIFT> >(taps4_p0, 0);
-        k[1][3] = kernel::create_object<SingleStream::FIR_MultiKernel_cin<NUM_SAMPLES, SHIFT> >(taps4_p3, 1);
+        k[1][3] = kernel::create_object<SingleStream::FIR_MultiKernel_cin<NUM_SAMPLES, SHIFT> >(taps4_p3, 0);
 
-        k[2][0] = kernel::create_object<SingleStream::FIR_MultiKernel_cout<NUM_SAMPLES, SHIFT> >(taps4_p2, 1);
-        k[2][1] = kernel::create_object<SingleStream::FIR_MultiKernel_cincout<NUM_SAMPLES, SHIFT> >(taps4_p3, 1);
+        k[2][0] = kernel::create_object<SingleStream::FIR_MultiKernel_cout<NUM_SAMPLES, SHIFT> >(taps4_p2, 0);
+        k[2][1] = kernel::create_object<SingleStream::FIR_MultiKernel_cincout<NUM_SAMPLES, SHIFT> >(taps4_p3, 0);
         k[2][2] = kernel::create_object<SingleStream::FIR_MultiKernel_cincout<NUM_SAMPLES, SHIFT> >(taps4_p0, 0);
         k[2][3] = kernel::create_object<SingleStream::FIR_MultiKernel_cin<NUM_SAMPLES, SHIFT> >(taps4_p1, 0);
 
         k[3][0] = kernel::create_object<SingleStream::FIR_MultiKernel_cout<NUM_SAMPLES, SHIFT> >(taps4_p0, 0);
-        k[3][1] = kernel::create_object<SingleStream::FIR_MultiKernel_cincout<NUM_SAMPLES, SHIFT> >(taps4_p3, 1);
-        k[3][2] = kernel::create_object<SingleStream::FIR_MultiKernel_cincout<NUM_SAMPLES, SHIFT> >(taps4_p2, 1);
-        k[3][3] = kernel::create_object<SingleStream::FIR_MultiKernel_cin<NUM_SAMPLES, SHIFT> >(taps4_p1, 1);
+        k[3][1] = kernel::create_object<SingleStream::FIR_MultiKernel_cincout<NUM_SAMPLES, SHIFT> >(taps4_p3, 0);
+        k[3][2] = kernel::create_object<SingleStream::FIR_MultiKernel_cincout<NUM_SAMPLES, SHIFT> >(taps4_p2, 0);
+        k[3][3] = kernel::create_object<SingleStream::FIR_MultiKernel_cin<NUM_SAMPLES, SHIFT> >(taps4_p1, 0);
 
         const int NPhases = 4;
 

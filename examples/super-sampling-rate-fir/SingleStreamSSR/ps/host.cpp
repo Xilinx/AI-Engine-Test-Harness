@@ -58,8 +58,8 @@ int main(int argc, char** argv) {
     // Prepare data
     const int in_ch = 4;
     const int out_ch = 4;
-    int in_sz = 512 * 4 * 4;
-    int out_sz = 512 * 4 * 4;
+    int in_sz = 512 * 4;
+    int out_sz = 512 * 4;
     char* in_data[in_ch];
     char* out_data[out_ch];
 
@@ -73,10 +73,10 @@ int main(int argc, char** argv) {
     test_harness_mgr mgr(0, argv[1], {"G"});
     std::vector<test_harness_args> args;
     for (int i = 0; i < 4; i++) {
-        args.push_back({channel_index(Column_12_TO_AIE + i), in_sz, 4, 0, (char*)in_data[i]});
+        args.push_back({channel_index(Column_12_TO_AIE + i), in_sz, 1, 0, (char*)in_data[i]});
         args.push_back({channel_index(Column_28_FROM_AIE + i), out_sz, 1, 0, (char*)out_data[i]});
     }
-    mgr.runGraph(0, 4);
+    mgr.runGraph(0, 1);
     mgr.runTestHarness(args);
     mgr.waitForRes(10000);
 

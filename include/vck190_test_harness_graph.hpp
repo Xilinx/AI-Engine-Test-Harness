@@ -49,7 +49,7 @@ class occupyUnusedPLIO : public graph {
                 if (std::count(used_in_plio_names.begin(), used_in_plio_names.end(),
                                vck190_test_harness::in_names[i]) == 0) {
                     pl_in[k] =
-                        input_plio::create(vck190_test_harness::in_names[i], adf::plio_128_bits, "data/dummy.txt", 250);
+                        input_plio::create(vck190_test_harness::in_names[i], adf::plio_128_bits, "dummy.txt", 250);
                     k_in[k] = kernel::create(dummy_in);
                     source(k_in[k]) = "dummy_kernel.cc";
                     runtime<ratio>(k_in[k]) = 0.01;
@@ -63,8 +63,8 @@ class occupyUnusedPLIO : public graph {
             for (int i = 0; i < 16; i++) {
                 if (std::count(used_out_plio_names.begin(), used_out_plio_names.end(),
                                vck190_test_harness::out_names[i]) == 0) {
-                    pl_out[k] = output_plio::create(vck190_test_harness::out_names[i], adf::plio_128_bits,
-                                                    "data/dummy.txt", 250);
+                    pl_out[k] =
+                        output_plio::create(vck190_test_harness::out_names[i], adf::plio_128_bits, "dummy.txt", 250);
                     k_out[k] = kernel::create(dummy_out);
                     source(k_out[k]) = "dummy_kernel.cc";
                     runtime<ratio>(k_out[k]) = 0.01;

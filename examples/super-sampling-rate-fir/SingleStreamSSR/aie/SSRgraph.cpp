@@ -30,7 +30,7 @@ vck190_test_harness::occupyUnusedPLIO<4, 4> dummyGraph(cust_in, cust_out);
 
 int main() {
     G.init();
-    G.run(NFRAMES);
+    G.run(1);
     G.end();
 
     return (0);

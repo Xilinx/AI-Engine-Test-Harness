@@ -25,7 +25,7 @@ TopGraph G;
 
 int main() {
     G.init();
-    G.run(NFRAMES);
+    G.run(1);
     G.end();
 
     return (0);
