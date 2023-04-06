@@ -35,11 +35,13 @@ Before start building, you need to source ``setup.sh`` and export ``SDKTARGETSYS
 Build AI Engine application (libadf.a)
 ---------------------------------------
 
-To build with test harness, developer needs modify two parts:
+To build with test harness, developer needs modify three parts:
 
 * 1. Modify all the PLIO in user graph to ``plio_128_bits`` to match with test harness and use the names specify in ``include/vck190_test_harness_port_name.hpp``. The ``vck190_test_harness::in_names`` is the list of PLIO names that can be used to send data to AI Engine and The ``out_names`` is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.
 
 * 2. In case your design does not use all PLIO ports, you need to put in an instance ``vck190_test_harness::occupyUnusedPLIO`` aside your original design. This instance will help occupy all the rest PLIOs. ``vck190_test_harness::occupyUnusedPLIO`` is a template graph, template arugment ``used_in_plio`` is the number of used PLIO to send data to AI Engine and ``used_out_plio`` is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of ``vck190_test_harness::occupyUnusedPLIO``.
+
+* 3. Add ``--event-trace=runtime --event-trace-port=gmio`` option to compile libadf.a.
 
 .. code-block::
 

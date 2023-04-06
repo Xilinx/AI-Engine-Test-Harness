@@ -219,17 +219,6 @@ class test_harness {
         for (int i = 0; i < N; i++) {
             from_aie_rep[i] = cfg[i + N * 5];
         }
-#ifndef __SYNTHESIS__
-        for (int i = 0; i < N; i++) {
-            std::cout << "to_aie_channel[" << i << ", delay = " << to_aie_delay[i]
-                      << ", to_aie_frame = " << to_aie_frame[i] << ", to_aie rep = " << to_aie_rep[i] << std::endl;
-        }
-        for (int i = 0; i < N; i++) {
-            std::cout << "from_aie_channel[" << i << ", delay = " << from_aie_delay[i]
-                      << ", from_aie_frame = " << from_aie_frame[i] << ", from_aie rep = " << from_aie_rep[i]
-                      << std::endl;
-        }
-#endif
     }
 
     void store_perf(ap_uint<64>* perf) {
@@ -240,14 +229,6 @@ class test_harness {
         for (int i = 0; i < N; i++) {
             perf[i + N] = from_aie_last[i];
         }
-#ifndef __SYNTHESIS__
-        for (int i = 0; i < N; i++) {
-            std::cout << "to_aie_channel[" << i << ", last = " << to_aie_last[i] << std::endl;
-        }
-        for (int i = 0; i < N; i++) {
-            std::cout << "from_aie_channel[" << i << ", last = " << from_aie_last[i] << std::endl;
-        }
-#endif
     }
 
     void load_buff(ap_uint<W>* data) {

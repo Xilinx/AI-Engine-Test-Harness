@@ -19,10 +19,21 @@
 Hareware Features
 ==================
 
+
 URAM buffer
 ------------
 
 Test harness on PL consists of 16 output channels and 16 input channels. Each channel has its own URAM based buffer which is 128 bits wide and 8192 deep. For output channels, test harness will first load data from DDR to buffer then load data from buffer to AI Engine through AXI-Stream. For input channels, test harness will first store data from AI Engine to buffer then load data from buffer to DDR. With the help of buffer on PL, test harness can communicate with AI Engine without suffering from DDR accessing latency. 
+
+Fix connection with AIE interface tile
+---------------------------------------
+
+All 16 output channels and 16 input channels of pre-buildt ``vck190_test_harness.xsa`` are connected to fixed AIE interface tile. In order to utilize these channel, AIE application need to specify its input_plio and output_plio with the valid names specified in ``include/vck190_test_harness_port_name.hpp``. Take ``Column_12_TO_AIE`` as example, ``Column_12`` means it's name for AIE interface tile at column 12 and ``TO_AIE`` means that it's used for input_plio to feed data to AIE. Current implementation of test harness utilize column 12 to column 27 to feed input to AIE and column 28 to column 43 to receive data from AIE.
+
+.. image:: /images/connection.png
+   :alt: stream sync Structure
+   :width: 80%
+   :align: center
 
 Pre-set delays
 ---------------
