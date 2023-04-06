@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     std::vector<test_harness_args> args;
     args.push_back({channel_index(Column_12_TO_AIE), in_sz, 1, 0, (char*)in_data[0]});
     args.push_back({channel_index(Column_28_FROM_AIE), out_sz, 1, 0, (char*)out_data[0]});
-    mgr.runGraph(0, 4);
+    mgr.runAIEGraph(0, 4);
     mgr.runTestHarness(args);
     mgr.waitForRes(10000);
 
