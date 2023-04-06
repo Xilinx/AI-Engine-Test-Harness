@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
         args.push_back({channel_index(Column_12_TO_AIE + i), in_sz, 1, 0, (char*)in_data[i]});
         args.push_back({channel_index(Column_28_FROM_AIE + i), out_sz, 1, 0, (char*)out_data[i]});
     }
-    mgr.runGraph(0, 1);
+    mgr.runAIEGraph(0, 1);
     mgr.runTestHarness(args);
     mgr.waitForRes(10000);
 

@@ -53,7 +53,7 @@ To drive test harness and AI Engine application from PS side, we need to instant
 We want to load ``in_sz`` bytes of data to channel ``Column_12_TO_AIE`` and receive ``out_sz`` bytes of data from channel ``Column_28_FROM_AIE``.
 We know that each iteration of graph "G" can consume ``in_sz`` bytes of data and generate ``out_sz`` bytes of data.
 To support multiple runs of graph "G", we set the repetition count of ``test_harness_arg`` to 4, same as total iteration of graph run.
-In order to measure total latency of each channel, we strongly recommend to call ``runGraph`` before ``runTestHarness``.
+In order to measure total latency of each channel, we strongly recommend to call ``runAIEGraph`` before ``runTestHarness``.
 
 .. code-block:: c++
 
@@ -61,7 +61,7 @@ In order to measure total latency of each channel, we strongly recommend to call
     std::vector<test_harness_args> args;
     args.push_back({channel_index(Column_12_TO_AIE), in_sz, 4, 0, (char*)in_data[0]});
     args.push_back({channel_index(Column_28_FROM_AIE), out_sz, 4, 0, (char*)out_data[0]});
-    mgr.runGraph(0, 4);
+    mgr.runAIEGraph(0, 4);
     mgr.runTestHarness(args);
     mgr.waitForRes(10000);
 
