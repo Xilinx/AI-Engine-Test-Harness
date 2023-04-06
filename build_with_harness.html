@@ -122,7 +122,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </div>
 <div class="section" id="build-ai-engine-application-libadf-a">
 <h2>Build AI Engine application (libadf.a)<a class="headerlink" href="#build-ai-engine-application-libadf-a" title="Permalink to this headline">¶</a></h2>
-<p>To build with test harness, developer needs modify two parts:</p>
+<p>To build with test harness, developer needs modify three parts:</p>
 <ul class="simple">
 <li><ol class="first arabic">
 <li>Modify all the PLIO in user graph to <code class="docutils literal notranslate"><span class="pre">plio_128_bits</span></code> to match with test harness and use the names specify in <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>. The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::in_names</span></code> is the list of PLIO names that can be used to send data to AI Engine and The <code class="docutils literal notranslate"><span class="pre">out_names</span></code> is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.</li>
@@ -130,6 +130,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </li>
 <li><ol class="first arabic" start="2">
 <li>In case your design does not use all PLIO ports, you need to put in an instance <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> aside your original design. This instance will help occupy all the rest PLIOs. <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> is a template graph, template arugment <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> is the number of used PLIO to send data to AI Engine and <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code>.</li>
+</ol>
+</li>
+<li><ol class="first arabic" start="3">
+<li>Add <code class="docutils literal notranslate"><span class="pre">--event-trace=runtime</span> <span class="pre">--event-trace-port=gmio</span></code> option to compile libadf.a.</li>
 </ol>
 </li>
 </ul>
@@ -187,7 +191,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on April 05, 2023.
+      <span class="lastupdated">Last updated on April 06, 2023.
       </span></p>
   </div>
 

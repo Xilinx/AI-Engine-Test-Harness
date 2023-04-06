@@ -63,6 +63,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <li class="toctree-l1"><a class="reference internal" href="overview.html#trademark-notice">Trademark Notice</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Hareware Features</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#uram-buffer">URAM buffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fix-connection-with-aie-interface-tile">Fix connection with AIE interface tile</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pre-set-delays">Pre-set delays</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cycle-counter">Cycle counter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#replay">Replay</a></li>
@@ -105,6 +106,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <h2>URAM buffer<a class="headerlink" href="#uram-buffer" title="Permalink to this headline">¶</a></h2>
 <p>Test harness on PL consists of 16 output channels and 16 input channels. Each channel has its own URAM based buffer which is 128 bits wide and 8192 deep. For output channels, test harness will first load data from DDR to buffer then load data from buffer to AI Engine through AXI-Stream. For input channels, test harness will first store data from AI Engine to buffer then load data from buffer to DDR. With the help of buffer on PL, test harness can communicate with AI Engine without suffering from DDR accessing latency.</p>
 </div>
+<div class="section" id="fix-connection-with-aie-interface-tile">
+<h2>Fix connection with AIE interface tile<a class="headerlink" href="#fix-connection-with-aie-interface-tile" title="Permalink to this headline">¶</a></h2>
+<p>All 16 output channels and 16 input channels of pre-buildt <code class="docutils literal notranslate"><span class="pre">vck190_test_harness.xsa</span></code> are connected to fixed AIE interface tile. In order to utilize these channel, AIE application need to specify its input_plio and output_plio with the valid names specified in <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>. Take <code class="docutils literal notranslate"><span class="pre">Column_12_TO_AIE</span></code> as example, <code class="docutils literal notranslate"><span class="pre">Column_12</span></code> means it’s name for AIE interface tile at column 12 and <code class="docutils literal notranslate"><span class="pre">TO_AIE</span></code> means that it’s used for input_plio to feed data to AIE. Current implementation of test harness utilize column 12 to column 27 to feed input to AIE and column 28 to column 43 to receive data from AIE.</p>
+<a class="reference internal image-reference" href="_images/connection.png"><img alt="stream sync Structure" class="align-center" src="_images/connection.png" style="width: 80%;" /></a>
+</div>
 <div class="section" id="pre-set-delays">
 <h2>Pre-set delays<a class="headerlink" href="#pre-set-delays" title="Permalink to this headline">¶</a></h2>
 <p>Each test harness channel can wait for a pre-set number of cycles before it starts to send/receive data. It will help developers to compose more granular tests.</p>
@@ -141,7 +147,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on April 05, 2023.
+      <span class="lastupdated">Last updated on April 06, 2023.
       </span></p>
   </div>
 
