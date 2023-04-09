@@ -11,24 +11,33 @@
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
 
+##################### Check Vitis Setup ######################
+.PHONY: check_setup
+check_setup:
+ifeq (,$(wildcard $(XILINX_VITIS)/bin/v++))
+	@echo "Cannot locate Vitis installation. Please set XILINX_VITIS variable." && false
+endif
+ifeq (,$(wildcard $(XILINX_XRT)/lib/libxilinxopencl.so))
+	@echo "Cannot locate XRT installation. Please set XILINX_XRT variable." && false
+endif
+
+##################### Project Variables ######################
+TARGET := sw_emu
+ifneq ($(filter x86sim sw_emu, $(TARGET)),)
+AIETARGET := x86sim
+CXX := g++
+else
+AIETARGET := hw
+CXX := $(XILINX_VITIS)/gnu/aarch64/lin/aarch64-linux/bin/aarch64-linux-gnu-g++
+endif
+
 ifneq ($(findstring 2023.1, $(XILINX_VITIS)), )
 TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202310_1/xilinx_vck190_base_dfx_202310_1.xpfm
+TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202310_1.xpfm
+PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202310_1.xpfm
 endif
-
 ifneq ($(findstring 2022.2, $(XILINX_VITIS)), )
 TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202220_1/xilinx_vck190_base_dfx_202220_1.xpfm
+TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202220_1.xpfm
+PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202220_1.xpfm
 endif
-
-${BUILD_DIR}/vck190_test_harness.xo: ${TEST_HARNESS_REPO_PATH}/src/pl/test_harness.cpp
-	v++ -c -t sw_emu --platform ${TEST_HARNESS_PLATFORM} -I ./ -I ${TEST_HARNESS_REPO_PATH}/include -k vck190_test_harness --hls.clock 250000000:vck190_test_harness $^ -o $@
-
-${BUILD_DIR}/vck190_test_harness.xsa: ${BUILD_DIR}/vck190_test_harness.xo ${AIE_EXE}
-	v++ -l -t sw_emu --platform ${TEST_HARNESS_PLATFORM} --config ${TEST_HARNESS_REPO_PATH}/cfg/system.cfg $^ -o $@
-
-${BUILD_DIR}/emconfig.json: ${BUILD_DIR}/vck190_test_harness.xsa
-	emconfigutil --platform ${TEST_HARNESS_PLATFORM} --od ${BUILD_DIR}
-
-${BUILD_DIR}/vck190_test_harness.xclbin: ${BUILD_DIR}/vck190_test_harness.xsa ${AIE_EXE}
-	v++ -p -t sw_emu  --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} $^ -o $@
-
-xsa: ${BUILD_DIR}/vck190_test_harness.xclbin ${BUILD_DIR}/emconfig.json
