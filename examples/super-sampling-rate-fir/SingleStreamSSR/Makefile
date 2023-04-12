@@ -11,6 +11,10 @@
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
 
+ifndef TEST_HARNESS_REPO_PATH
+export TEST_HARNESS_REPO_PATH=$(notdir $(shell pwd))/../../
+endif
+
 include ${TEST_HARNESS_REPO_PATH}/common.mk
 ##################### Build AIE ##############################
 AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --pl-freq=250 --event-trace=runtime --event-trace-port=gmio --platform=$(TEST_HARNESS_REPO_PATH)/bin/vck190_test_harness.xsa
