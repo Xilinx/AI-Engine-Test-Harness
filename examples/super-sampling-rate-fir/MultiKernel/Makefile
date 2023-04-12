@@ -12,10 +12,10 @@
 #
 
 ifndef TEST_HARNESS_REPO_PATH
-export TEST_HARNESS_REPO_PATH=$(notdir $(shell pwd))/../../
+export TEST_HARNESS_REPO_PATH=$(shell pwd)/../../../
 endif
 
-include ${TEST_HARNESS_REPO_PATH}/common.mk
+include ${TEST_HARNESS_REPO_PATH}/test_harness/common.mk
 ##################### Build AIE ##############################
 AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --pl-freq=250 --event-trace=runtime --event-trace-port=gmio --platform=$(TEST_HARNESS_REPO_PATH)/bin/vck190_test_harness.xsa
 
