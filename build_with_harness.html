@@ -18,7 +18,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-5RHQV7');</script>
 <!-- End Google Tag Manager -->
-  <title>Build With Test Harness &mdash; AIE Test Harness v2023.1 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Using the Test Harness &mdash; AIE Test Harness v2023.1 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -30,8 +30,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Step by Step" href="step_by_step.html" />
-    <link rel="prev" title="Software API" href="sw_api.html" /> 
+    <link rel="next" title="Step by Step Example" href="step_by_step.html" />
+    <link rel="prev" title="Software APIs" href="sw_api.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -57,21 +57,34 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Introduction</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="overview.html#license">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="overview.html#trademark-notice">Trademark Notice</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hw_feature.html">Hareware Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sw_api.html">Software API</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Build With Test Harness</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#environment-setup">Environment setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#build-ai-engine-application-libadf-a">Build AI Engine application (libadf.a)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#build-ps-application">Build PS application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#package">Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="hw_feature.html">Hardware Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sw_api.html">Software APIs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Test Harness</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#environment-setup">Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#instrumenting-the-ai-engine-graph">Instrumenting the AI Engine Graph</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#test-harness-header-file">Test Harness Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mapping-plios">Mapping PLIOs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connecting-plios">Connecting PLIOs</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step by Step</a></li>
-<li class="toctree-l1"><a class="reference internal" href="limits.html">Limitation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-ai-engine-graph">Building the AI Engine Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-ps-application">Building the PS Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#packaging-the-test">Packaging the Test</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step by Step Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limitations.html">Limitations</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Additional Topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trademark.html">Trademark Notice</a></li>
 </ul>
 
         </div>
@@ -88,7 +101,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Build With Test Harness</li>
+      <li>Using the Test Harness</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -97,46 +110,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="toctree-wrapper compound" id="overview">
+  <div class="toctree-wrapper compound" id="using-the-harness">
 </div>
-<div class="section" id="build-with-test-harness">
-<h1>Build With Test Harness<a class="headerlink" href="#build-with-test-harness" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="using-the-test-harness">
+<h1>Using the Test Harness<a class="headerlink" href="#using-the-test-harness" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="environment-setup">
-<h2>Environment setup<a class="headerlink" href="#environment-setup" title="Permalink to this headline">¶</a></h2>
-<p>To build with test harness, developer needs to install:</p>
-<ul class="simple">
-<li><ol class="first arabic">
-<li>Vitis tools (<a class="reference external" href="https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html">https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html</a>)</li>
-</ol>
-</li>
-<li><ol class="first arabic" start="2">
-<li>Xilinx Runtime (<a class="reference external" href="https://www.xilinx.com/products/design-tools/vitis/xrt.html#gettingstarted">https://www.xilinx.com/products/design-tools/vitis/xrt.html#gettingstarted</a>)</li>
-</ol>
-</li>
-<li><ol class="first arabic" start="3">
-<li>Versal common image for Vitis embedded platforms (<a class="reference external" href="https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html">https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html</a>)</li>
-</ol>
-</li>
-</ul>
+<h2>Environment Setup<a class="headerlink" href="#environment-setup" title="Permalink to this headline">¶</a></h2>
 <p>Before start building, you need to source <code class="docutils literal notranslate"><span class="pre">setup.sh</span></code> and export <code class="docutils literal notranslate"><span class="pre">SDKTARGETSYSROOT</span></code> according to your installation of Versal common image for Vitis embedded platforms.</p>
 </div>
-<div class="section" id="build-ai-engine-application-libadf-a">
-<h2>Build AI Engine application (libadf.a)<a class="headerlink" href="#build-ai-engine-application-libadf-a" title="Permalink to this headline">¶</a></h2>
-<p>To build with test harness, developer needs modify three parts:</p>
-<ul class="simple">
-<li><ol class="first arabic">
-<li>Modify all the PLIO in user graph to <code class="docutils literal notranslate"><span class="pre">plio_128_bits</span></code> to match with test harness and use the names specify in <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>. The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::in_names</span></code> is the list of PLIO names that can be used to send data to AI Engine and The <code class="docutils literal notranslate"><span class="pre">out_names</span></code> is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.</li>
-</ol>
-</li>
-<li><ol class="first arabic" start="2">
-<li>In case your design does not use all PLIO ports, you need to put in an instance <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> aside your original design. This instance will help occupy all the rest PLIOs. <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> is a template graph, template arugment <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> is the number of used PLIO to send data to AI Engine and <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> is the number of used PLIO to receive data from AI Engine. Also you need to put in all PLIO names into the constructor of <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code>.</li>
-</ol>
-</li>
-<li><ol class="first arabic" start="3">
-<li>Add <code class="docutils literal notranslate"><span class="pre">--event-trace=runtime</span> <span class="pre">--event-trace-port=gmio</span></code> option to compile libadf.a.</li>
-</ol>
-</li>
-</ul>
+<div class="section" id="instrumenting-the-ai-engine-graph">
+<h2>Instrumenting the AI Engine Graph<a class="headerlink" href="#instrumenting-the-ai-engine-graph" title="Permalink to this headline">¶</a></h2>
+<p>The following modifications are needed to use an AIE graph with the test harness:</p>
+<div class="section" id="test-harness-header-file">
+<h3>Test Harness Header File<a class="headerlink" href="#test-harness-header-file" title="Permalink to this headline">¶</a></h3>
+<p>The harness graph header must be included in the AIE graph sources:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#include &quot;vck190_test_harness_graph.hpp&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mapping-plios">
+<h3>Mapping PLIOs<a class="headerlink" href="#mapping-plios" title="Permalink to this headline">¶</a></h3>
+<p>The names and width of the usable PLIOs are predefined in the test harness. The original AIE graph must be mapped to these predefined PLIOs.</p>
+<p>The graph must be modified to ensure that all PLIOs are 128 bits wide and use one of the PLIO names predefined in the harness:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pl_in0</span> <span class="o">=</span> <span class="n">input_plio</span><span class="p">::</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Column_12_TO_AIE&quot;</span>   <span class="p">,</span> <span class="n">adf</span><span class="p">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s2">&quot;DataIn0.txt&quot;</span><span class="p">);</span>
+<span class="n">pl_in1</span> <span class="o">=</span> <span class="n">input_plio</span><span class="p">::</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Column_13_TO_AIE&quot;</span>   <span class="p">,</span> <span class="n">adf</span><span class="p">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s2">&quot;DataIn1.txt&quot;</span><span class="p">);</span>
+<span class="n">pl_out</span> <span class="o">=</span> <span class="n">output_plio</span><span class="p">::</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Column_28_FROM_AIE&quot;</span><span class="p">,</span> <span class="n">adf</span><span class="p">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s2">&quot;DataOut0.txt&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The predefined PLIO names are listed in <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>. The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::in_names</span></code> is the list of PLIO names which can be used to send data to AI Engine and <code class="docutils literal notranslate"><span class="pre">out_names</span></code> is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.</p>
+</div>
+<div class="section" id="connecting-plios">
+<h3>Connecting PLIOs<a class="headerlink" href="#connecting-plios" title="Permalink to this headline">¶</a></h3>
+<p>All the PLIO ports defined in the harness must be connected. In case the AIE graph does not use all the PLIOs defined in the harness, an instance of the <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> helper class must be added in the <code class="docutils literal notranslate"><span class="pre">graph.cpp</span></code> file. This class will connect all the PLIOs which are not used by the original AIE graph.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> class takes two template arguments: <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> is the number of input PLIOs in the AIE graph and <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> of output PLIOs in the AIE graph.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> class constructor takes two arguments: <code class="docutils literal notranslate"><span class="pre">used_in_plio_names</span></code> which is a vector of strings containing the names of the input PLIOs used by the AIE graph, and <code class="docutils literal notranslate"><span class="pre">used_out_plio_names</span></code> which is a vector of strings containing the names of the output PLIOs used by the AIE graph.</p>
 <pre class="highlight literal-block">
 <span></span><span class="n">template</span> <span class="o">&lt;</span><span class="nb">int</span> <span class="n">used_in_plio</span><span class="p">,</span> <span class="nb">int</span> <span class="n">used_out_plio</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">occupyUnusedPLIO</span><span class="p">;</span>
@@ -144,13 +151,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <span class="n">template</span> <span class="o">&lt;</span><span class="nb">int</span> <span class="n">used_in_plio</span><span class="p">,</span> <span class="nb">int</span> <span class="n">used_out_plio</span><span class="o">&gt;</span>
 <span class="n">occupyUnusedPLIO</span><span class="p">::</span><span class="n">occupyUnusedPLIO</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">used_in_plio_names</span><span class="p">,</span>  <span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">used_out_plio_names</span><span class="p">);</span>
 </pre>
+<p>NOTE: the length of the <code class="docutils literal notranslate"><span class="pre">used_in_plio_names</span></code> vector should match the value of the <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> template, and the length of the <code class="docutils literal notranslate"><span class="pre">used_out_plio_names</span></code> vector should match the value of the <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> template.</p>
 </div>
-<div class="section" id="build-ps-application">
-<h2>Build PS application<a class="headerlink" href="#build-ps-application" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="building-the-ai-engine-graph">
+<h2>Building the AI Engine Graph<a class="headerlink" href="#building-the-ai-engine-graph" title="Permalink to this headline">¶</a></h2>
+<p>To build the libadf.a for use with the test harness, it must be compiled using the prebuilt XSA as the input platform, and setting the –event-trace and –event-trace-port options as shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aiecompiler</span> <span class="o">--</span><span class="n">platform</span><span class="o">=&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">test</span> <span class="n">harness</span> <span class="n">repo</span><span class="o">&gt;/</span><span class="nb">bin</span><span class="o">/</span><span class="n">vck190_test_harness</span><span class="o">.</span><span class="n">xsa</span> <span class="o">--</span><span class="n">event</span><span class="o">-</span><span class="n">trace</span><span class="o">=</span><span class="n">runtime</span> <span class="o">--</span><span class="n">event</span><span class="o">-</span><span class="n">trace</span><span class="o">-</span><span class="n">port</span><span class="o">=</span><span class="n">gmio</span> <span class="p">[</span><span class="n">other</span> <span class="n">user</span> <span class="n">options</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-the-ps-application">
+<h2>Building the PS Application<a class="headerlink" href="#building-the-ps-application" title="Permalink to this headline">¶</a></h2>
 <p>To build ps application, you need source Xilinx Runtime before compiling. The rest is regular c++ coding.</p>
 </div>
-<div class="section" id="package">
-<h2>Package<a class="headerlink" href="#package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="packaging-the-test">
+<h2>Packaging the Test<a class="headerlink" href="#packaging-the-test" title="Permalink to this headline">¶</a></h2>
 <p>Test harness provide support packaging for software emulation and hardware. To be notice that software emulation needs AI Engine application to be complied under target <code class="docutils literal notranslate"><span class="pre">x86sim</span></code>. Please take reference from examples cases for details. You need source Vitis and Xilinx Runtime setup.sh before packaging, and setup proper <code class="docutils literal notranslate"><span class="pre">SDKTARGETSYSROOT</span></code> according to build environment.</p>
 <ol class="arabic simple">
 <li>Software emulation:</li>
@@ -183,15 +199,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   </style>
 				  
 				  <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="sw_api.html" class="btn btn-neutral float-left" title="Software API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="step_by_step.html" class="btn btn-neutral float-right" title="Step by Step" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sw_api.html" class="btn btn-neutral float-left" title="Software APIs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="step_by_step.html" class="btn btn-neutral float-right" title="Step by Step Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on April 06, 2023.
+      <span class="lastupdated">Last updated on April 13, 2023.
       </span></p>
   </div>
 
