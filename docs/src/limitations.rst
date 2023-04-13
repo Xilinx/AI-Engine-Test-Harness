@@ -11,12 +11,12 @@
 
    Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 
-.. _overview:
+.. _limitations:
 
 .. toctree::
    :hidden:
 
-Limitation
+Limitations
 ===========
 
 * Currently test harness only support VCK190.

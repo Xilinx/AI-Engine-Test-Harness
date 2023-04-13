@@ -16,7 +16,7 @@
 .. toctree::
    :hidden:
 
-Hareware Features
+Hardware Features
 ==================
 
 

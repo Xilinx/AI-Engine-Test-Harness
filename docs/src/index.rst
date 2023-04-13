@@ -20,8 +20,21 @@ AIE Test Harness
    :maxdepth: 1
 
    Overview <overview.rst>
-   Hardware Feature <hw_feature.rst>
-   Software API <sw_api.rst>
-   Build With Test Harness <build_with_harness.rst>
+   Installation <installation.rst>
+
+.. toctree::
+   :caption: User Guide
+   :maxdepth: 1
+
+   Hardware Features <hw_feature.rst>
+   Software APIs <sw_api.rst>
+   Using the Test Harness <build_with_harness.rst>
    Step By Step Example <step_by_step.rst>
-   Limitation <limits.rst>
+   Limitations <limitations.rst>
+
+.. toctree::
+   :caption: Additional Topics
+   :maxdepth: 1
+
+   License <license.rst>
+   Trademark <trademark.rst>
