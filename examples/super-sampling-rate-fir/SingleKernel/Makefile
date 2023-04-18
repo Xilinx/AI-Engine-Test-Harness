@@ -52,7 +52,7 @@ ifeq ($(TARGET), sw_emu)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_sw_emu.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf
 endif
 ifeq ($(TARGET), hw)
-	${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf
+	${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf run_script.sh
 endif
 
 ##################### Build All + Run Emulation ##############
