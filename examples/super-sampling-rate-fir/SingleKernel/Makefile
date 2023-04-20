@@ -12,7 +12,9 @@
 #
 
 ifndef TEST_HARNESS_REPO_PATH
-export TEST_HARNESS_REPO_PATH=$(shell pwd)/../../../
+#export TEST_HARNESS_REPO_PATH=$(shell pwd)/../../..
+MK_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+export TEST_HARNESS_REPO_PATH ?= $(shell bash -c 'export MK_PATH=$(MK_PATH); echo $${MK_PATH%/examples/*}')
 endif
 
 include ${TEST_HARNESS_REPO_PATH}/test_harness/common.mk
