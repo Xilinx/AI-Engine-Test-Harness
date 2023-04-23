@@ -11,14 +11,33 @@
 
    Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 
-.. _limitations:
+.. _release_notes:
 
 .. toctree::
    :hidden:
 
-Limitations
-===========
+Release Notes
+=============
 
-* Currently test harness only support VCK190.
-* Capacity of each test harness channel is 128KB. For longer input / output, you need to utilize the "replay" function.
-* Input / Output size in bytes for each channel must be multiple of 16.
+Summary
+-------
+
+This is the first release of the AIE Test Harness. This release supports the following:
+
+- AIE graphs with up to 16 input PLIOs and 16 output PLIOs
+- PLIO throughput of 4GB/sec (32 bits @ 1GHz)
+- Input and output datasets up to 128KB in size
+- User-defined number of replay for each input and output dataset
+- User-defined start delay for each input and output PLIO
+- Built-in support for AIE event trace
+- SW APIs to develop a test application to run the AIE graph and transfer data to and from the AIE graph
+- Utility scripts to build the test for SW emulation and create a SD card image for VCK190
+
+
+Limitations
+-----------
+
+- The precompiled .xsa only supports the VCK190 board
+- AIE graphs with GMIOs are not supported
+- Datasets larger than 128KB are not supported. For longer input / output sequences, the "replay" functionality should be used
+- The size (in bytes) of input and output datasets must be multiple of 16
