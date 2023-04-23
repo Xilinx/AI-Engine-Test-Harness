@@ -25,26 +25,23 @@
 #include <vector>
 #include <complex>
 
-
-template<typename T>
-size_t num_bytes(const std::vector<T>& vec)
-{
+template <typename T>
+size_t num_bytes(const std::vector<T>& vec) {
     return sizeof(T) * vec.size();
 }
 
-template<typename T>
-void check_size(std::string name, const std::vector<T>& vec)
-{
-    if (num_bytes(vec) / 1024 > 128 ) {
-        printf("Error: size of %s (%dKB) exceeds the capacity of test harness buffers (128KB).\n", name.c_str(), num_bytes(vec) / 1024);
+template <typename T>
+void check_size(std::string name, const std::vector<T>& vec) {
+    if (num_bytes(vec) / 1024 > 128) {
+        printf("Error: size of %s (%dKB) exceeds the capacity of test harness buffers (128KB).\n", name.c_str(),
+               num_bytes(vec) / 1024);
         exit(-1);
     }
 }
 
-template<typename T>
-void read_data_from_file(const std::string file_name, std::vector<T> &vec)
-{
-    std::ifstream input_file(file_name,std::ifstream::in);
+template <typename T>
+void read_data_from_file(const std::string file_name, std::vector<T>& vec) {
+    std::ifstream input_file(file_name, std::ifstream::in);
     if (!input_file.is_open()) {
         printf("Failed to open data file %s for reading\n", file_name.c_str());
         throw std::runtime_error("Failed to open data file.\n");
@@ -52,16 +49,15 @@ void read_data_from_file(const std::string file_name, std::vector<T> &vec)
 
     T val;
     while (input_file >> val) {
-    	vec.push_back(val);
+        vec.push_back(val);
     }
 
-    input_file.close();    
+    input_file.close();
 }
 
-template<typename T>
-void read_data_from_file(const std::string file_name, std::vector<std::complex<T>> &vec)
-{
-    std::ifstream input_file(file_name,std::ifstream::in);
+template <typename T>
+void read_data_from_file(const std::string file_name, std::vector<std::complex<T> >& vec) {
+    std::ifstream input_file(file_name, std::ifstream::in);
     if (!input_file.is_open()) {
         printf("Failed to open data file %s for reading\n", file_name.c_str());
         throw std::runtime_error("Failed to open data file.\n");
@@ -70,14 +66,14 @@ void read_data_from_file(const std::string file_name, std::vector<std::complex<T
     T val;
     std::complex<T> cpx;
     while (input_file >> val) {
-    	cpx.real(val);
-	    if (input_file >> val) {
-	    	cpx.imag(val);
-    	} else {
-	    	cpx.imag(0);
-    	}
-   		vec.push_back(cpx);
+        cpx.real(val);
+        if (input_file >> val) {
+            cpx.imag(val);
+        } else {
+            cpx.imag(0);
+        }
+        vec.push_back(cpx);
     }
 
-    input_file.close();    
+    input_file.close();
 }

@@ -85,7 +85,8 @@
  * -------------------------
  * FIR_27TAP_SYMM_HB_DEC2                - enable this design
  INBUF_OFFSET_0                      - enable version with input buffer offset amount is 0 (default offset is 6)
- * TESTING                                                              - enable testbench setup (shared function name: fir_reference, fir_filter)
+ * TESTING                                                              - enable testbench setup (shared function name:
+fir_reference, fir_filter)
  * REFERENCE                                                            - enable reference code
  *
 **********/
@@ -96,7 +97,8 @@
   };
 */
 
-int16_t coeffs_27_d[DECIMATOR27_COEFFICIENTS]  = {33, -158, 0, 0, 491, -1214, 2674, 0, 0, -5942, 20503, 32767, 0, 0, 0, 0};
+int16_t coeffs_27_d[DECIMATOR27_COEFFICIENTS] = {33, -158,  0,     0,     491, -1214, 2674, 0,
+                                                 0,  -5942, 20503, 32767, 0,   0,     0,    0};
 
 // Default implementation (shift=6)
 /**
@@ -126,83 +128,83 @@ int16_t coeffs_27_d[DECIMATOR27_COEFFICIENTS]  = {33, -158, 0, 0, 491, -1214, 26
  * <o4..7> = F(<c0..cB>, <d24..33>, <d28..working>)
 **********/
 
-//36 version with circular_buffer
-void fir_27taps_symm_hb_dec2
-(
-    input_window_cint16 * inputw,
-    output_window_cint16 * outputw
-) {
-    const int shift = 1 ;
-    const unsigned output_samples =  DECIMATOR27_OUTPUT_SAMPLES ;
+// 36 version with circular_buffer
+void fir_27taps_symm_hb_dec2(input_window_cint16* inputw, output_window_cint16* outputw) {
+    const int shift = 1;
+    const unsigned output_samples = DECIMATOR27_OUTPUT_SAMPLES;
     static int loopct = 0;
-    const v16int16 coe =  *((const v16int16 *) coeffs_27_d) ;
+    const v16int16 coe = *((const v16int16*)coeffs_27_d);
 
-    //create a copy of the input window to handle symmetry
+    // create a copy of the input window to handle symmetry
     input_window_cint16 temp_w;
-    input_window_cint16 * restrict symw = &temp_w;
+    input_window_cint16* restrict symw = &temp_w;
     *symw = *inputw;
 
     v8cint16 vdata;
 
-    window_incr_v8(symw,3);
+    window_incr_v8(symw, 3);
 
     v16cint16 lbuff = undef_v16cint16();
     v16cint16 rbuff = undef_v16cint16();
 
     window_readincr(inputw, vdata);
-    lbuff = upd_w0(lbuff, vdata);   //|0:7|X|---|X|X| ->8
+    lbuff = upd_w0(lbuff, vdata); //|0:7|X|---|X|X| ->8
 
     window_readincr(symw, vdata);
-    rbuff = upd_w0(rbuff, vdata);   //|0:7|X|---|24:31|X| ->32
+    rbuff = upd_w0(rbuff, vdata); //|0:7|X|---|24:31|X| ->32
 
-    const unsigned lc = (output_samples / 4/ 2);
-    for ( unsigned l=0; l<lc; ++l )
-        chess_loop_range(4,)  // for 128 samples, we only require 4 iterations
-        chess_prepare_for_pipelining
-    {
-        v4cacc48 acc0;
+    const unsigned lc = (output_samples / 4 / 2);
+    for (unsigned l = 0; l < lc; ++l)
+        chess_loop_range(4, ) // for 128 samples, we only require 4 iterations
+            chess_prepare_for_pipelining {
+            v4cacc48 acc0;
 
-        window_readincr(inputw, vdata);
-        lbuff = upd_w1(lbuff, vdata); //|0:7|8:15|---|24:31|X| l->16
-        // lbuff = upd_w1(lbuff, window_readincr_v8(inputw));
-        window_read(symw, vdata);
-        rbuff = upd_w1(rbuff, vdata);   window_decr_v8(symw,2); //|0:7|8:15|---|24:31|32:39| r->16
+            window_readincr(inputw, vdata);
+            lbuff = upd_w1(lbuff, vdata); //|0:7|8:15|---|24:31|X| l->16
+            // lbuff = upd_w1(lbuff, window_readincr_v8(inputw));
+            window_read(symw, vdata);
+            rbuff = upd_w1(rbuff, vdata);
+            window_decr_v8(symw, 2); //|0:7|8:15|---|24:31|32:39| r->16
 
-        acc0 = mul4_sym(        lbuff, 6,0x6420,2, rbuff,8,     coe,0,0x0000,1);   //d6..14 d30-38 c0..1
+            acc0 = mul4_sym(lbuff, 6, 0x6420, 2, rbuff, 8, coe, 0, 0x0000, 1); // d6..14 d30-38 c0..1
 
-        window_readincr(inputw, vdata);
-        lbuff = upd_w0(lbuff, vdata); //|16:23|8:15|---|24:31|32:39| l->24
+            window_readincr(inputw, vdata);
+            lbuff = upd_w0(lbuff, vdata); //|16:23|8:15|---|24:31|32:39| l->24
 
-        acc0 = mac4_sym(   acc0,lbuff,10,0x6420,2, rbuff,4,     coe,4,0x0000,1);
+            acc0 = mac4_sym(acc0, lbuff, 10, 0x6420, 2, rbuff, 4, coe, 4, 0x0000, 1);
 
-        window_readincr(inputw, vdata);
-        lbuff = upd_w1(lbuff, vdata); //|16:23|24:31|---|24:31|32:39| l->32
-        window_read(symw, vdata);
-        rbuff = upd_w1(rbuff, vdata); window_incr_v8(symw,2); //|16:23|24:31|---|24:31|16:23| r->32
+            window_readincr(inputw, vdata);
+            lbuff = upd_w1(lbuff, vdata); //|16:23|24:31|---|24:31|32:39| l->32
+            window_read(symw, vdata);
+            rbuff = upd_w1(rbuff, vdata);
+            window_incr_v8(symw, 2); //|16:23|24:31|---|24:31|16:23| r->32
 
-        acc0 = mac4_sym_ct(acc0,lbuff,14,0x6420,2, rbuff,0, 5 , coe,8,0x0000,1);
-        window_writeincr(outputw,fsrs(acc0,shift));
+            acc0 = mac4_sym_ct(acc0, lbuff, 14, 0x6420, 2, rbuff, 0, 5, coe, 8, 0x0000, 1);
+            window_writeincr(outputw, fsrs(acc0, shift));
 
-        window_read(inputw, vdata);
-        lbuff = upd_w0(lbuff, vdata); window_decr_v8(inputw,2);
-        window_readincr(symw, vdata);
-        rbuff = upd_w1(rbuff, vdata);
+            window_read(inputw, vdata);
+            lbuff = upd_w0(lbuff, vdata);
+            window_decr_v8(inputw, 2);
+            window_readincr(symw, vdata);
+            rbuff = upd_w1(rbuff, vdata);
 
-        acc0 = mul4_sym_ct(     lbuff, 6,0x6420,2, rbuff,8, 5, coe,8,0x0000,1);
+            acc0 = mul4_sym_ct(lbuff, 6, 0x6420, 2, rbuff, 8, 5, coe, 8, 0x0000, 1);
 
-        // window_readdecr(inputw, vdata);
-        window_read(inputw, vdata);
-        lbuff = upd_w0(lbuff, vdata); window_decr_v8(inputw, 1);
-        window_readincr(symw, vdata);
-        rbuff = upd_w0(rbuff, vdata);
+            // window_readdecr(inputw, vdata);
+            window_read(inputw, vdata);
+            lbuff = upd_w0(lbuff, vdata);
+            window_decr_v8(inputw, 1);
+            window_readincr(symw, vdata);
+            rbuff = upd_w0(rbuff, vdata);
 
-        acc0 = mac4_sym(   acc0,lbuff,18,0x6420,2, rbuff,12,    coe,4,0x0000,1);
+            acc0 = mac4_sym(acc0, lbuff, 18, 0x6420, 2, rbuff, 12, coe, 4, 0x0000, 1);
 
-        window_read(inputw, vdata);
-        lbuff = upd_w1(lbuff, vdata); window_incr_v8(inputw,2);
+            window_read(inputw, vdata);
+            lbuff = upd_w1(lbuff, vdata);
+            window_incr_v8(inputw, 2);
 
-        acc0 = mac4_sym(   acc0,lbuff,14,0x6420,2, rbuff,16,    coe,0,0x0000,1);
-        window_writeincr(outputw,fsrs(acc0,shift));
-    }
+            acc0 = mac4_sym(acc0, lbuff, 14, 0x6420, 2, rbuff, 16, coe, 0, 0x0000, 1);
+            window_writeincr(outputw, fsrs(acc0, shift));
+        }
     window_incr_v8(inputw, 3);
 }

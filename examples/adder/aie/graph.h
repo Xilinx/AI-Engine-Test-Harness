@@ -46,8 +46,8 @@ class test_graph : public graph {
         adder = kernel::create(aie_adder);
 
         // REQUIRED: Declare PLIOs using one of the predefined names, and using the predefined width of 128 bits
-        pl_in0 = input_plio::create("Column_12_TO_AIE"   , adf::plio_128_bits, "data/DataIn0.txt");
-        pl_in1 = input_plio::create("Column_13_TO_AIE"   , adf::plio_128_bits, "data/DataIn1.txt");
+        pl_in0 = input_plio::create("Column_12_TO_AIE", adf::plio_128_bits, "data/DataIn0.txt");
+        pl_in1 = input_plio::create("Column_13_TO_AIE", adf::plio_128_bits, "data/DataIn1.txt");
         pl_out = output_plio::create("Column_28_FROM_AIE", adf::plio_128_bits, "data/DataOut0.txt");
 
         connect<stream> net0(pl_in0.out[0], adder.in[0]);

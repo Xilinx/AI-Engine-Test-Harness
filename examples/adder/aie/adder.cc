@@ -27,19 +27,15 @@
 #include <aie_api/utils.hpp>
 #include "common.h"
 
-void aie_adder(input_stream_int32* in0, input_stream_int32* in1, output_stream_int32* out)
-{
-    for(int i=0;i<KERNEL_LOOP_ITERS;i++)
-      chess_prepare_for_pipelining
-      chess_loop_range(KERNEL_LOOP_ITERS,KERNEL_LOOP_ITERS)
-    {
-        v4int32 a = readincr_v4(in0);
-        v4int32 b = readincr_v4(in1);
-        v4int32 c = operator+(a, b);
-        // std::cout << a << std::endl; 
-        // std::cout << b << std::endl; 
-        // std::cout << c << std::endl; 
-        writeincr_v4(out, c);
-    }
+void aie_adder(input_stream_int32* in0, input_stream_int32* in1, output_stream_int32* out) {
+    for (int i = 0; i < KERNEL_LOOP_ITERS; i++)
+        chess_prepare_for_pipelining chess_loop_range(KERNEL_LOOP_ITERS, KERNEL_LOOP_ITERS) {
+            v4int32 a = readincr_v4(in0);
+            v4int32 b = readincr_v4(in1);
+            v4int32 c = operator+(a, b);
+            // std::cout << a << std::endl;
+            // std::cout << b << std::endl;
+            // std::cout << c << std::endl;
+            writeincr_v4(out, c);
+        }
 }
-

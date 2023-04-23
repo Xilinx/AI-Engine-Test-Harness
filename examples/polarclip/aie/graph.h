@@ -31,54 +31,51 @@ using namespace adf;
 // REQUIRED: Include the test harness header file
 #include "vck190_test_harness_graph.hpp"
 
-class clipped : public adf::graph {  
-
-  private:
+class clipped : public adf::graph {
+   private:
     kernel interpolator;
     kernel classify;
     kernel clip;
-   
-  public:
-      
-    //Declaring PLIO objects
+
+   public:
+    // Declaring PLIO objects
     adf::input_plio in;
     adf::output_plio out;
 
     clipped() {
-      //kernel instantiation
-      interpolator = adf::kernel::create(fir_27t_sym_hb_2i);
-      clip         = adf::kernel::create(polar_clip);
-      classify     = adf::kernel::create(classifier);
-      
-      adf::source(interpolator) = "kernels/interpolators/hb27_2i.cc";
-      adf::source(clip)         = "kernels/polar_clip.cpp";
-      adf::source(classify)     = "kernels/classifiers/classify.cc";
-      
-      // REQUIRED: Declare PLIOs using one of the predefined names, and using the predefined width of 128 bits
-      in  = input_plio::create("Column_12_TO_AIE"   , adf::plio_128_bits, "data/input.txt");
-      out = output_plio::create("Column_28_FROM_AIE", adf::plio_128_bits, "data/output.txt");
+        // kernel instantiation
+        interpolator = adf::kernel::create(fir_27t_sym_hb_2i);
+        clip = adf::kernel::create(polar_clip);
+        classify = adf::kernel::create(classifier);
 
-      //Window connection between port 'in' and input port of the kernel
-      connect< window<INTERPOLATOR27_INPUT_BLOCK_SIZE, INTERPOLATOR27_INPUT_MARGIN> >(in.out[0], interpolator.in[0]);
+        adf::source(interpolator) = "kernels/interpolators/hb27_2i.cc";
+        adf::source(clip) = "kernels/polar_clip.cpp";
+        adf::source(classify) = "kernels/classifiers/classify.cc";
 
-      connect< window<POLAR_CLIP_INPUT_BLOCK_SIZE>, stream >(interpolator.out[0], clip.in[0]);
-      
-      //stream connection between kernels
-      connect< stream>(clip.out[0], classify.in[0]);
-      
-      //window connection between output port of the kernel and port 'out'
-      connect< window<CLASSIFIER_OUTPUT_BLOCK_SIZE> >(classify.out[0], out.in[0]);
+        // REQUIRED: Declare PLIOs using one of the predefined names, and using the predefined width of 128 bits
+        in = input_plio::create("Column_12_TO_AIE", adf::plio_128_bits, "data/input.txt");
+        out = output_plio::create("Column_28_FROM_AIE", adf::plio_128_bits, "data/output.txt");
 
-      std::vector<std::string> myheaders;
-      myheaders.push_back("include.h");
+        // Window connection between port 'in' and input port of the kernel
+        connect<window<INTERPOLATOR27_INPUT_BLOCK_SIZE, INTERPOLATOR27_INPUT_MARGIN> >(in.out[0], interpolator.in[0]);
 
-      adf::headers(interpolator) = myheaders;
-      adf::headers(classify) = myheaders;
-      
-      //Specifying core usage fraction for a kernel
-      runtime<ratio>(interpolator) = 0.8;
-      runtime<ratio>(clip) = 0.8;
-      runtime<ratio>(classify) = 0.8;
+        connect<window<POLAR_CLIP_INPUT_BLOCK_SIZE>, stream>(interpolator.out[0], clip.in[0]);
+
+        // stream connection between kernels
+        connect<stream>(clip.out[0], classify.in[0]);
+
+        // window connection between output port of the kernel and port 'out'
+        connect<window<CLASSIFIER_OUTPUT_BLOCK_SIZE> >(classify.out[0], out.in[0]);
+
+        std::vector<std::string> myheaders;
+        myheaders.push_back("include.h");
+
+        adf::headers(interpolator) = myheaders;
+        adf::headers(classify) = myheaders;
+
+        // Specifying core usage fraction for a kernel
+        runtime<ratio>(interpolator) = 0.8;
+        runtime<ratio>(clip) = 0.8;
+        runtime<ratio>(classify) = 0.8;
     };
 };
-

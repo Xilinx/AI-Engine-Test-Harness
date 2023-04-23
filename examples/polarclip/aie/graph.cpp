@@ -25,21 +25,20 @@
 
 using namespace adf;
 
-clipped clipgraph; //A graph object 'clipgraph' is declared
+clipped clipgraph; // A graph object 'clipgraph' is declared
 
 // REQUIRED: Instantiate a graph to occupy the PLIOs unused by the user graph.
 static std::vector<std::string> usedInputs = {"Column_12_TO_AIE"};
 static std::vector<std::string> usedOutputs = {"Column_28_FROM_AIE"};
 vck190_test_harness::occupyUnusedPLIO<1, 1> unusedPLIOs(usedInputs, usedOutputs);
 
-//This main() function runs only for AIESIM and X86Sim targets. 
-//Emulation uses a different host code
+// This main() function runs only for AIESIM and X86Sim targets.
+// Emulation uses a different host code
 #if defined(__AIESIM__) || defined(__X86SIM__)
-int main(int argc, char ** argv) {
-
-	clipgraph.init(); //Loads the graph to the AI Engine Array
-    clipgraph.run(4); //Starts the graph execution by enabling the processors.
-    clipgraph.end(); //Wait for 4 iterations to finish
+int main(int argc, char** argv) {
+    clipgraph.init(); // Loads the graph to the AI Engine Array
+    clipgraph.run(4); // Starts the graph execution by enabling the processors.
+    clipgraph.end();  // Wait for 4 iterations to finish
     return 0;
 }
 #endif
