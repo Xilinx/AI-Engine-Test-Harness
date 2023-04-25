@@ -58,23 +58,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
 <p class="caption"><span class="caption-text">User Guide</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="hw_feature.html">Hardware Features</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Software APIs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#constructor">Constructor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#run-aie-graph">Run AIE Graph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#run-test-harness">Run Test Harness</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#wait-for-result">Wait for Result</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#print-performance">Print Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-aie-graph">Running the AIE Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-test-harness">Running the Test Harness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#waiting-for-completion">Waiting for Completion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reporting-performance">Reporting Performance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="build_with_harness.html">Using the Test Harness</a></li>
 <li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step by Step Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="limitations.html">Limitations</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Additional Topics</span></p>
 <ul>
@@ -105,52 +104,145 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="toctree-wrapper compound" id="overview">
+  <div class="toctree-wrapper compound" id="sw-apis">
 </div>
 <div class="section" id="software-apis">
 <h1>Software APIs<a class="headerlink" href="#software-apis" title="Permalink to this headline">¶</a></h1>
-<p>To run test harness with developer’s AI Engine applications on board, we need software APIs to help PS programs to initialize device and setup parameters to run PL and AIE. You can find them in <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_mgr.hpp</span></code>. Basically, you can instantiate an instance of <code class="docutils literal notranslate"><span class="pre">test_harness_mgr</span></code> and call its member functions.</p>
-<div class="section" id="constructor">
-<h2>Constructor<a class="headerlink" href="#constructor" title="Permalink to this headline">¶</a></h2>
-<p>The constructor of class <code class="docutils literal notranslate"><span class="pre">test_harness_mgr</span></code> will help initialize the device. Argument <code class="docutils literal notranslate"><span class="pre">device_index</span></code> is the device id of your testing board, typically it will be zero. Argument <code class="docutils literal notranslate"><span class="pre">xclbin_file_path</span></code> is the path to your xclbin file to be tested. Argument <code class="docutils literal notranslate"><span class="pre">graph_name</span></code> is the vector of graph names which packaged inside the xclbin file.</p>
-<pre class="highlight literal-block">
-<span></span><span class="n">test_harness_mgr</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">device_index</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">xclbin_file_path</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">graph_name</span><span class="p">);</span>
-</pre>
+<p>The AIE test harness includes software APIs to easily build SW applications to test an AIE graph on hardware board. The SW application is executing on the embedded ARM processor of the Versal device. The APIs are designed to structure the test applications following these simple steps:</p>
+<ol class="arabic simple">
+<li>Initialize the device and load the xclbin</li>
+<li>Run the AIE graph</li>
+<li>Configure the DMA channels and start the data transfers to the AIE graph</li>
+<li>Wait for all the data to be received</li>
+<li>Report performance for each channel, and optionally check correctness of results</li>
+</ol>
+<p>The test harness APIs are included in <a class="reference external" href="https://github.com/Xilinx/Test_Harness/blob/main/include/vck190_test_harness_mgr.hpp">include/vck190_test_harness_mgr.hpp</a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
 </div>
-<div class="section" id="run-aie-graph">
-<h2>Run AIE Graph<a class="headerlink" href="#run-aie-graph" title="Permalink to this headline">¶</a></h2>
-<p>Function <code class="docutils literal notranslate"><span class="pre">test_harness_mgr::runAIEGraph</span></code> is to run the specified AI Engine graph for a specified number of iterations. Argument <code class="docutils literal notranslate"><span class="pre">g_idx</span></code> is the graph’s reference id in list of graph names. Argument <code class="docutils literal notranslate"><span class="pre">iters</span></code> is the number of iterations that you’d like to run.</p>
-<pre class="highlight literal-block">
-<span></span><span class="kt">void</span> <span class="nf">runAIEGraph</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">g_idx</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">iters</span><span class="p">);</span>
-</pre>
-</div>
-<div class="section" id="run-test-harness">
-<h2>Run Test Harness<a class="headerlink" href="#run-test-harness" title="Permalink to this headline">¶</a></h2>
-<p>Function <code class="docutils literal notranslate"><span class="pre">test_harness_mgr::runTestHarness</span></code> is to run the test harness. Its only input is a vector of <code class="docutils literal notranslate"><span class="pre">test_harness_args</span></code>. <code class="docutils literal notranslate"><span class="pre">test_harness_args::idx</span></code> is the channel you want to use; <code class="docutils literal notranslate"><span class="pre">test_harness_args::size_in_byte</span></code> is the size of one data frame that you want to send or receive; <code class="docutils literal notranslate"><span class="pre">test_harness_args::delay</span></code> is the delays cycles for this channel; <code class="docutils literal notranslate"><span class="pre">test_harness_args::data</span></code> is a pointer to the data that you want read or receive.</p>
-<pre class="highlight literal-block">
-<span></span><span class="kt">void</span> <span class="nf">runTestHarness</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">test_harness_args</span><span class="o">&gt;</span> <span class="n">args</span><span class="p">);</span>
+<div class="section" id="initialization">
+<h2>Initialization<a class="headerlink" href="#initialization" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="_CPPv316test_harness_mgr">
+<span id="_CPPv216test_harness_mgr"></span><span id="test_harness_mgr"></span><em class="property">class </em><code class="descname">test_harness_mgr</code><a class="headerlink" href="#_CPPv316test_harness_mgr" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The test harness manager class. This class encapsultates the necessary runtime objects to interact with the hardware DMA channels and the AIE graph. All test harness APIs belong to this class.</p>
+</dd></dl>
 
-<span class="k">struct</span> <span class="n">test_harness_args</span> <span class="p">{</span>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl class="function">
+<dt id="_CPPv3N16test_harness_mgr16test_harness_mgrEjNSt6stringENSt6vectorINSt6stringEEE">
+<span id="_CPPv2N16test_harness_mgr16test_harness_mgrEjNSt6stringENSt6vectorINSt6stringEEE"></span><span id="test_harness_mgr::test_harness_mgr__unsigned-i.ss.std::vector:ss:"></span><code class="descclassname"><a class="reference internal" href="#_CPPv3N16test_harness_mgr16test_harness_mgrEjNSt6stringENSt6vectorINSt6stringEEE" title="test_harness_mgr::test_harness_mgr">test_harness_mgr</a><code class="descclassname">::</code></code><code class="descname">test_harness_mgr</code><span class="sig-paren">(</span>unsigned int <em>device_index</em>, std::string <em>xclbin_file_path</em>, std::vector&lt;std::string&gt; <em>graph_name</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv3N16test_harness_mgr16test_harness_mgrEjNSt6stringENSt6vectorINSt6stringEEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The test harness manager class constructor. Loads the xclbin on the devide and initializes the various test harness runtime objects.</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">device_index</span></code></dt>
+<dd>The device id of the testing board, typically it will be zero</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::string</span> <span class="pre">xclbin_file_path</span></code></dt>
+<dd>The path and name of the xclbin file to be loaded and used for test. By default, the name of the xclbin file generated by the test harness packaging script is <code class="docutils literal notranslate"><span class="pre">vck190_test_harness.xclbin</span></code> and it is placed in the same folder as the test application.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;std::string&gt;</span> <span class="pre">graph_name</span></code></dt>
+<dd>The vector of graph names in the libadf.a and packaged in the xclbin file</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="running-the-aie-graph">
+<h2>Running the AIE Graph<a class="headerlink" href="#running-the-aie-graph" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="_CPPv3N16test_harness_mgr11runAIEGraphEjj">
+<span id="_CPPv2N16test_harness_mgr11runAIEGraphEjj"></span><span id="test_harness_mgr::runAIEGraph__unsigned-i.unsigned-i"></span>void <code class="descclassname"><a class="reference internal" href="#_CPPv316test_harness_mgr" title="test_harness_mgr">test_harness_mgr</a><code class="descclassname">::</code></code><code class="descname">runAIEGraph</code><span class="sig-paren">(</span>unsigned int <em>g_idx</em>, unsigned int <em>iters</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv3N16test_harness_mgr11runAIEGraphEjj" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Run the specified AI Engine graph for a specified number of iterations. To ensure accurate performance results, this function should be called after <a class="reference internal" href="#_CPPv3N16test_harness_mgr14runTestHarnessENSt6vectorI17test_harness_argsEE" title="test_harness_mgr::runTestHarness"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">test_harness_mgr::runTestHarness()</span></code></a>.</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">g_idx</span></code></dt>
+<dd>The index of the graph in the vector of graph names passed to the class constructor. For designs with a single graph, this argument is zero.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">iters</span></code></dt>
+<dd>The number of graph iterations to run</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="running-the-test-harness">
+<h2>Running the Test Harness<a class="headerlink" href="#running-the-test-harness" title="Permalink to this headline">¶</a></h2>
+<dl class="enum">
+<dt id="_CPPv313channel_index">
+<span id="_CPPv213channel_index"></span><em class="property">enum </em><code class="descname">channel_index</code><a class="headerlink" href="#_CPPv313channel_index" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Enumerated type listing the index of each DMA channel. The enumerated values correspond to the name of the predefined PLIOs: <a href="#id1"><span class="problematic" id="id2">:c:enumerator:`Column_12_TO_AIE`</span></a>, <a href="#id3"><span class="problematic" id="id4">:c:enumerator:`Column_13_TO_AIE`</span></a>, etc…</p>
+</dd></dl>
+
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>Definition</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="k">struct</span> <span class="n">test_harness_args</span> <span class="p">{</span>
  <span class="n">channel_index</span> <span class="n">idx</span><span class="p">;</span>
  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">size_in_byte</span><span class="p">;</span>
  <span class="kt">uint64_t</span> <span class="n">delay</span><span class="p">;</span>
  <span class="kt">char</span><span class="o">*</span> <span class="n">data</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
+<p><strong>Members</strong></p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">idx</span></code></dt>
+<dd>The index of the DMA channel to use, specified using the <a class="reference internal" href="#_CPPv313channel_index" title="channel_index"><code class="xref cpp cpp-enum docutils literal notranslate"><span class="pre">channel_index</span></code></a> enum. The index corresponds to the name of the targeted AIE PLIO, and implicitly specifies the direction of the data transfer.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">size_in_byte</span></code></dt>
+<dd>The size (in bytes) of one data frame to be transferred to or from the AIE</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">delay</span></code></dt>
+<dd>The start delay (in clock cycles) for this channel</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">data</span></code></dt>
+<dd>Pointer to the data that you want read or receive</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
 </div>
-<div class="section" id="wait-for-result">
-<h2>Wait for Result<a class="headerlink" href="#wait-for-result" title="Permalink to this headline">¶</a></h2>
-<p>Function <code class="docutils literal notranslate"><span class="pre">test_harness_mgr::waitForRes</span></code> is to wait for AI Engine application to finish and get back the result. The only arugment <code class="docutils literal notranslate"><span class="pre">graph_timeout_millisec</span></code> is the time out limit for AI Engine application to finish in milliseconds.</p>
-<pre class="highlight literal-block">
-<span></span><span class="kt">void</span> <span class="nf">waitForRes</span><span class="p">(</span><span class="kt">int</span> <span class="n">graph_timeout_millisec</span><span class="p">);</span>
-</pre>
+<dl class="function">
+<dt id="_CPPv3N16test_harness_mgr14runTestHarnessENSt6vectorI17test_harness_argsEE">
+<span id="_CPPv2N16test_harness_mgr14runTestHarnessENSt6vectorI17test_harness_argsEE"></span><span id="test_harness_mgr::runTestHarness__std::vector:test_harness_args:"></span>void <code class="descclassname"><a class="reference internal" href="#_CPPv316test_harness_mgr" title="test_harness_mgr">test_harness_mgr</a><code class="descclassname">::</code></code><code class="descname">runTestHarness</code><span class="sig-paren">(</span>std::vector&lt;test_harness_args&gt; <em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv3N16test_harness_mgr14runTestHarnessENSt6vectorI17test_harness_argsEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Run the test harness using the specified DMA channel arguments. To ensure accurate performance results, this function should be called after <a class="reference internal" href="#_CPPv3N16test_harness_mgr11runAIEGraphEjj" title="test_harness_mgr::runAIEGraph"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">test_harness_mgr::runAIEGraph()</span></code></a>.</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;test_harness_args&gt;</span> <span class="pre">args</span></code></dt>
+<dd>A vector of DMA channel arguments</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
 </div>
-<div class="section" id="print-performance">
-<h2>Print Performance<a class="headerlink" href="#print-performance" title="Permalink to this headline">¶</a></h2>
-<p>Function <code class="docutils literal notranslate"><span class="pre">test_harness_mgr::printPerf()</span></code> is to print total working cycles of each channel. It does not require any arguments but can only be called after <code class="docutils literal notranslate"><span class="pre">test_harness_mgr::waitForRes</span></code> returns.</p>
-<pre class="highlight literal-block">
-<span></span><span class="kt">void</span> <span class="nf">printPerf</span><span class="p">();</span>
-</pre>
+</div>
+<div class="section" id="waiting-for-completion">
+<h2>Waiting for Completion<a class="headerlink" href="#waiting-for-completion" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<code class="descname">void test_harness_mgr::waitForRes(int graph_timeout_millisec);</code></dt>
+<dd><p>Wait for all DMA engines to send and receive the expected amount of data, then wait for the AIE graph to finish, then get back the results to the host application.</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">graph_timeout_millisec</span></code></dt>
+<dd>Timeout limit in milliseconds for AIE graph to finish. The timeout only applies to the completion of the AIE graph iterations. This function can block indefinitely if the DMA channels are configured to send or receive more data than what the AIE graph will consume or produce.</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="reporting-performance">
+<h2>Reporting Performance<a class="headerlink" href="#reporting-performance" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<code class="descname">void test_harness_mgr::printPerf();</code></dt>
+<dd><p>Print the total number of cycles elapsed between the start and the end of the data transfer for each DMA channel. Can only be called after <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">test_harness_mgr::waitForRes()</span></code> returns.</p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -176,7 +268,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on April 13, 2023.
+      <span class="lastupdated">Last updated on April 24, 2023.
       </span></p>
   </div>
 

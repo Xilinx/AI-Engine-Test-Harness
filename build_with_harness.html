@@ -58,7 +58,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
 <p class="caption"><span class="caption-text">User Guide</span></p>
@@ -70,16 +70,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <li class="toctree-l2"><a class="reference internal" href="#instrumenting-the-ai-engine-graph">Instrumenting the AI Engine Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#test-harness-header-file">Test Harness Header File</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mapping-plios">Mapping PLIOs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#connecting-plios">Connecting PLIOs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connecting-unused-plios">Connecting unused PLIOs</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#building-the-ai-engine-graph">Building the AI Engine Graph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#building-the-ps-application">Building the PS Application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#packaging-the-test">Packaging the Test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-the-sw-application">Creating the SW Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-on-hardware">Testing on Hardware</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-the-ai-engine-graph">Building the AI Engine Graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-the-sw-application">Building the SW Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#packaging-the-test">Packaging the Test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#software-emulation">Software Emulation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step by Step Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="limitations.html">Limitations</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Additional Topics</span></p>
 <ul>
@@ -116,7 +120,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <h1>Using the Test Harness<a class="headerlink" href="#using-the-test-harness" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="environment-setup">
 <h2>Environment Setup<a class="headerlink" href="#environment-setup" title="Permalink to this headline">¶</a></h2>
-<p>Before start building, you need to source <code class="docutils literal notranslate"><span class="pre">setup.sh</span></code> and export <code class="docutils literal notranslate"><span class="pre">SDKTARGETSYSROOT</span></code> according to your installation of Versal common image for Vitis embedded platforms.</p>
+<p>Before building the design with the AIE test harness, you need to source the <code class="docutils literal notranslate"><span class="pre">setup.sh</span></code> script included in this repository. You should also ensure that Vitis, XRT and Versal <code class="docutils literal notranslate"><span class="pre">SDKTARGETSYSROOT</span></code> are properly set up.</p>
+<pre class="highlight literal-block">
+<span></span><span class="nb">source</span> &lt;path to Versal common image&gt;/environment-setup-cortexa72-cortexa53-xilinx-linux
+<span class="nb">source</span> &lt;path to Vitis installation&gt;/settings64.sh
+<span class="nb">source</span> &lt;path to XRT installation&gt;/setup.sh
+
+<span class="nb">source</span> &lt;<span class="nb">test</span> harness repo folder&gt;/setup.sh
+</pre>
 </div>
 <div class="section" id="instrumenting-the-ai-engine-graph">
 <h2>Instrumenting the AI Engine Graph<a class="headerlink" href="#instrumenting-the-ai-engine-graph" title="Permalink to this headline">¶</a></h2>
@@ -124,63 +135,150 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <div class="section" id="test-harness-header-file">
 <h3>Test Harness Header File<a class="headerlink" href="#test-harness-header-file" title="Permalink to this headline">¶</a></h3>
 <p>The harness graph header must be included in the AIE graph sources:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#include &quot;vck190_test_harness_graph.hpp&quot;</span>
-</pre></div>
-</div>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;vck190_test_harness_graph.hpp&quot;</span>
+</pre>
 </div>
 <div class="section" id="mapping-plios">
 <h3>Mapping PLIOs<a class="headerlink" href="#mapping-plios" title="Permalink to this headline">¶</a></h3>
 <p>The names and width of the usable PLIOs are predefined in the test harness. The original AIE graph must be mapped to these predefined PLIOs.</p>
-<p>The graph must be modified to ensure that all PLIOs are 128 bits wide and use one of the PLIO names predefined in the harness:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pl_in0</span> <span class="o">=</span> <span class="n">input_plio</span><span class="p">::</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Column_12_TO_AIE&quot;</span>   <span class="p">,</span> <span class="n">adf</span><span class="p">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s2">&quot;DataIn0.txt&quot;</span><span class="p">);</span>
-<span class="n">pl_in1</span> <span class="o">=</span> <span class="n">input_plio</span><span class="p">::</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Column_13_TO_AIE&quot;</span>   <span class="p">,</span> <span class="n">adf</span><span class="p">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s2">&quot;DataIn1.txt&quot;</span><span class="p">);</span>
-<span class="n">pl_out</span> <span class="o">=</span> <span class="n">output_plio</span><span class="p">::</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Column_28_FROM_AIE&quot;</span><span class="p">,</span> <span class="n">adf</span><span class="p">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s2">&quot;DataOut0.txt&quot;</span><span class="p">);</span>
-</pre></div>
-</div>
-<p>The predefined PLIO names are listed in <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>. The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::in_names</span></code> is the list of PLIO names which can be used to send data to AI Engine and <code class="docutils literal notranslate"><span class="pre">out_names</span></code> is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.</p>
-</div>
-<div class="section" id="connecting-plios">
-<h3>Connecting PLIOs<a class="headerlink" href="#connecting-plios" title="Permalink to this headline">¶</a></h3>
-<p>All the PLIO ports defined in the harness must be connected. In case the AIE graph does not use all the PLIOs defined in the harness, an instance of the <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> helper class must be added in the <code class="docutils literal notranslate"><span class="pre">graph.cpp</span></code> file. This class will connect all the PLIOs which are not used by the original AIE graph.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> class takes two template arguments: <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> is the number of input PLIOs in the AIE graph and <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> of output PLIOs in the AIE graph.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> class constructor takes two arguments: <code class="docutils literal notranslate"><span class="pre">used_in_plio_names</span></code> which is a vector of strings containing the names of the input PLIOs used by the AIE graph, and <code class="docutils literal notranslate"><span class="pre">used_out_plio_names</span></code> which is a vector of strings containing the names of the output PLIOs used by the AIE graph.</p>
+<p>The graph must be modified to ensure that all PLIOs are 128 bits wide and use one of the PLIO names predefined in the harness.</p>
+<p>The predefined PLIO names are listed in <a class="reference external" href="https://github.com/Xilinx/Test_Harness/blob/main/include/vck190_test_harness_port_name.hpp">include/vck190_test_harness_port_name.hpp</a>. The <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::in_names</span></code> is the list of PLIO names which can be used to send data to AI Engine and <code class="docutils literal notranslate"><span class="pre">out_names</span></code> is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness.</p>
+<p><strong>Example</strong></p>
 <pre class="highlight literal-block">
-<span></span><span class="n">template</span> <span class="o">&lt;</span><span class="nb">int</span> <span class="n">used_in_plio</span><span class="p">,</span> <span class="nb">int</span> <span class="n">used_out_plio</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">occupyUnusedPLIO</span><span class="p">;</span>
-
-<span class="n">template</span> <span class="o">&lt;</span><span class="nb">int</span> <span class="n">used_in_plio</span><span class="p">,</span> <span class="nb">int</span> <span class="n">used_out_plio</span><span class="o">&gt;</span>
-<span class="n">occupyUnusedPLIO</span><span class="p">::</span><span class="n">occupyUnusedPLIO</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">used_in_plio_names</span><span class="p">,</span>  <span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">used_out_plio_names</span><span class="p">);</span>
+<span></span><span class="n">pl_in0</span> <span class="o">=</span> <span class="n">input_plio</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;Column_12_TO_AIE&quot;</span>   <span class="p">,</span> <span class="n">adf</span><span class="o">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s">&quot;DataIn0.txt&quot;</span><span class="p">);</span>
+<span class="n">pl_in1</span> <span class="o">=</span> <span class="n">input_plio</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;Column_13_TO_AIE&quot;</span>   <span class="p">,</span> <span class="n">adf</span><span class="o">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s">&quot;DataIn1.txt&quot;</span><span class="p">);</span>
+<span class="n">pl_out</span> <span class="o">=</span> <span class="n">output_plio</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;Column_28_FROM_AIE&quot;</span><span class="p">,</span> <span class="n">adf</span><span class="o">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s">&quot;DataOut0.txt&quot;</span><span class="p">);</span>
 </pre>
-<p>NOTE: the length of the <code class="docutils literal notranslate"><span class="pre">used_in_plio_names</span></code> vector should match the value of the <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> template, and the length of the <code class="docutils literal notranslate"><span class="pre">used_out_plio_names</span></code> vector should match the value of the <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> template.</p>
+</div>
+<div class="section" id="connecting-unused-plios">
+<h3>Connecting unused PLIOs<a class="headerlink" href="#connecting-unused-plios" title="Permalink to this headline">¶</a></h3>
+<p>All the PLIO ports defined in the harness must be connected. In case the AIE graph does not use all the PLIOs defined in the harness, an instance of the <code class="docutils literal notranslate"><span class="pre">vck190_test_harness::occupyUnusedPLIO</span></code> helper class must be added in the <code class="docutils literal notranslate"><span class="pre">graph.cpp</span></code> file. This class will connect all the PLIOs which are not used by the original AIE graph.</p>
+<pre class="highlight literal-block">
+<span></span><span class="k">template</span> <span class="o">&lt;</span><span class="kt">int</span> <span class="n">used_in_plio</span><span class="p">,</span> <span class="kt">int</span> <span class="n">used_out_plio</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="n">occupyUnusedPLIO</span><span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="kt">int</span> <span class="n">used_in_plio</span><span class="p">,</span> <span class="kt">int</span> <span class="n">used_out_plio</span><span class="o">&gt;</span>
+<span class="n">occupyUnusedPLIO</span><span class="o">::</span><span class="n">occupyUnusedPLIO</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">used_in_plio_names</span><span class="p">,</span>  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">used_out_plio_names</span><span class="p">);</span>
+</pre>
+<p><strong>Templates</strong></p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code></dt>
+<dd>The number of input PLIOs in the AIE graph</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code></dt>
+<dd>The number of output PLIOs in the AIE graph</dd>
+</dl>
+<p><strong>Parameters</strong></p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">used_in_plio_names</span></code></dt>
+<dd>Vector of strings containing the names of the input PLIOs used by the AIE graph. The length of the vector should match the value of the <code class="docutils literal notranslate"><span class="pre">used_in_plio</span></code> template</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">used_out_plio_names</span></code></dt>
+<dd>Vector of strings containing the names of the output PLIOs used by the AIE graph. The length of the vector should match the value of the <code class="docutils literal notranslate"><span class="pre">used_out_plio</span></code> template.</dd>
+</dl>
+<p><strong>Example</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;vck190_test_harness_graph.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">cust_in</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Column_12_TO_AIE&quot;</span><span class="p">,</span> <span class="s">&quot;Column_13_TO_AIE&quot;</span><span class="p">};</span>
+<span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">cust_out</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Column_28_FROM_AIE&quot;</span><span class="p">};</span>
+<span class="n">vck190_test_harness</span><span class="o">::</span><span class="n">occupyUnusedPLIO</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;</span> <span class="n">unusedPLIOs</span><span class="p">(</span><span class="n">cust_in</span><span class="p">,</span> <span class="n">cust_out</span><span class="p">);</span>
+</pre>
 </div>
 </div>
+<div class="section" id="creating-the-sw-application">
+<h2>Creating the SW Application<a class="headerlink" href="#creating-the-sw-application" title="Permalink to this headline">¶</a></h2>
+<p>A SW application running on the embedded ARM core of the Versal is necessary to run the test. This SW application must be developped using the <a class="reference internal" href="sw_api.html#sw-apis"><span class="std std-ref">test harness software APIs</span></a>.</p>
+<p>The application usually ressembles the structure and contents of graph.cpp file used in x86sim and AIEsim. The main difference is that a difference set of APIs is used to transfer data and interact with the AIE graph.</p>
+<p>For additional details, refer to the <a class="reference internal" href="step_by_step.html#ps-app"><span class="std std-ref">step by step example</span></a> section of this documentation, or to one of the examples included in this repo, such as <a class="reference external" href="https://github.com/Xilinx/Test_Harness/blob/main/examples/super-sampling-rate-fir/SingleKernel/ps/host.cpp">examples/super-sampling-rate-fir/SingleKernel/ps/host.cpp</a>.</p>
+</div>
+<div class="section" id="testing-on-hardware">
+<h2>Testing on Hardware<a class="headerlink" href="#testing-on-hardware" title="Permalink to this headline">¶</a></h2>
+<p>Once the AIE graph has been modified and the SW application has been created, the test can be built and run on the hardware board.</p>
+<p>Building the test is done in three simple steps:</p>
+<ol class="arabic simple">
+<li>Build the AIE graph</li>
+<li>Build the SW application</li>
+<li>Package the libadf.a, test.exe and other files to create a bootable SD card image</li>
+</ol>
 <div class="section" id="building-the-ai-engine-graph">
-<h2>Building the AI Engine Graph<a class="headerlink" href="#building-the-ai-engine-graph" title="Permalink to this headline">¶</a></h2>
-<p>To build the libadf.a for use with the test harness, it must be compiled using the prebuilt XSA as the input platform, and setting the –event-trace and –event-trace-port options as shown below:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aiecompiler</span> <span class="o">--</span><span class="n">platform</span><span class="o">=&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">test</span> <span class="n">harness</span> <span class="n">repo</span><span class="o">&gt;/</span><span class="nb">bin</span><span class="o">/</span><span class="n">vck190_test_harness</span><span class="o">.</span><span class="n">xsa</span> <span class="o">--</span><span class="n">event</span><span class="o">-</span><span class="n">trace</span><span class="o">=</span><span class="n">runtime</span> <span class="o">--</span><span class="n">event</span><span class="o">-</span><span class="n">trace</span><span class="o">-</span><span class="n">port</span><span class="o">=</span><span class="n">gmio</span> <span class="p">[</span><span class="n">other</span> <span class="n">user</span> <span class="n">options</span><span class="p">]</span>
-</pre></div>
+<h3>Building the AI Engine Graph<a class="headerlink" href="#building-the-ai-engine-graph" title="Permalink to this headline">¶</a></h3>
+<p>To build the libadf.a for use with the test harness, it must be compiled using the prebuilt XSA as the input platform, with the <code class="docutils literal notranslate"><span class="pre">hw</span></code> target, and setting the –event-trace and –event-trace-port options as shown below:</p>
+<pre class="highlight literal-block">
+<span></span>aiecompiler --platform<span class="o">=</span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/bin/vck190_test_harness.xsa
+            --target<span class="o">=</span>hw
+            --event-trace<span class="o">=</span>runtime
+            --event-trace-port<span class="o">=</span>gmio
+            -include<span class="o">=</span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/include/
+            <span class="o">[</span>other user options<span class="o">]</span>
+</pre>
 </div>
-</div>
-<div class="section" id="building-the-ps-application">
-<h2>Building the PS Application<a class="headerlink" href="#building-the-ps-application" title="Permalink to this headline">¶</a></h2>
-<p>To build ps application, you need source Xilinx Runtime before compiling. The rest is regular c++ coding.</p>
+<div class="section" id="building-the-sw-application">
+<h3>Building the SW Application<a class="headerlink" href="#building-the-sw-application" title="Permalink to this headline">¶</a></h3>
+<p>The SW application must be compiled with the ARM cross-compiler and using the Xilinx Runtime (XRT) libraries.</p>
+<pre class="highlight literal-block">
+<span></span><span class="nb">source</span> &lt;path to Versal common image&gt;/environment-setup-cortexa72-cortexa53-xilinx-linux
+
+<span class="si">${</span><span class="nv">CXX</span><span class="si">}</span> test.cpp -c -I<span class="si">${</span><span class="nv">XILINX_XRT</span><span class="si">}</span>/include -I<span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/include -o test.o
+<span class="si">${</span><span class="nv">CXX</span><span class="si">}</span> test.o -lxrt_coreutil -L<span class="si">${</span><span class="nv">XILINX_XRT</span><span class="si">}</span>/lib -o test.exe
+</pre>
 </div>
 <div class="section" id="packaging-the-test">
-<h2>Packaging the Test<a class="headerlink" href="#packaging-the-test" title="Permalink to this headline">¶</a></h2>
-<p>Test harness provide support packaging for software emulation and hardware. To be notice that software emulation needs AI Engine application to be complied under target <code class="docutils literal notranslate"><span class="pre">x86sim</span></code>. Please take reference from examples cases for details. You need source Vitis and Xilinx Runtime setup.sh before packaging, and setup proper <code class="docutils literal notranslate"><span class="pre">SDKTARGETSYSROOT</span></code> according to build environment.</p>
-<ol class="arabic simple">
-<li>Software emulation:</li>
-</ol>
-<p>Package flow for software emulation will generate <code class="docutils literal notranslate"><span class="pre">vck190_test_harness.xclbin</span></code> to run software emulation and put all files needed to user specific directory.</p>
+<h3>Packaging the Test<a class="headerlink" href="#packaging-the-test" title="Permalink to this headline">¶</a></h3>
+<p>The AIE test harness includes a utility script which can be used to package the test files and generate a bootable SD card image to run the test on the hardware board.</p>
 <pre class="highlight literal-block">
-<span></span>test_harness/package_sw_emu.sh &lt;path <span class="k">for</span> sw_emu package files&gt; &lt;your libadf.a&gt; &lt;your host exe&gt; &lt;other files needed <span class="k">for</span> test&gt;
+<span></span>test_harness/package_hw.sh &lt;output dir&gt;
+                           &lt;libadf.a&gt;
+                           &lt;text.exe&gt;
+                           &lt;other files needed by the test&gt;
 </pre>
-<ol class="arabic simple" start="2">
-<li>Hardware:</li>
-</ol>
-<p>Package flow for hardware is slightly different than software emulation. You need download the pre-compiled <code class="docutils literal notranslate"><span class="pre">vck190_test_harness.xsa</span></code> from Xilinx or go to <code class="docutils literal notranslate"><span class="pre">test_harness</span></code> and build it locally before packaging for hardware. Package flow for hardware will generate SD card image to run on board.</p>
+<p><strong>Parameters</strong></p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;output</span> <span class="pre">dir&gt;</span></code></dt>
+<dd>The folder in which the output of the packaging script and the bootable SD card image should be generated</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;libadf.a&gt;</span></code></dt>
+<dd>The libadf.a resulting from the compilation of the AIE graph</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;test.exe&gt;</span></code></dt>
+<dd>The executable resulting from building the SW application</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;other</span> <span class="pre">files</span> <span class="pre">needed</span> <span class="pre">by</span> <span class="pre">the</span> <span class="pre">test&gt;</span></code></dt>
+<dd>A list of other files needed by the test and to be packaged in the SD card image. This can be for instance input data files read by the test application</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="software-emulation">
+<h2>Software Emulation<a class="headerlink" href="#software-emulation" title="Permalink to this headline">¶</a></h2>
+<p>The AIE test harness also provides support for packaging and running the test in the software emulation mode.</p>
+<p>In the software emulation mode, the AIE graph is compiled for x86sim and the SW application is compiled using the native compiler of the host system.</p>
+<p>This mode allows testing the SW application and making sure that it works correctly before running the test on hardware.</p>
+<p class="rubric">Building the AI Engine Graph</p>
+<p>Building the AIE graph for software emulation is similar to building fit or HW, except that the <code class="docutils literal notranslate"><span class="pre">x86sim</span></code> target should be used:</p>
 <pre class="highlight literal-block">
-<span></span>test_harness/package_hw.sh &lt;path <span class="k">for</span> hw package files&gt; &lt;your libadf.a&gt; &lt;your host exe&gt; &lt;other files needed <span class="k">for</span> test&gt;
+<span></span>aiecompiler --platform<span class="o">=</span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/bin/vck190_test_harness.xsa
+            --target<span class="o">=</span>x86sim
+            --event-trace<span class="o">=</span>runtime
+            --event-trace-port<span class="o">=</span>gmio
+            -include<span class="o">=</span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/include/
+            <span class="o">[</span>other user options<span class="o">]</span>
+</pre>
+<p class="rubric">Building the SW Application</p>
+<p>Building the SW application for software emulation is similar to building it for HW, except that the native g++ compiler should be used:</p>
+<pre class="highlight literal-block">
+<span></span>g++ test.cpp -c -I<span class="si">${</span><span class="nv">XILINX_XRT</span><span class="si">}</span>/include -I<span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/include -o test.o
+g++ test.o -lxrt_coreutil -L<span class="si">${</span><span class="nv">XILINX_XRT</span><span class="si">}</span>/lib -o test.exe
+</pre>
+<p class="rubric">Packaging the Test</p>
+<p>Packaging the test for software emulation is similar to packaging it for HW, except that the package_sw_emu.sh script should be used:</p>
+<pre class="highlight literal-block">
+<span></span>test_harness/package_sw_emu.sh &lt;output dir&gt;
+                               &lt;libadf.a&gt;
+                               &lt;text.exe&gt;
+                               &lt;other files needed by the test&gt;
+</pre>
+<p class="rubric">Running SW emulation</p>
+<p>To run the test in software emulation mode, first set the <code class="docutils literal notranslate"><span class="pre">XCL_EMULATION_MODE</span></code> variable before running the natively compiled test application:</p>
+<pre class="highlight literal-block">
+<span></span><span class="nb">cd</span> &lt;sw emu output dir&gt;
+<span class="nb">export</span> <span class="nv">XCL_EMULATION_MODE</span><span class="o">=</span>sw_emu
+./test.exe &lt;optional args&gt;
 </pre>
 </div>
 </div>
@@ -207,7 +305,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on April 13, 2023.
+      <span class="lastupdated">Last updated on April 24, 2023.
       </span></p>
   </div>
 

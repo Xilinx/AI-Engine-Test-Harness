@@ -30,7 +30,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Overview" href="overview.html" /> 
+    <link rel="next" title="Release Notes" href="release_notes.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -57,7 +57,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
 <p class="caption"><span class="caption-text">User Guide</span></p>
@@ -66,7 +66,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <li class="toctree-l1"><a class="reference internal" href="sw_api.html">Software APIs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_with_harness.html">Using the Test Harness</a></li>
 <li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step by Step Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="limitations.html">Limitations</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Additional Topics</span></p>
 <ul>
@@ -99,29 +98,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
              
   <div class="section" id="aie-test-harness">
 <h1>AIE Test Harness<a class="headerlink" href="#aie-test-harness" title="Permalink to this headline">¶</a></h1>
+<p>This repository provides a test harness to help AIE developers easily build and test their AIE graph on VCK190 boards. This test harness is designed to provide a very simple and natural transition from the AIE simulation environment to testing on hardware. With the test harness, AIE graphs running in simulation can be taken to hardware in just a few minutes and with only a few minor modifications.</p>
+<p>The test harness consists of three main elements:</p>
+<ol class="arabic simple">
+<li>A precompiled .xsa implementing a DMA engine to transfer data between DDR and a set of predefined AI Engine PLIOs.</li>
+<li>A set of software APIs to facilitate the development of the application used to initialize the device and run the tests.</li>
+<li>A script to easily package the user’s libadf.a and test application, and generate the boot image for VCK190.</li>
+</ol>
+<a class="reference internal image-reference" href="_images/sys_diagram.png"><img alt="stream sync Structure" class="align-center" src="_images/sys_diagram.png" style="width: 80%;" /></a>
+<p>The test harness leverages a precompiled .xsa file which is used as an input platform when compiling the AIE graph. This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image. This saves the most time-consuming part of the build process for on-board tests and allows for fast and predictable iterations.</p>
+<p>The precompiled .xsa implements a DMA engine with 32 channels. 16 channels send data from DDR to AIE and 16 send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.</p>
+<p>The software APIs enable to easily build SW applications to test an AIE graph using the test harness. The APIs are designed to structure test applications following these 5 simple steps:</p>
+<ol class="arabic simple">
+<li>Initialize the device and load the xclbin</li>
+<li>Configure how each DMA channel with transfer data to or from the AIE graph</li>
+<li>Run the AIE graph</li>
+<li>Wait for all the data to be received</li>
+<li>Check correctness of results and performance for each channel</li>
+</ol>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Introduction</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-</ul>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">User Guide</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="hw_feature.html">Hardware Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sw_api.html">Software APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_with_harness.html">Using the Test Harness</a></li>
-<li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step by Step Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="limitations.html">Limitations</a></li>
-</ul>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Additional Topics</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trademark.html">Trademark Notice</a></li>
-</ul>
 </div>
 </div>
 
@@ -139,14 +138,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   </style>
 				  
 				  <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="overview.html" class="btn btn-neutral float-right" title="Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="release_notes.html" class="btn btn-neutral float-right" title="Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on April 13, 2023.
+      <span class="lastupdated">Last updated on April 24, 2023.
       </span></p>
   </div>
 

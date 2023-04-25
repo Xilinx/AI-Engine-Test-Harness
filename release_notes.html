@@ -18,7 +18,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-5RHQV7');</script>
 <!-- End Google Tag Manager -->
-  <title>Trademark Notice &mdash; AIE Test Harness v2023.1 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Release Notes &mdash; AIE Test Harness v2023.1 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -30,7 +30,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="License" href="license.html" /> 
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="AIE Test Harness" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -56,8 +57,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Introduction</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Release Notes</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#limitations">Limitations</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
 <p class="caption"><span class="caption-text">User Guide</span></p>
@@ -68,9 +73,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step by Step Example</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Additional Topics</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Trademark Notice</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trademark.html">Trademark Notice</a></li>
 </ul>
 
         </div>
@@ -87,7 +92,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Trademark Notice</li>
+      <li>Release Notes</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -96,14 +101,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="toctree-wrapper compound">
+  <div class="toctree-wrapper compound" id="release-notes">
 </div>
-<div class="section" id="trademark-notice">
-<h1>Trademark Notice<a class="headerlink" href="#trademark-notice" title="Permalink to this headline">¶</a></h1>
-<p>Xilinx, the Xilinx logo, Artix, ISE, Kintex, Spartan, Virtex, Zynq, and
-other designated brands included herein are trademarks of Xilinx in the
-United States and other countries.</p>
-<p>All other trademarks are the property of their respective owners.</p>
+<div class="section" id="id1">
+<h1>Release Notes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>This is the first release of the AIE Test Harness. This release supports the following:</p>
+<ul class="simple">
+<li>AIE graphs with up to 16 input PLIOs and 16 output PLIOs</li>
+<li>PLIO throughput of 4GB/sec (32 bits &#64; 1GHz)</li>
+<li>Input and output datasets up to 128KB in size</li>
+<li>User-defined number of replay for each input and output dataset</li>
+<li>User-defined start delay for each input and output PLIO</li>
+<li>Built-in support for AIE event trace</li>
+<li>SW APIs to develop a test application to run the AIE graph and transfer data to and from the AIE graph</li>
+<li>Utility scripts to build the test for SW emulation and create a SD card image for VCK190</li>
+</ul>
+</div>
+<div class="section" id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>The precompiled .xsa only supports the VCK190 board</li>
+<li>AIE graphs with GMIOs are not supported</li>
+<li>Datasets larger than 128KB are not supported. For longer input / output sequences, the “replay” functionality should be used</li>
+<li>The size (in bytes) of input and output datasets must be multiple of 16</li>
+</ul>
+</div>
 </div>
 
 
@@ -120,7 +144,8 @@ United States and other countries.</p>
                   </style>
 				  
 				  <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="license.html" class="btn btn-neutral float-left" title="License" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="AIE Test Harness" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

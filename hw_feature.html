@@ -58,23 +58,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
 <p class="caption"><span class="caption-text">User Guide</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Hardware Features</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#uram-buffer">URAM buffer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#fix-connection-with-aie-interface-tile">Fix connection with AIE interface tile</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pre-set-delays">Pre-set delays</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cycle-counter">Cycle counter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#replay">Replay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#precompiled-xsa">Precompiled XSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pl-dma-engine">PL DMA Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data-size">Data Size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#start-delay">Start Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#replay">Replay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-counter">Performance Counter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dma-channel-operating-sequences">DMA Channel Operating Sequences</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#placement-of-aie-plios">Placement of AIE PLIOs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sw_api.html">Software APIs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_with_harness.html">Using the Test Harness</a></li>
 <li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step by Step Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="limitations.html">Limitations</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Additional Topics</span></p>
 <ul>
@@ -109,26 +113,76 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </div>
 <div class="section" id="hardware-features">
 <h1>Hardware Features<a class="headerlink" href="#hardware-features" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="uram-buffer">
-<h2>URAM buffer<a class="headerlink" href="#uram-buffer" title="Permalink to this headline">¶</a></h2>
-<p>Test harness on PL consists of 16 output channels and 16 input channels. Each channel has its own URAM based buffer which is 128 bits wide and 8192 deep. For output channels, test harness will first load data from DDR to buffer then load data from buffer to AI Engine through AXI-Stream. For input channels, test harness will first store data from AI Engine to buffer then load data from buffer to DDR. With the help of buffer on PL, test harness can communicate with AI Engine without suffering from DDR accessing latency.</p>
+<div class="section" id="precompiled-xsa">
+<h2>Precompiled XSA<a class="headerlink" href="#precompiled-xsa" title="Permalink to this headline">¶</a></h2>
+<p>The test harness leverages a precompiled .xsa file which is used as an input platform when compiling the AIE graph. This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image. This saves the most time-consuming part of the build process for on-board tests and allows for fast and predictable iterations.</p>
 </div>
-<div class="section" id="fix-connection-with-aie-interface-tile">
-<h2>Fix connection with AIE interface tile<a class="headerlink" href="#fix-connection-with-aie-interface-tile" title="Permalink to this headline">¶</a></h2>
-<p>All 16 output channels and 16 input channels of pre-buildt <code class="docutils literal notranslate"><span class="pre">vck190_test_harness.xsa</span></code> are connected to fixed AIE interface tile. In order to utilize these channel, AIE application need to specify its input_plio and output_plio with the valid names specified in <code class="docutils literal notranslate"><span class="pre">include/vck190_test_harness_port_name.hpp</span></code>. Take <code class="docutils literal notranslate"><span class="pre">Column_12_TO_AIE</span></code> as example, <code class="docutils literal notranslate"><span class="pre">Column_12</span></code> means it’s name for AIE interface tile at column 12 and <code class="docutils literal notranslate"><span class="pre">TO_AIE</span></code> means that it’s used for input_plio to feed data to AIE. Current implementation of test harness utilize column 12 to column 27 to feed input to AIE and column 28 to column 43 to receive data from AIE.</p>
-<a class="reference internal image-reference" href="_images/connection.png"><img alt="stream sync Structure" class="align-center" src="_images/connection.png" style="width: 80%;" /></a>
+<div class="section" id="pl-dma-engine">
+<h2>PL DMA Engine<a class="headerlink" href="#pl-dma-engine" title="Permalink to this headline">¶</a></h2>
+<p>The precompiled .xsa implements a DMA engine with 32 channels. 16 Tx channels send data from DDR to AIE and 16 Rx send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.</p>
+<ul class="simple">
+<li>Each channel is connected to a unique AIE PLIO port using 128-bits wide AXI-Stream clocked at 250Mhz. This delivers an effective throughput of 4GB/sec (32-bits &#64; 1GHz)</li>
+<li>Each channel contains its own 128KB URAM memory used to buffer data. This allows transferring data to or from the AIE without unwanted external performance size-effects and deliver maximum throughput.</li>
+<li>The channels are parametrized, allowing the user to control at runtime how data is transferred to or from the AI Engine. The software APIs are used configure these parameters (size, delay and replay).</li>
+</ul>
+<div class="section" id="data-size">
+<h3>Data Size<a class="headerlink" href="#data-size" title="Permalink to this headline">¶</a></h3>
+<p>The data size parameter specifies the size in bytes of the dataset to be transferred (sent or received). The data size cannot be larger than 128KB and must be a multiple of 16 bytes.</p>
 </div>
-<div class="section" id="pre-set-delays">
-<h2>Pre-set delays<a class="headerlink" href="#pre-set-delays" title="Permalink to this headline">¶</a></h2>
-<p>Each test harness channel can wait for a pre-set number of cycles before it starts to send/receive data. It will help developers to compose more granular tests.</p>
-</div>
-<div class="section" id="cycle-counter">
-<h2>Cycle counter<a class="headerlink" href="#cycle-counter" title="Permalink to this headline">¶</a></h2>
-<p>Each channel of test harness has its own built-in cycle counter which will start counting once the channel starts to send / receive data. It will stop counting once all sending / receiving are finished. The counter will not stop even its channel got stuck on sending / receiving. It can help profile real throughput of AI Engine application.</p>
+<div class="section" id="start-delay">
+<h3>Start Delay<a class="headerlink" href="#start-delay" title="Permalink to this headline">¶</a></h3>
+<p>The start delay parameter specifies the number of cycles that each channel should wait before it starts to send/receive data. This can be used to compose more granular tests and to model more realistic performance scenarios. By default, the start delay is 0.</p>
 </div>
 <div class="section" id="replay">
-<h2>Replay<a class="headerlink" href="#replay" title="Permalink to this headline">¶</a></h2>
-<p>The URAM buffer for each channel is limited. To support longer tests, each channel can repeat sending / receiving data for a given repetition count. By sending / receiving the same data frames multiple times, test harness can mimic a longer test input / output.</p>
+<h3>Replay<a class="headerlink" href="#replay" title="Permalink to this headline">¶</a></h3>
+<p>The replay parameter specifies how many times each dataset should be replayed (sent or received). The maximum size of a dataset is 128KB. The replay parameter is useful to generate longer test sequences by sending or receiving a dataset multiple times. By default, each dataset is transfered once.</p>
+</div>
+<div class="section" id="performance-counter">
+<h3>Performance Counter<a class="headerlink" href="#performance-counter" title="Permalink to this headline">¶</a></h3>
+<p>Each channel has its own built-in performance counter which will start counting cycles once the channel starts to send / receive data. It will stop counting once all sending / receiving are finished. The counter keeps counting even when the channel is stalled by the AIE graph. The performance counter helps profile the real throughput of the AI Engine application.</p>
+</div>
+<div class="section" id="dma-channel-operating-sequences">
+<h3>DMA Channel Operating Sequences<a class="headerlink" href="#dma-channel-operating-sequences" title="Permalink to this headline">¶</a></h3>
+<p>Tx Channels sending data to the AI Engine work as follows:</p>
+<ol class="arabic simple">
+<li>Each channel loads a user-defined quantity of data from DDR and stores it in its local URAM buffer.</li>
+<li>After all data has been stored in the URAM buffer, each channel starts a countdown based on its ‘delay’ parameter. This allows Tx channels to start sending data to the AIE at different times.</li>
+<li>Once the countdown reaches 0, each channel loads data from the URAM buffer and sends it to AIE. Each channel can repeat this step for a user-specified number of rounds.</li>
+<li>Each channel reports the latency (cycle count) between when it sent the first data and when it sent the last data to the AIE.</li>
+</ol>
+<p>Rx Channels receiving data from the AI Engine work as follows:</p>
+<ol class="arabic simple">
+<li>Each channel starts a countdown based on its ‘delay’ parameter. This allows Rx channels to start receiving data from the AIE at different times.</li>
+<li>Once the countdown reaches 0, each channel starts receiving a user-defined quantity of data from the AIE and stores it in its local URAM buffer. Each channel can repeat this step for a user-specified number of rounds.</li>
+<li>After all output channels have finished receiving data from the AIE, they write the output data from the URAM buffers to DDR.</li>
+<li>Each channel reports the latency (cycle count) between when it received the first data and when it received the last data to the AIE.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="placement-of-aie-plios">
+<span id="plio-placement"></span><h2>Placement of AIE PLIOs<a class="headerlink" href="#placement-of-aie-plios" title="Permalink to this headline">¶</a></h2>
+<p>Each PLIO defined in the precompiled .xsa is assigned to a specific AIE interface file and is identified by a unique name. The name reflects the placement and the direction of the PLIO.</p>
+<ul class="simple">
+<li>PL to AIE PLIOs 1 to 16 are mapped to the AIE interface tiles on columns 12 to 27, respectively.</li>
+<li>AIE to PL PLIOs 1 to 16 are mapped to the AIE interface tiles on columns 28 to 43, respectively.</li>
+</ul>
+<a class="reference internal image-reference" href="_images/connection.png"><img alt="stream sync Structure" class="align-center" src="_images/connection.png" style="width: 80%;" /></a>
+<p>When declaring PLIOs in the AIE graph, the developer must use one these predefined PLIO names. This lets the developer control which AIE interface tiles are used and thereby, influence the results of the AIE mapper and router.</p>
+<p>The predefined PLIO names are listed in <a class="reference external" href="https://github.com/Xilinx/Test_Harness/blob/main/include/vck190_test_harness_port_name.hpp">include/vck190_test_harness_port_name.hpp</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">in_names</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Column_12_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_13_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_14_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_15_TO_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_16_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_17_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_18_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_19_TO_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_20_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_21_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_22_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_23_TO_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_24_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_25_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_26_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_27_TO_AIE&quot;</span><span class="p">};</span>
+<span class="n">static</span> <span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">out_names</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Column_28_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_29_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_30_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_31_FROM_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_32_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_33_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_34_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_35_FROM_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_36_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_37_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_38_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_39_FROM_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_40_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_41_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_42_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_43_FROM_AIE&quot;</span><span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Example: the PLIO named <code class="docutils literal notranslate"><span class="pre">Column_12_TO_AIE</span></code> is mapped to the interface tile on column 12 and is used for to transfer data to the AIE.</p>
 </div>
 </div>
 
@@ -154,7 +208,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on April 13, 2023.
+      <span class="lastupdated">Last updated on April 24, 2023.
       </span></p>
   </div>
 
