@@ -17,10 +17,14 @@ export TEST_HARNESS_REPO_PATH ?= $(shell bash -c 'export MK_PATH=$(MK_PATH); ech
 endif
 
 include ${TEST_HARNESS_REPO_PATH}/test_harness/common.mk
+################### Download XSA #############################
+${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa:
+	cd ${TEST_HARNESS_REPO_PATH}/bin && ./download.sh
+
 ##################### Build AIE ##############################
 AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --pl-freq=250 --event-trace=runtime --event-trace-port=gmio --platform=$(TEST_HARNESS_REPO_PATH)/bin/vck190_test_harness.xsa
 
-libadf.a: ./aie/graph.cpp
+libadf.a: ./aie/graph.cpp ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa
 	@echo "Compiling: libadf.a"
 	mkdir -p $(dir $@)
 	aiecompiler $(AIE_CXX_FLAGS) -workdir=./Work $^ 
