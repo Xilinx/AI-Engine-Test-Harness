@@ -1,5 +1,5 @@
 {
-    "name": "Single Kernel", 
+    "name": "Adder Kernel", 
     "flow": "versal",
     "platform_allowlist": [
         "vck190"
