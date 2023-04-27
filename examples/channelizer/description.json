@@ -1,0 +1,28 @@
+{
+    "name": "M=16 SSR=8 Channelizer Prototype", 
+    "flow": "versal",
+    "platform_allowlist": [
+        "vck190"
+    ],
+    "testinfo": {
+        "disable": false,
+        "jobs": [
+            {
+                "index": 0,
+                "dependency": [],
+                "env": "",
+                "cmd": "",
+                "max_memory_MB": 32768,
+                "max_time_min": 300
+            }
+        ],
+        "targets": [
+            "vitis_aie_x86sim",
+            "vitis_aie_sim",
+            "vitis_sw_emu",
+            "vitis_hw_build",
+            "vitis_hw_run"
+        ],
+        "category": "canary"
+    }
+}
