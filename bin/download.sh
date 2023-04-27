@@ -13,3 +13,6 @@
 #
 
 echo "This is script that lead user to downloading url of pre-compiled .xsa"
+wget https://www.xilinx.com/bin/public/openDownload?filename=vck190_test_harness_xsa_2023_0418.zip
+unzip openDownload?filename=vck190_test_harness_xsa_2023_0418.zip
+mv vck190_test_harness_xsa_2023_0418/* ./
