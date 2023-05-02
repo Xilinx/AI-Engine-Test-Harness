@@ -41,11 +41,25 @@
 template <int W, int D>
 class buff_channel {
    public:
+#ifndef __SYNTHESIS__
+    ap_uint<W>* buff;
+#else
     ap_uint<W> buff[D];
+#endif
 
     buff_channel() {
+#ifndef __SYNTHESIS__
+        buff = (ap_uint<W>*)malloc(sizeof(ap_uint<W>) * D);
+#else
 #pragma HLS inline
 #pragma HLS bind_storage variable = buff type = RAM_1P impl = URAM
+#endif
+    }
+
+    ~buff_channel() {
+#ifndef __SYNTHESIS__
+        free(buff);
+#endif
     }
 
     void load_buff(ap_uint<W>* source, int size_in_frame) {
