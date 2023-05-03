@@ -74,8 +74,8 @@ function OptanonWrapper() { }
   <link rel="stylesheet" href="_static/css/pro.min.css" media="all" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="installation.html" />
-    <link rel="prev" title="AIE Test Harness" href="index.html" /> 
+    <link rel="next" title="Software APIs" href="sw_apis.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
 	</head>
 	<body>
 		<div class="xilinx-bs3"/>
@@ -252,17 +252,25 @@ function OptanonWrapper() { }
             
             
               <p class="caption"><span class="caption-text">Introduction</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#limitations">Limitations</a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
 <p class="caption"><span class="caption-text">User Guide</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="hw_features.html">Hardware Features</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Hardware Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#precompiled-xsa">Precompiled XSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pl-dma-engine">PL DMA Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data-size">Data Size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#start-delay">Start Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#replay">Replay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-counter">Performance Counter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dma-channel-operating-sequences">DMA Channel Operating Sequences</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#placement-of-aie-plios">Placement of AIE PLIOs</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="sw_apis.html">Software APIs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_the_harness.html">Using the Test Harness</a></li>
 <li class="toctree-l1"><a class="reference internal" href="step_by_step_example.html">Step by Step Example</a></li>
@@ -318,7 +326,7 @@ function OptanonWrapper() { }
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Release Notes</li>
+      <li>Hardware Features</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -335,32 +343,80 @@ function OptanonWrapper() { }
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="toctree-wrapper compound" id="release-notes">
+  <div class="toctree-wrapper compound" id="hw-features">
 </div>
-<div class="section" id="id1">
-<h1>Release Notes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="summary">
-<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
-<p>This is the first release of the AIE Test Harness. This release supports the following:</p>
-<ul class="simple">
-<li>AIE graphs with up to 16 input PLIOs and 16 output PLIOs</li>
-<li>PLIO throughput of 4GB/sec (32 bits &#64; 1GHz)</li>
-<li>Input and output datasets up to 128KB in size</li>
-<li>User-defined number of replay for each input and output dataset</li>
-<li>User-defined start delay for each input and output PLIO</li>
-<li>Built-in support for AIE event trace</li>
-<li>SW APIs to develop a test application to run the AIE graph and transfer data to and from the AIE graph</li>
-<li>Utility scripts to build the test for SW emulation and create a SD card image for VCK190</li>
-</ul>
+<div class="section" id="hardware-features">
+<h1>Hardware Features<a class="headerlink" href="#hardware-features" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="precompiled-xsa">
+<h2>Precompiled XSA<a class="headerlink" href="#precompiled-xsa" title="Permalink to this headline">¶</a></h2>
+<p>The test harness leverages a precompiled .xsa file which is used as an input platform when compiling the AIE graph. This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image. This saves the most time-consuming part of the build process for on-board tests and allows for fast and predictable iterations.</p>
 </div>
-<div class="section" id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pl-dma-engine">
+<h2>PL DMA Engine<a class="headerlink" href="#pl-dma-engine" title="Permalink to this headline">¶</a></h2>
+<p>The precompiled .xsa implements a DMA engine with 32 channels. 16 Tx channels send data from DDR to AIE and 16 Rx send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.</p>
 <ul class="simple">
-<li>The precompiled .xsa only supports the VCK190 board</li>
-<li>AIE graphs with GMIOs are not supported</li>
-<li>Datasets larger than 128KB are not supported. For longer input / output sequences, the “replay” functionality should be used</li>
-<li>The size (in bytes) of input and output datasets must be a multiple of 16</li>
+<li>Each channel is connected to a unique AIE PLIO port using 128-bits wide AXI-Stream clocked at 250Mhz. This delivers an effective throughput of 4GB/sec (32-bits &#64; 1GHz)</li>
+<li>Each channel contains its own 128KB URAM memory used to buffer data. This allows transferring data to or from the AIE without unwanted external performance size-effects and deliver maximum throughput.</li>
+<li>The channels are parametrized, allowing the user to control at runtime how data is transferred to or from the AI Engine. The software APIs are used configure these parameters (size, delay and replay).</li>
 </ul>
+<div class="section" id="data-size">
+<h3>Data Size<a class="headerlink" href="#data-size" title="Permalink to this headline">¶</a></h3>
+<p>The data size parameter specifies the size in bytes of the dataset to be transferred (sent or received). The data size cannot be larger than 128KB and must be a multiple of 16 bytes.</p>
+</div>
+<div class="section" id="start-delay">
+<h3>Start Delay<a class="headerlink" href="#start-delay" title="Permalink to this headline">¶</a></h3>
+<p>The start delay parameter specifies the number of cycles that each channel should wait before it starts to send/receive data. This can be used to compose more granular tests and to model more realistic performance scenarios. By default, the start delay is 0.</p>
+</div>
+<div class="section" id="replay">
+<h3>Replay<a class="headerlink" href="#replay" title="Permalink to this headline">¶</a></h3>
+<p>The replay parameter specifies how many times each dataset should be replayed (sent or received). The maximum size of a dataset is 128KB. The replay parameter is useful to generate longer test sequences by sending or receiving a dataset multiple times. By default, each dataset is transfered once.</p>
+</div>
+<div class="section" id="performance-counter">
+<h3>Performance Counter<a class="headerlink" href="#performance-counter" title="Permalink to this headline">¶</a></h3>
+<p>Each channel has its own built-in performance counter which will start counting cycles once the channel starts to send / receive data. It will stop counting once all sending / receiving are finished. The counter keeps counting even when the channel is stalled by the AIE graph. The performance counter helps profile the real throughput of the AI Engine application.</p>
+</div>
+<div class="section" id="dma-channel-operating-sequences">
+<h3>DMA Channel Operating Sequences<a class="headerlink" href="#dma-channel-operating-sequences" title="Permalink to this headline">¶</a></h3>
+<p>Tx Channels sending data to the AI Engine work as follows:</p>
+<ol class="arabic simple">
+<li>Each channel loads a user-defined quantity of data from DDR and stores it in its local URAM buffer.</li>
+<li>After all data has been stored in the URAM buffer, each channel starts a countdown based on its ‘delay’ parameter. This allows Tx channels to start sending data to the AIE at different times.</li>
+<li>Once the countdown reaches 0, each channel loads data from the URAM buffer and sends it to AIE. Each channel can repeat this step for a user-specified number of rounds.</li>
+<li>Each channel reports the latency (cycle count) between when it sent the first data and when it sent the last data to the AIE.</li>
+</ol>
+<p>Rx Channels receiving data from the AI Engine work as follows:</p>
+<ol class="arabic simple">
+<li>Each channel starts a countdown based on its ‘delay’ parameter. This allows Rx channels to start receiving data from the AIE at different times.</li>
+<li>Once the countdown reaches 0, each channel starts receiving a user-defined quantity of data from the AIE and stores it in its local URAM buffer. Each channel can repeat this step for a user-specified number of rounds.</li>
+<li>After all output channels have finished receiving data from the AIE, they write the output data from the URAM buffers to DDR.</li>
+<li>Each channel reports the latency (cycle count) between when it received the first data and when it received the last data to the AIE.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="placement-of-aie-plios">
+<span id="plio-placement"></span><h2>Placement of AIE PLIOs<a class="headerlink" href="#placement-of-aie-plios" title="Permalink to this headline">¶</a></h2>
+<p>Each PLIO defined in the precompiled .xsa is assigned to a specific AIE interface file and is identified by a unique name. The name reflects the placement and the direction of the PLIO.</p>
+<ul class="simple">
+<li>PL to AIE PLIOs 1 to 16 are mapped to the AIE interface tiles on columns 12 to 27, respectively.</li>
+<li>AIE to PL PLIOs 1 to 16 are mapped to the AIE interface tiles on columns 28 to 43, respectively.</li>
+</ul>
+<a class="reference internal image-reference" href="_images/connection.png"><img alt="stream sync Structure" class="align-center" src="_images/connection.png" style="width: 80%;" /></a>
+<p>When declaring PLIOs in the AIE graph, the developer must use one these predefined PLIO names. This lets the developer control which AIE interface tiles are used and thereby, influence the results of the AIE mapper and router.</p>
+<p>The predefined PLIO names are listed in <a class="reference external" href="https://github.com/Xilinx/Test_Harness/blob/main/include/vck190_test_harness_port_name.hpp">include/vck190_test_harness_port_name.hpp</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">in_names</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Column_12_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_13_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_14_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_15_TO_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_16_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_17_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_18_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_19_TO_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_20_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_21_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_22_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_23_TO_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_24_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_25_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_26_TO_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_27_TO_AIE&quot;</span><span class="p">};</span>
+<span class="n">static</span> <span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">out_names</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Column_28_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_29_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_30_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_31_FROM_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_32_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_33_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_34_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_35_FROM_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_36_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_37_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_38_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_39_FROM_AIE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Column_40_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_41_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_42_FROM_AIE&quot;</span><span class="p">,</span> <span class="s2">&quot;Column_43_FROM_AIE&quot;</span><span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Example: the PLIO named <code class="docutils literal notranslate"><span class="pre">Column_12_TO_AIE</span></code> is mapped to the interface tile on column 12 and is used for to transfer data to the AIE.</p>
 </div>
 </div>
 
@@ -380,10 +436,10 @@ function OptanonWrapper() { }
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="sw_apis.html" class="btn btn-neutral float-right" title="Software APIs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="AIE Test Harness" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
