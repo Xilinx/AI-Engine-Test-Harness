@@ -13,6 +13,8 @@
 
 .. _step_by_step:
 
+.. highlight:: none
+
 .. toctree::
    :hidden:
 
@@ -41,7 +43,7 @@ This example uses 1 input PLIO and 1 output PLIO. The width of each PLIO is set 
 2. Connect Unused PLIOs
 -----------------------
 
-Because this example does not use all the PLIOs implemented in the test harness, we need to put an additional graph to connect all unused PLIOs. For this purpose, the ``occupyUnusedPLIO`` helper class is instanciated in the :url_to_repo:`examples/super-sampling-rate-fir/SingleKernel/aie/graph.cpp` file. The template parameters indicate number of used input and output PLIOs, and the constructor parameters indicate the names of used input and output PLIOs.
+Because this example does not use all the PLIOs implemented in the test harness, we need to put an additional graph to connect all unused PLIOs. For this purpose, the ``occupyUnusedPLIO`` helper class is instantiated in the :url_to_repo:`examples/super-sampling-rate-fir/SingleKernel/aie/graph.cpp` file. The template parameters indicate number of used input and output PLIOs, and the constructor parameters indicate the names of used input and output PLIOs.
 
 .. code-block:: c++
 
@@ -55,7 +57,7 @@ Because this example does not use all the PLIOs implemented in the test harness,
 3. Create SW Application
 ------------------------
 
-A SW application running on the embedded ARM core of the Versal is necessary to run the test. The source code for this application is provided in the :url_to_repo:`examples/super-sampling-rate-fir/SingleKernel/ps/host.cpp` file. The application must be developped using the :ref:`test harness software APIs <sw_apis>`.
+A SW application running on the embedded ARM core of the Versal is necessary to run the test. The source code for this application is provided in the :url_to_repo:`examples/super-sampling-rate-fir/SingleKernel/ps/host.cpp` file. The application must be developed using the :ref:`test harness software APIs <sw_apis>`.
 
 .. code-block:: c++
 
@@ -67,7 +69,7 @@ A SW application running on the embedded ARM core of the Versal is necessary to 
     mgr.runTestHarness(args);
     mgr.waitForRes(10000);
 
-The application needs one instance of the :cpp:class:`test_harness_mgr` class. The last argument ``{"G"}`` is a string with the name of the graph instanciated in the graph.cpp file. If an incorrect graph name is provided, the application will report an error at runtime.
+The application needs one instance of the :cpp:class:`test_harness_mgr` class. The last argument ``{"G"}`` is a string with the name of the graph instantiated in the graph.cpp file. If an incorrect graph name is provided, the application will report an error at runtime.
 
 Then, a vector or :cpp:struct:`test_harness_args` is created to configure the DMA channels associated with each PLIO used by the AIE graph.
 As seen in step #1, the input of the graph is mapped to PLIO ``Column_12_TO_AIE``, and the output is mapped to ``Column_28_FROM_AIE``. The :cpp:enum:`channel_index` member of the :cpp:struct:`test_harness_args` descriptors must be set accordingly in the SW application.
@@ -81,7 +83,7 @@ The test harness is started with the :cpp:func:`test_harness_mgr::runAIEGraph` A
 4. Run Software Emulation
 --------------------------
 
-The ``package_sw_emu.sh`` utility is used to generate the files needed to run software emulation. The AIE graph must be compiled for the x86sim target and the SW application must be compiled with the native g++ compiler.
+The ``package_sw_emu.sh`` utility is used to generate the files needed to run software emulation. The AIE graph must be compiled for the x86sim target, and the SW application must be compiled with the native g++ compiler.
 
 .. code-block:: shell
 
@@ -91,7 +93,7 @@ The ``package_sw_emu.sh`` utility is used to generate the files needed to run so
 5. Package SD card image
 -------------------------
 
-The ``package_hw.sh`` utility is used to generate the bootable SD card image. The AIE graph must be compiled for the hw target and the SW application must be compiled with the ARM cross-compiler.
+The ``package_hw.sh`` utility is used to generate the bootable SD card image. The AIE graph must be compiled for the hw target, and the SW application must be compiled with the ARM cross-compiler.
 
 .. code-block:: shell
 

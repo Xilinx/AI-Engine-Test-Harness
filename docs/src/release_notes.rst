@@ -40,4 +40,4 @@ Limitations
 - The precompiled .xsa only supports the VCK190 board
 - AIE graphs with GMIOs are not supported
 - Datasets larger than 128KB are not supported. For longer input / output sequences, the "replay" functionality should be used
-- The size (in bytes) of input and output datasets must be multiple of 16
+- The size (in bytes) of input and output datasets must be a multiple of 16

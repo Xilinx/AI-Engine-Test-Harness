@@ -13,6 +13,8 @@
 
 .. _using_the_harness:
 
+.. highlight:: none
+
 .. toctree::
    :hidden:
 
@@ -172,16 +174,16 @@ The AIE test harness includes a utility script which can be used to package the 
 **Parameters**
 
 ``<output dir>``
-  The folder in which the output of the packaging script and the bootable SD card image should be generated
+  The folder in which the output of the packaging script and the bootable SD card image should be generated.
 
 ``<libadf.a>``
-  The libadf.a resulting from the compilation of the AIE graph
+  The libadf.a resulting from the compilation of the AIE graph.
 
 ``<test.exe>``
-  The executable resulting from building the SW application
+  The executable resulting from building the SW application.
 
 ``<other files needed by the test>``
-  A list of other files needed by the test and to be packaged in the SD card image. This can be for instance input data files read by the test application
+  A list of other files needed by the test and to be packaged in the SD card image. This can be for instance input data files read by the test application.
 
 
 Software Emulation
@@ -238,4 +240,36 @@ To run the test in software emulation mode, first set the ``XCL_EMULATION_MODE``
    cd <sw emu output dir>
    export XCL_EMULATION_MODE=sw_emu 
    ./test.exe <optional args>
+
+
+Troubleshooting
+===============
+
+AIE Compilation
+---------------
+
+**Issue:** The following error message is seen when compiling the AIE graph with the test harness XSA: ``ERROR: [aiecompiler 77-4252] For application port with annotation 'Column_12_TO_AIE' the buswidth is 32-bits, which is different than the buswidth of 128-bits as specified in incoming logical architecture``
+
+- The width of the PLIOs in the prebuilt XSA is set to 128 bits. The PLIO widths in the AIE graph must align with the XSA. Set all PLIO width in the graph to ``adf::plio_128_bits``.
+
+
+**Issue:** The following error message is seen when compiling the AIE graph with the test harness XSA: ``ERROR: [aiecompiler 77-295] Cannot find port instance tf0_pi0 corresponding to Logical Arch Port M00_AXI``
+
+- The ``--event-trace=runtime --event-trace-port=gmio`` options are missing from the aiecompiler command
+
+
+AIE Simulation
+--------------
+
+**Issue:** The following error message is seen, when running x86sim or AIEsim after modifying the graph to work with the test harness: ``Error: Could not open input file : ./data/dummy.txt``
+
+- The unused PLIOs are expecting an input data file called ``./data/dummy.txt``. Create an empty file with this name and in this folder, then rerun x86sim or AIEsim.
+
+
+HW Testing
+----------
+
+**Issue:** When running on HW, the performance numbers reported by the test harness change a lot from run to run.
+
+- Make sure the start the AIE graph before starting the DMA engine. The performance counters start at the same time as the DMA engine. If the graph is not already started and ready to send and receive data, the performance counters will be incremented by an arbitrary number of cycles.
 

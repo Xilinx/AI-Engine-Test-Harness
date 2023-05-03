@@ -13,6 +13,8 @@
 
 .. _installation:
 
+.. highlight:: none
+
 .. toctree::
    :hidden:
 

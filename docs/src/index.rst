@@ -55,10 +55,10 @@ The software APIs enable to easily build SW applications to test an AIE graph us
    :maxdepth: 1
    :hidden:
 
-   Hardware Features <hw_feature.rst>
-   Software APIs <sw_api.rst>
-   Using the Test Harness <build_with_harness.rst>
-   Step By Step Example <step_by_step.rst>
+   Hardware Features <hw_features.rst>
+   Software APIs <sw_apis.rst>
+   Using the Test Harness <using_the_harness.rst>
+   Step By Step Example <step_by_step_example.rst>
 
 .. toctree::
    :caption: Additional Topics

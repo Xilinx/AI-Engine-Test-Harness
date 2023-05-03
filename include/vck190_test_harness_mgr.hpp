@@ -204,6 +204,16 @@ struct test_harness_args {
 
 class test_harness_mgr : public fastXM {
    public:
+    /*
+     * test_harness_mgr() - Loads the xclbin on the devide and initializes the various test harness runtime objects
+     *
+     * @param device_index
+     * The device id of the testing board, typically it will be zero
+     * @param xclbin_file_path
+     * The name, including its full path, to the xclbin file to be tested
+     * @param graph_name
+     * The vector of graph names in the libadf.a and packaged in the xclbin file
+     */
     test_harness_mgr(unsigned int device_index, std::string xclbin_file_path, std::vector<std::string> graph_name)
         : fastXM(device_index, xclbin_file_path, {"vck190_test_harness"}, graph_name) {
         cfg_ptr = (uint64_t*)malloc(N * 2 * 3 * sizeof(uint64_t));
