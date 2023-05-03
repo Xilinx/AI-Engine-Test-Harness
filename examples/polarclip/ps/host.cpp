@@ -48,8 +48,8 @@ int main(int argc, char** argv) {
     std::vector<int32_t> outputs;
     std::vector<int32_t> golden;
 
-    read_data_from_file("./data/input.txt", inputs);
-    read_data_from_file("./data/golden_32iters.txt", golden);
+    read_data_from_file("./input.txt", inputs);
+    read_data_from_file("./golden_32iters.txt", golden);
     outputs.resize(golden.size());
 
     auto num_inputs = inputs.size();

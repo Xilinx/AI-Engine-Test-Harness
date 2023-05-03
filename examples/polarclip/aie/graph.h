@@ -53,8 +53,8 @@ class clipped : public adf::graph {
         adf::source(classify) = "kernels/classifiers/classify.cc";
 
         // REQUIRED: Declare PLIOs using one of the predefined names, and using the predefined width of 128 bits
-        in = input_plio::create("Column_12_TO_AIE", adf::plio_128_bits, "data/input.txt");
-        out = output_plio::create("Column_28_FROM_AIE", adf::plio_128_bits, "data/output.txt");
+        in = input_plio::create("Column_12_TO_AIE", adf::plio_128_bits, "input.txt");
+        out = output_plio::create("Column_28_FROM_AIE", adf::plio_128_bits, "output.txt");
 
         // Window connection between port 'in' and input port of the kernel
         connect<window<INTERPOLATOR27_INPUT_BLOCK_SIZE, INTERPOLATOR27_INPUT_MARGIN> >(in.out[0], interpolator.in[0]);

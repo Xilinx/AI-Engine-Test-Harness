@@ -31,5 +31,5 @@ serialize_and_diff()
 }
 
 echo ""
-serialize_and_diff ./x86simulator_output/data/output.txt ./data/golden_4iters.txt
+serialize_and_diff ./x86simulator_output/output.txt ./golden_4iters.txt
 echo ""
