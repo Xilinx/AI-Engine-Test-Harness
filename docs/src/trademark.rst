@@ -9,14 +9,19 @@
 
    THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-.. _overview:
+   Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 
 .. toctree::
    :hidden:
 
-Limitation
-===========
 
-* Currently test harness only support VCK190.
-* Capacity of each test harness channel is 128KB. For longer input / output, you need to utilize the "replay" function.
-* Input / Output size in bytes for each channel must be multiple of 16.
+Trademark Notice
+================
+
+Xilinx, the Xilinx logo, Artix, ISE, Kintex, Spartan, Virtex, Zynq, and
+other designated brands included herein are trademarks of Xilinx in the
+United States and other countries.
+
+All other trademarks are the property of their respective owners.
+
+

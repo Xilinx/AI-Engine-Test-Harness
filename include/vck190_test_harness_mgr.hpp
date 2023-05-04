@@ -15,6 +15,10 @@
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or
+ * otherwise to promote the sale, use or other dealings in this Software without prior written authorization from
+ * Advanced Micro Devices, Inc.
  */
 #ifndef _VCK190_TEST_HARNESS_MGR_HPP_
 #define _VCK190_TEST_HARNESS_MGR_HPP_
@@ -61,7 +65,7 @@ class fastXM {
            std::vector<std::string> pl_kernel_name,
            std::vector<std::string> graph_name) {
         d_hdl = xrtDeviceOpen(device_index);
-        if (d_hdl == nullptr) throw std::runtime_error("No valid device handle found.");
+        if (d_hdl == nullptr) throw std::runtime_error("ERROR: No valid device handle found! Failed to init device!");
         xrtDeviceLoadXclbinFile(d_hdl, xclbin_file_path.c_str());
         xrtDeviceGetXclbinUUID(d_hdl, uuid);
 
@@ -76,7 +80,8 @@ class fastXM {
         for (int i = 0; i < graph_name.size(); i++) {
             xrtGraphHandle tmp = xrtGraphOpen(d_hdl, uuid, graph_name[i].c_str());
             if (tmp == NULL) {
-                std::cout << graph_name[i] << " not found!" << std::endl;
+                std::cout << "ERROR: graph '" << graph_name[i] << "' is not found! Failed to init device!" << std::endl;
+                std::cout << "Please provide check and use correct graph name!" << std::endl;
                 exit(1);
             } else {
                 g_hdl.push_back(tmp);
@@ -199,12 +204,23 @@ struct test_harness_args {
 
 class test_harness_mgr : public fastXM {
    public:
+    /*
+     * test_harness_mgr() - Loads the xclbin on the devide and initializes the various test harness runtime objects
+     *
+     * @param device_index
+     * The device id of the testing board, typically it will be zero
+     * @param xclbin_file_path
+     * The name, including its full path, to the xclbin file to be tested
+     * @param graph_name
+     * The vector of graph names in the libadf.a and packaged in the xclbin file
+     */
     test_harness_mgr(unsigned int device_index, std::string xclbin_file_path, std::vector<std::string> graph_name)
         : fastXM(device_index, xclbin_file_path, {"vck190_test_harness"}, graph_name) {
         cfg_ptr = (uint64_t*)malloc(N * 2 * 3 * sizeof(uint64_t));
         to_aie_ptr = (char*)malloc(N * W * D);
         from_aie_ptr = (char*)malloc(N * W * D);
         perf_ptr = (uint64_t*)malloc(N * 2 * sizeof(uint64_t));
+        graph_started = false;
 
         reset_cfg();
     }
@@ -221,6 +237,12 @@ class test_harness_mgr : public fastXM {
 
     void runTestHarness(std::vector<test_harness_args> args) {
         reset_cfg();
+
+        if (!graph_started) {
+            std::cout << "Warning: you're trying to call 'runTestHarness' before calling 'runAIEGraph'." << std::endl;
+            std::cout << "This might lead to result of 'printPerf' to be fluctuated." << std::endl;
+            std::cout << "It is strongly recommended to call 'runAIEGraph' before 'runTestHarness'." << std::endl;
+        }
 
         bool frame_size_valid = true;
         for (int i = 0; i < args.size(); i++) {
@@ -261,14 +283,18 @@ class test_harness_mgr : public fastXM {
                             {2, true, N * W * D, to_aie_ptr, 0},
                             {3, true, N * W * D, from_aie_ptr, 0}});
         } else {
-            std::cout << "Arguments for test harness is not valid, won't run test harness!" << std::endl;
+            std::cout << "ERROR: Arguments for test harness is not valid, won't run test harness!" << std::endl;
         }
     }
 
-    void runAIEGraph(unsigned int g_idx, unsigned int iters) { runGraph(g_idx, iters); }
+    void runAIEGraph(unsigned int g_idx, unsigned int iters) {
+        runGraph(g_idx, iters);
+        graph_started = true;
+    }
 
     void waitForRes(int graph_timeout_millisec) {
         this->waitDone(graph_timeout_millisec);
+        graph_started = false;
         this->fetchRes();
         for (int i = 0; i < args_rec.size(); i++) {
             if (args_rec[i].idx >= Column_28_FROM_AIE) {
@@ -307,6 +333,7 @@ class test_harness_mgr : public fastXM {
     static const unsigned int N = 16;
     static const unsigned int W = 16;
     static const unsigned int D = 8192;
+    bool graph_started;
     uint64_t* cfg_ptr;
     uint64_t* perf_ptr;
     char* to_aie_ptr;
@@ -316,11 +343,13 @@ class test_harness_mgr : public fastXM {
     bool check_frame_size(unsigned int sz) {
         std::cout << "N = " << N << ", W = " << W << ", D = " << D << std::endl;
         if (sz > (W * D)) {
-            std::cout << "frame size " << sz << " > " << D * W << ", beyond capacity of one channel" << std::endl;
+            std::cout << "ERROR: Frame size " << sz << " > " << D * W
+                      << ", is not valid because it's beyond capacity of one channel." << std::endl;
             return false;
         }
         if (sz % W != 0) {
-            std::cout << "frame size = " << sz << ", not divisible by 16" << std::endl;
+            std::cout << "ERROR: Frame size = " << sz << ", is not valid because it is not divisible by 16"
+                      << std::endl;
             return false;
         }
         return true;

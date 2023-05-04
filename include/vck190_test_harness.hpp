@@ -15,6 +15,10 @@
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or
+ * otherwise to promote the sale, use or other dealings in this Software without prior written authorization from
+ * Advanced Micro Devices, Inc.
  */
 
 #ifndef _VCK190_TEST_HARNESS_HPP_
@@ -37,11 +41,25 @@
 template <int W, int D>
 class buff_channel {
    public:
+#ifndef __SYNTHESIS__
+    ap_uint<W>* buff;
+#else
     ap_uint<W> buff[D];
+#endif
 
     buff_channel() {
+#ifndef __SYNTHESIS__
+        buff = (ap_uint<W>*)malloc(sizeof(ap_uint<W>) * D);
+#else
 #pragma HLS inline
 #pragma HLS bind_storage variable = buff type = RAM_1P impl = URAM
+#endif
+    }
+
+    ~buff_channel() {
+#ifndef __SYNTHESIS__
+        free(buff);
+#endif
     }
 
     void load_buff(ap_uint<W>* source, int size_in_frame) {
@@ -215,17 +233,6 @@ class test_harness {
         for (int i = 0; i < N; i++) {
             from_aie_rep[i] = cfg[i + N * 5];
         }
-#ifndef __SYNTHESIS__
-        for (int i = 0; i < N; i++) {
-            std::cout << "to_aie_channel[" << i << ", delay = " << to_aie_delay[i]
-                      << ", to_aie_frame = " << to_aie_frame[i] << ", to_aie rep = " << to_aie_rep[i] << std::endl;
-        }
-        for (int i = 0; i < N; i++) {
-            std::cout << "from_aie_channel[" << i << ", delay = " << from_aie_delay[i]
-                      << ", from_aie_frame = " << from_aie_frame[i] << ", from_aie rep = " << from_aie_rep[i]
-                      << std::endl;
-        }
-#endif
     }
 
     void store_perf(ap_uint<64>* perf) {
@@ -236,14 +243,6 @@ class test_harness {
         for (int i = 0; i < N; i++) {
             perf[i + N] = from_aie_last[i];
         }
-#ifndef __SYNTHESIS__
-        for (int i = 0; i < N; i++) {
-            std::cout << "to_aie_channel[" << i << ", last = " << to_aie_last[i] << std::endl;
-        }
-        for (int i = 0; i < N; i++) {
-            std::cout << "from_aie_channel[" << i << ", last = " << from_aie_last[i] << std::endl;
-        }
-#endif
     }
 
     void load_buff(ap_uint<W>* data) {
