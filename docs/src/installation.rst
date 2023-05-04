@@ -45,6 +45,9 @@ Installation Instructions
     cd Test_Harness/bin
     source download.sh
 
+.. CAUTION::
+   The prebuilt test harness XSA can only work 2023.1 Vitis, including building AI Engine Application and linking/packaging with prebuilt test harness.
+   If you need to compile AI Engine Application using 2022.2 Vitis, you must rebuild test harness XSA from source with 2022.2 Vitis.
 
 Rebuilding from Source
 ----------------------
