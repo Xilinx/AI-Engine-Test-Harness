@@ -39,7 +39,7 @@ else
     mkdir xsa_tmp
     cd xsa_tmp
     unzip ${xsa_name}
-    tmp_ver="`grep Version xsa.json | grep -o 20..\..`"
+    tmp_ver="`grep Version xsa.json | grep -o 20[0-9][0-9]\.[0-9]`"
     xsa_ver=${tmp_ver}
     cd ..
     rm -rf xsa_tmp
@@ -50,12 +50,12 @@ if [ ! -f ${adf_name} ]
         echo "ERROR: ${adf_name} does not exist!"
     exit 1
 else
-    tmp_ver="`hexdump -C libadf.a|grep Vitis\/20.... -m 1 |grep -o 20..\..`"
+    tmp_ver="`hexdump -C libadf.a|grep Vitis\/20[0-9][0-9]\.[0-9] -m 1 |grep -o 20[0-9][0-9]\.[0-9]`"
     adf_ver=${tmp_ver}
 fi
 
 if [ ${XILINX_VITIS} ]
-    then tmp_ver="`vitis -version | grep v20.... -m 1 |grep -o 20..\..`"
+    then tmp_ver="`vitis -version | grep v20[0-9][0-9]\.[0-9] -m 1 |grep -o 20[0-9][0-9]\.[0-9]`"
     vts_ver=${tmp_ver}
 else
     echo "ERROR: Please source your Vitis setup."
