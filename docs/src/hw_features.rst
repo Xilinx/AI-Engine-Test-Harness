@@ -32,7 +32,7 @@ PL DMA Engine
 
 The precompiled .xsa implements a DMA engine with 32 channels. 16 Tx channels send data from DDR to AIE and 16 Rx send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.
 
-- Each channel is connected to a unique AIE PLIO port using 128-bits wide AXI-Stream clocked at 250Mhz. This delivers an effective throughput of 4GB/sec (32-bits @ 1GHz)
+- Each channel is connected to a unique AIE PLIO port using 128-bits wide AXI-Stream clocked at 312.5Mhz. This delivers an effective throughput of 5GB/sec (32-bits @ 1.25GHz)
 - Each channel contains its own 128KB URAM memory used to buffer data. This allows transferring data to or from the AIE without unwanted external performance size-effects and deliver maximum throughput.
 - The channels are parametrized, allowing the user to control at runtime how data is transferred to or from the AI Engine. The software APIs are used configure these parameters (size, delay and replay).
 

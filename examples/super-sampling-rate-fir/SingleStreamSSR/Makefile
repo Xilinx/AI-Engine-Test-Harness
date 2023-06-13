@@ -10,7 +10,6 @@
 #
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
-
 ifndef TEST_HARNESS_REPO_PATH
 MK_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 export TEST_HARNESS_REPO_PATH ?= $(shell bash -c 'export MK_PATH=$(MK_PATH); echo $${MK_PATH%/examples/*}')
@@ -58,6 +57,7 @@ ifeq ($(TARGET), sw_emu)
 endif
 ifeq ($(TARGET), hw)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf run_script.sh
+	ln -s ${PKG_DIR} package_hw
 endif
 
 ##################### Build All + Run Emulation ##############

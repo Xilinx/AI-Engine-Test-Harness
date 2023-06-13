@@ -23,6 +23,55 @@ arglist=($@)
 PACKAGE_PATH=$(realpath ${arglist[0]})
 AIE_EXE_PATH=$(realpath ${arglist[1]})
 
+xsa_name=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa
+adf_name=${AIE_EXE_PATH}
+
+xsa_ver=23.1
+adf_ver=23.1
+vts_ver=23.1
+
+if [ ! -f ${xsa_name} ]
+    then
+        echo "ERROR: ${xsa_name} does not exist!"
+        echo "Please download or re-build it from source."
+    exit 1
+else
+    mkdir xsa_tmp
+    cd xsa_tmp
+    unzip ${xsa_name}
+    tmp_ver="`grep Version xsa.json | grep -o 20[0-9][0-9]\.[0-9]`"
+    xsa_ver=${tmp_ver}
+    cd ..
+    rm -rf xsa_tmp
+fi
+
+if [ ! -f ${adf_name} ]
+    then
+        echo "ERROR: ${adf_name} does not exist!"
+    exit 1
+else
+    tmp_ver="`hexdump -C libadf.a|grep Vitis\/20[0-9][0-9]\.[0-9] -m 1 |grep -o 20[0-9][0-9]\.[0-9]`"
+    adf_ver=${tmp_ver}
+fi
+
+if [ ${XILINX_VITIS} ]
+    then tmp_ver="`vitis -version | grep v20[0-9][0-9]\.[0-9] -m 1 |grep -o 20[0-9][0-9]\.[0-9]`"
+    vts_ver=${tmp_ver}
+else
+    echo "ERROR: Please source your Vitis setup."
+    exit 1
+fi
+
+if [ $adf_ver != $xsa_ver ] || [ $vts_ver != $xsa_ver]
+    then
+        echo "ERROR: Vitis version not match!"
+        echo "${xsa_name} is built with Vitis ${xsa_ver}."
+        echo "${adf_name} is built with Vitis ${adf_ver}."
+        echo "You're now using Vitis ${vts_ver}."
+        echo "We strongly suggest that using same version of Vitis as ${xsa_name} for compiling, linking and packaging."
+    exit 1
+fi
+
 mkdir -p ${PACKAGE_PATH}
 
 PACKAGE_SD_FILE=""
