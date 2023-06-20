@@ -80,7 +80,7 @@ Running the Test Harness
 
 .. cpp:enum:: channel_index
 
-   Enumerated type listing the index of each DMA channel. The enumerated values correspond to the name of the predefined PLIOs: :c:enumerator:`Column_12_TO_AIE`, :c:enumerator:`Column_13_TO_AIE`, etc...
+   Enumerated type listing the index of each DMA channel. The enumerated values correspond to the name of the predefined PLIOs: :c:enum:`Column_12_TO_AIE`, :c:enum:`Column_13_TO_AIE`, etc...
 
 |
 
@@ -129,7 +129,7 @@ Running the Test Harness
 Waiting for Completion
 ----------------------
 
-.. cpp:function:: void test_harness_mgr::waitForRes(int graph_timeout_millisec);
+.. cpp:function:: void test_harness_mgr::waitForRes(int graph_timeout_millisec)
 
    Wait for all DMA engines to send and receive the expected amount of data, then wait for the AIE graph to finish, then get back the results to the host application. 
 
@@ -143,6 +143,6 @@ Waiting for Completion
 Reporting Performance
 ---------------------
 
-.. cpp:function:: void test_harness_mgr::printPerf();
+.. cpp:function:: void test_harness_mgr::printPerf()
 
    Print the total number of cycles elapsed between the start and the end of the data transfer for each DMA channel. Can only be called after :cpp:func:`test_harness_mgr::waitForRes` returns.

@@ -25,7 +25,7 @@ Summary
 This is the first release of the AIE Test Harness. This release supports the following:
 
 - AIE graphs with up to 16 input PLIOs and 16 output PLIOs
-- PLIO throughput of 4GB/sec (32 bits @ 1GHz)
+- PLIO throughput of 5GB/sec (32 bits @ 1.25GHz)
 - Input and output datasets up to 128KB in size
 - User-defined number of replay for each input and output dataset
 - User-defined start delay for each input and output PLIO
