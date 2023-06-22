@@ -174,7 +174,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <dl class="enum">
 <dt id="_CPPv313channel_index">
 <span id="_CPPv213channel_index"></span><em class="property">enum </em><code class="descname">channel_index</code><a class="headerlink" href="#_CPPv313channel_index" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Enumerated type listing the index of each DMA channel. The enumerated values correspond to the name of the predefined PLIOs: <a href="#id1"><span class="problematic" id="id2">:c:enumerator:`Column_12_TO_AIE`</span></a>, <a href="#id3"><span class="problematic" id="id4">:c:enumerator:`Column_13_TO_AIE`</span></a>, etc…</p>
+<dd><p>Enumerated type listing the index of each DMA channel. The enumerated values correspond to the name of the predefined PLIOs: <a href="#id1"><span class="problematic" id="id2">:c:enum:`Column_12_TO_AIE`</span></a>, <a href="#id3"><span class="problematic" id="id4">:c:enum:`Column_13_TO_AIE`</span></a>, etc…</p>
 </dd></dl>
 
 <div class="line-block">
@@ -221,8 +221,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <div class="section" id="waiting-for-completion">
 <h2>Waiting for Completion<a class="headerlink" href="#waiting-for-completion" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt>
-<code class="descname">void test_harness_mgr::waitForRes(int graph_timeout_millisec);</code></dt>
+<dt id="_CPPv3N16test_harness_mgr10waitForResEi">
+<span id="_CPPv2N16test_harness_mgr10waitForResEi"></span><span id="test_harness_mgr::waitForRes__i"></span>void <code class="descclassname"><a class="reference internal" href="#_CPPv316test_harness_mgr" title="test_harness_mgr">test_harness_mgr</a><code class="descclassname">::</code></code><code class="descname">waitForRes</code><span class="sig-paren">(</span>int <em>graph_timeout_millisec</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv3N16test_harness_mgr10waitForResEi" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Wait for all DMA engines to send and receive the expected amount of data, then wait for the AIE graph to finish, then get back the results to the host application.</p>
 </dd></dl>
 
@@ -238,9 +238,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <div class="section" id="reporting-performance">
 <h2>Reporting Performance<a class="headerlink" href="#reporting-performance" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt>
-<code class="descname">void test_harness_mgr::printPerf();</code></dt>
-<dd><p>Print the total number of cycles elapsed between the start and the end of the data transfer for each DMA channel. Can only be called after <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">test_harness_mgr::waitForRes()</span></code> returns.</p>
+<dt id="_CPPv3N16test_harness_mgr9printPerfEv">
+<span id="_CPPv2N16test_harness_mgr9printPerfEv"></span><span id="test_harness_mgr::printPerf"></span>void <code class="descclassname"><a class="reference internal" href="#_CPPv316test_harness_mgr" title="test_harness_mgr">test_harness_mgr</a><code class="descclassname">::</code></code><code class="descname">printPerf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv3N16test_harness_mgr9printPerfEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Print the total number of cycles elapsed between the start and the end of the data transfer for each DMA channel. Can only be called after <a class="reference internal" href="#_CPPv3N16test_harness_mgr10waitForResEi" title="test_harness_mgr::waitForRes"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">test_harness_mgr::waitForRes()</span></code></a> returns.</p>
 </dd></dl>
 
 </div>
@@ -268,7 +268,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on May 24, 2023.
+      <span class="lastupdated">Last updated on June 22, 2023.
       </span></p>
   </div>
 
