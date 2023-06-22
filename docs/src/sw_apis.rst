@@ -80,7 +80,7 @@ Running the Test Harness
 
 .. cpp:enum:: channel_index
 
-   Enumerated type listing the index of each DMA channel. The enumerated values correspond to the name of the predefined PLIOs: :c:enum:`Column_12_TO_AIE`, :c:enum:`Column_13_TO_AIE`, etc...
+   Enumerated type listing the index of each DMA channel. The enumerated values correspond to the name of the predefined PLIOs: :cpp:enum:`Column_12_TO_AIE`, :cpp:enum:`Column_13_TO_AIE`, etc...
 
 |
 
