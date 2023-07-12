@@ -46,8 +46,8 @@ Installation Instructions
     source download.sh
 
 .. CAUTION::
-   The prebuilt test harness XSA can only work 2023.1 Vitis, including building AI Engine Application and linking/packaging with prebuilt test harness.
-   If you need to compile AI Engine Application using 2022.2 Vitis, you must rebuild test harness XSA from source with 2022.2 Vitis.
+   The prebuilt XSA can only be used with the 2023.1 version of the Vitis tools. 
+   To build and test your AI Engine graph using Vitis 2022.2, you must first rebuild the XSA with the 2022.2 version of the Vitis tools, as described in the section below.
 
 Rebuilding from Source
 ----------------------
