@@ -26,11 +26,10 @@
 #include <hls_stream.h>
 #include <hls_burst_maxi.h>
 #include "vck190_test_harness.hpp"
-//#include "pragma_macro.hpp"
 
 const int W = 128;
-const int D = 8192;
-const int CN = 16;
+const int D = 4096;
+const int CN = 36;
 const int DL = 25;
 const int TA = 128;
 const int FA = 192;
@@ -57,6 +56,26 @@ extern "C" void vck190_test_harness(ap_uint<64>* cfg,
                                     hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm13,
                                     hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm14,
                                     hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm15,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm16,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm17,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm18,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm19,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm20,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm21,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm22,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm23,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm24,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm25,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm26,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm27,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm28,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm29,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm30,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm31,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm32,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm33,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm34,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& to_aie_strm35,
                                     hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm0,
                                     hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm1,
                                     hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm2,
@@ -72,15 +91,35 @@ extern "C" void vck190_test_harness(ap_uint<64>* cfg,
                                     hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm12,
                                     hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm13,
                                     hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm14,
-                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm15) {
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm15,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm16,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm17,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm18,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm19,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm20,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm21,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm22,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm23,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm24,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm25,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm26,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm27,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm28,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm29,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm30,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm31,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm32,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm33,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm34,
+                                    hls::stream<ap_axiu<128, 0, 0, 0> >& from_aie_strm35) {
 #pragma HLS INTERFACE m_axi offset = slave latency = 64 num_write_outstanding = 16 num_read_outstanding = \
-    16 max_write_burst_length = 64 max_read_burst_length = 64 bundle = gmem0 port = cfg depth = 8192
+    16 max_write_burst_length = 64 max_read_burst_length = 64 bundle = gmem0 port = cfg depth = 4096
 #pragma HLS INTERFACE m_axi offset = slave latency = 64 num_write_outstanding = 16 num_read_outstanding = \
-    16 max_write_burst_length = 64 max_read_burst_length = 64 bundle = gmem0 port = perf depth = 8192
+    16 max_write_burst_length = 64 max_read_burst_length = 64 bundle = gmem0 port = perf depth = 4096
 #pragma HLS INTERFACE m_axi offset = slave latency = 64 num_write_outstanding = 16 num_read_outstanding = \
-    16 max_write_burst_length = 64 max_read_burst_length = 64 bundle = gmem0 port = to_aie_data depth = 8192
+    16 max_write_burst_length = 64 max_read_burst_length = 64 bundle = gmem0 port = to_aie_data depth = 4096
 #pragma HLS INTERFACE m_axi offset = slave latency = 64 num_write_outstanding = 16 num_read_outstanding = \
-    16 max_write_burst_length = 64 max_read_burst_length = 64 bundle = gmem0 port = from_aie_data depth = 8192
+    16 max_write_burst_length = 64 max_read_burst_length = 64 bundle = gmem0 port = from_aie_data depth = 4096
 #pragma HLS INTERFACE s_axilite port = cfg bundle = control
 #pragma HLS INTERFACE s_axilite port = perf bundle = control
 #pragma HLS INTERFACE s_axilite port = to_aie_data bundle = control
@@ -102,6 +141,26 @@ extern "C" void vck190_test_harness(ap_uint<64>* cfg,
 #pragma HLS INTERFACE axis port = to_aie_strm13
 #pragma HLS INTERFACE axis port = to_aie_strm14
 #pragma HLS INTERFACE axis port = to_aie_strm15
+#pragma HLS INTERFACE axis port = to_aie_strm16
+#pragma HLS INTERFACE axis port = to_aie_strm17
+#pragma HLS INTERFACE axis port = to_aie_strm18
+#pragma HLS INTERFACE axis port = to_aie_strm19
+#pragma HLS INTERFACE axis port = to_aie_strm20
+#pragma HLS INTERFACE axis port = to_aie_strm21
+#pragma HLS INTERFACE axis port = to_aie_strm22
+#pragma HLS INTERFACE axis port = to_aie_strm23
+#pragma HLS INTERFACE axis port = to_aie_strm24
+#pragma HLS INTERFACE axis port = to_aie_strm25
+#pragma HLS INTERFACE axis port = to_aie_strm26
+#pragma HLS INTERFACE axis port = to_aie_strm27
+#pragma HLS INTERFACE axis port = to_aie_strm28
+#pragma HLS INTERFACE axis port = to_aie_strm29
+#pragma HLS INTERFACE axis port = to_aie_strm30
+#pragma HLS INTERFACE axis port = to_aie_strm31
+#pragma HLS INTERFACE axis port = to_aie_strm32
+#pragma HLS INTERFACE axis port = to_aie_strm33
+#pragma HLS INTERFACE axis port = to_aie_strm34
+#pragma HLS INTERFACE axis port = to_aie_strm35
 #pragma HLS INTERFACE axis port = from_aie_strm0
 #pragma HLS INTERFACE axis port = from_aie_strm1
 #pragma HLS INTERFACE axis port = from_aie_strm2
@@ -118,17 +177,43 @@ extern "C" void vck190_test_harness(ap_uint<64>* cfg,
 #pragma HLS INTERFACE axis port = from_aie_strm13
 #pragma HLS INTERFACE axis port = from_aie_strm14
 #pragma HLS INTERFACE axis port = from_aie_strm15
+#pragma HLS INTERFACE axis port = from_aie_strm16
+#pragma HLS INTERFACE axis port = from_aie_strm17
+#pragma HLS INTERFACE axis port = from_aie_strm18
+#pragma HLS INTERFACE axis port = from_aie_strm19
+#pragma HLS INTERFACE axis port = from_aie_strm20
+#pragma HLS INTERFACE axis port = from_aie_strm21
+#pragma HLS INTERFACE axis port = from_aie_strm22
+#pragma HLS INTERFACE axis port = from_aie_strm23
+#pragma HLS INTERFACE axis port = from_aie_strm24
+#pragma HLS INTERFACE axis port = from_aie_strm25
+#pragma HLS INTERFACE axis port = from_aie_strm26
+#pragma HLS INTERFACE axis port = from_aie_strm27
+#pragma HLS INTERFACE axis port = from_aie_strm28
+#pragma HLS INTERFACE axis port = from_aie_strm29
+#pragma HLS INTERFACE axis port = from_aie_strm30
+#pragma HLS INTERFACE axis port = from_aie_strm31
+#pragma HLS INTERFACE axis port = from_aie_strm32
+#pragma HLS INTERFACE axis port = from_aie_strm33
+#pragma HLS INTERFACE axis port = from_aie_strm34
+#pragma HLS INTERFACE axis port = from_aie_strm35
 
     test_harness<W, D, CN> inst;
     inst.load_cfg(cfg);
     inst.load_buff(to_aie_data);
-    inst.load_store_stream(to_aie_strm0, to_aie_strm1, to_aie_strm2, to_aie_strm3, to_aie_strm4, to_aie_strm5,
-                           to_aie_strm6, to_aie_strm7, to_aie_strm8, to_aie_strm9, to_aie_strm10, to_aie_strm11,
-                           to_aie_strm12, to_aie_strm13, to_aie_strm14, to_aie_strm15, from_aie_strm0, from_aie_strm1,
-                           from_aie_strm2, from_aie_strm3, from_aie_strm4, from_aie_strm5, from_aie_strm6,
-                           from_aie_strm7, from_aie_strm8, from_aie_strm9, from_aie_strm10, from_aie_strm11,
-                           from_aie_strm12, from_aie_strm13, from_aie_strm14, from_aie_strm15);
-    // inst.load_store_stream(to_aie_strm0, from_aie_strm0);
+    inst.load_store_stream(
+        to_aie_strm0, to_aie_strm1, to_aie_strm2, to_aie_strm3, to_aie_strm4, to_aie_strm5, to_aie_strm6, to_aie_strm7,
+        to_aie_strm8, to_aie_strm9, to_aie_strm10, to_aie_strm11, to_aie_strm12, to_aie_strm13, to_aie_strm14,
+        to_aie_strm15, to_aie_strm16, to_aie_strm17, to_aie_strm18, to_aie_strm19, to_aie_strm20, to_aie_strm21,
+        to_aie_strm22, to_aie_strm23, to_aie_strm24, to_aie_strm25, to_aie_strm26, to_aie_strm27, to_aie_strm28,
+        to_aie_strm29, to_aie_strm30, to_aie_strm31, to_aie_strm32, to_aie_strm33, to_aie_strm34,
+        to_aie_strm35, //
+        from_aie_strm0, from_aie_strm1, from_aie_strm2, from_aie_strm3, from_aie_strm4, from_aie_strm5, from_aie_strm6,
+        from_aie_strm7, from_aie_strm8, from_aie_strm9, from_aie_strm10, from_aie_strm11, from_aie_strm12,
+        from_aie_strm13, from_aie_strm14, from_aie_strm15, from_aie_strm16, from_aie_strm17, from_aie_strm18,
+        from_aie_strm19, from_aie_strm20, from_aie_strm21, from_aie_strm22, from_aie_strm23, from_aie_strm24,
+        from_aie_strm25, from_aie_strm26, from_aie_strm27, from_aie_strm28, from_aie_strm29, from_aie_strm30,
+        from_aie_strm31, from_aie_strm32, from_aie_strm33, from_aie_strm34, from_aie_strm35);
 
     inst.store_buff(from_aie_data);
     inst.store_perf(perf);

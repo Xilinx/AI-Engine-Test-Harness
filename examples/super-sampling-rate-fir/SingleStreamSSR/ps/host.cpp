@@ -17,14 +17,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <stdint.h>
-//#include <fstream>
-
 #include "vck190_test_harness_mgr.hpp"
-
-#define DATA_SIZE 16
 
 using namespace vck190_test_harness;
 
@@ -36,23 +29,6 @@ using namespace vck190_test_harness;
 #include <cstring>
 
 using namespace std;
-
-void load_input(string fname, vector<int>& data) {
-    data.clear();
-    fstream file(fname, ios::in);
-
-    if (file.is_open()) {
-        string line;
-        while (getline(file, line)) {
-            stringstream str(line);
-            for (int i = 0; i < 4; i++) {
-                int tmp;
-                str >> tmp;
-                data.push_back(tmp);
-            }
-        }
-    }
-}
 
 int main(int argc, char** argv) {
     // Prepare data
@@ -73,8 +49,8 @@ int main(int argc, char** argv) {
     test_harness_mgr mgr(0, argv[1], {"G"});
     std::vector<test_harness_args> args;
     for (int i = 0; i < 4; i++) {
-        args.push_back({channel_index(Column_12_TO_AIE + i), in_sz, 1, 0, (char*)in_data[i]});
-        args.push_back({channel_index(Column_28_FROM_AIE + i), out_sz, 1, 0, (char*)out_data[i]});
+        args.push_back({channel_index(PLIO_01_TO_AIE + 2 * i), in_sz, 1, 0, (char*)in_data[i]});
+        args.push_back({channel_index(PLIO_02_FROM_AIE + 2 * i), out_sz, 1, 0, (char*)out_data[i]});
     }
     mgr.runAIEGraph(0, 1);
     mgr.runTestHarness(args);

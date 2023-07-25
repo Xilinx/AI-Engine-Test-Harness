@@ -25,6 +25,8 @@
 #include <adf.h>
 #include "system_settings.h"
 #include "aie_kernels.h"
+
+// REQUIRED: Include the test harness header file
 #include "vck190_test_harness_graph.hpp"
 
 using namespace adf;
@@ -65,8 +67,8 @@ class TopGraph : public adf::graph {
     FIRGraph_OneKernel G1;
 
     TopGraph() {
-        input_plio plin = input_plio::create("Column_12_TO_AIE", plio_128_bits, "data/PhaseIn_0.txt", 250);
-        output_plio plout = output_plio::create("Column_28_FROM_AIE", plio_128_bits, "data/Output_0.txt", 250);
+        input_plio plin = input_plio::create("PLIO_01_TO_AIE", plio_128_bits, "data/PhaseIn_0.txt", 250);
+        output_plio plout = output_plio::create("PLIO_02_FROM_AIE", plio_128_bits, "data/Output_0.txt", 250);
 
         connect<>(plin.out[0], G1.in);
         connect<>(G1.out, plout.in[0]);

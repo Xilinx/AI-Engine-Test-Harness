@@ -25,13 +25,15 @@
 
 #include "SSRgraph.h"
 
-std::vector<std::string> cust_in = {"Column_12_TO_AIE", "Column_13_TO_AIE", "Column_14_TO_AIE", "Column_15_TO_AIE"};
-std::vector<std::string> cust_out = {"Column_28_FROM_AIE", "Column_29_FROM_AIE", "Column_30_FROM_AIE",
-                                     "Column_31_FROM_AIE"};
-
 TopGraph G;
+
+// REQUIRED: Instantiate a graph to occupy the PLIOs unused by the user graph.
+static std::vector<std::string> cust_in = {"PLIO_01_TO_AIE", "PLIO_03_TO_AIE", "PLIO_05_TO_AIE", "PLIO_07_TO_AIE"};
+static std::vector<std::string> cust_out = {"PLIO_02_FROM_AIE", "PLIO_04_FROM_AIE", "PLIO_06_FROM_AIE",
+                                            "PLIO_08_FROM_AIE"};
 vck190_test_harness::occupyUnusedPLIO<4, 4> dummyGraph(cust_in, cust_out);
 
+#if defined(__AIESIM__) || defined(__X86SIM__)
 int main() {
     G.init();
     G.run(1);
@@ -39,3 +41,4 @@ int main() {
 
     return (0);
 }
+#endif

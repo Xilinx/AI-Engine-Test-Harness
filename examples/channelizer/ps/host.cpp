@@ -28,8 +28,6 @@
 
 #include "vck190_test_harness_mgr.hpp"
 
-#define DATA_SIZE 16
-
 using namespace vck190_test_harness;
 
 #include <string>
@@ -40,23 +38,6 @@ using namespace vck190_test_harness;
 #include <cstring>
 
 using namespace std;
-
-void load_input(string fname, vector<int>& data) {
-    data.clear();
-    fstream file(fname, ios::in);
-
-    if (file.is_open()) {
-        string line;
-        while (getline(file, line)) {
-            stringstream str(line);
-            for (int i = 0; i < 4; i++) {
-                int tmp;
-                str >> tmp;
-                data.push_back(tmp);
-            }
-        }
-    }
-}
 
 int main(int argc, char** argv) {
     // Prepare data
@@ -76,38 +57,38 @@ int main(int argc, char** argv) {
     // run test with test harness
     test_harness_mgr mgr(0, argv[1], {"aie_dut"});
     std::vector<test_harness_args> args;
-    args.push_back({channel_index(Column_12_TO_AIE), in_sz, 1, 0, (char*)in_data[0]});
-    args.push_back({channel_index(Column_13_TO_AIE), in_sz, 1, 0, (char*)in_data[1]});
-    args.push_back({channel_index(Column_14_TO_AIE), in_sz, 1, 0, (char*)in_data[2]});
-    args.push_back({channel_index(Column_15_TO_AIE), in_sz, 1, 0, (char*)in_data[3]});
-    args.push_back({channel_index(Column_16_TO_AIE), in_sz, 1, 0, (char*)in_data[4]});
-    args.push_back({channel_index(Column_17_TO_AIE), in_sz, 1, 0, (char*)in_data[5]});
-    args.push_back({channel_index(Column_18_TO_AIE), in_sz, 1, 0, (char*)in_data[6]});
-    args.push_back({channel_index(Column_19_TO_AIE), in_sz, 1, 0, (char*)in_data[7]});
-    args.push_back({channel_index(Column_20_TO_AIE), in_sz, 1, 0, (char*)in_data[8]});
-    args.push_back({channel_index(Column_21_TO_AIE), in_sz, 1, 0, (char*)in_data[9]});
-    args.push_back({channel_index(Column_22_TO_AIE), in_sz, 1, 0, (char*)in_data[10]});
-    args.push_back({channel_index(Column_23_TO_AIE), in_sz, 1, 0, (char*)in_data[11]});
-    args.push_back({channel_index(Column_24_TO_AIE), in_sz, 1, 0, (char*)in_data[12]});
-    args.push_back({channel_index(Column_25_TO_AIE), in_sz, 1, 0, (char*)in_data[13]});
-    args.push_back({channel_index(Column_26_TO_AIE), in_sz, 1, 0, (char*)in_data[14]});
-    args.push_back({channel_index(Column_27_TO_AIE), in_sz, 1, 0, (char*)in_data[15]});
-    args.push_back({channel_index(Column_28_FROM_AIE), out_sz, 1, 0, (char*)out_data[0]});
-    args.push_back({channel_index(Column_29_FROM_AIE), out_sz, 1, 0, (char*)out_data[1]});
-    args.push_back({channel_index(Column_30_FROM_AIE), out_sz, 1, 0, (char*)out_data[2]});
-    args.push_back({channel_index(Column_31_FROM_AIE), out_sz, 1, 0, (char*)out_data[3]});
-    args.push_back({channel_index(Column_32_FROM_AIE), out_sz, 1, 0, (char*)out_data[4]});
-    args.push_back({channel_index(Column_33_FROM_AIE), out_sz, 1, 0, (char*)out_data[5]});
-    args.push_back({channel_index(Column_34_FROM_AIE), out_sz, 1, 0, (char*)out_data[6]});
-    args.push_back({channel_index(Column_35_FROM_AIE), out_sz, 1, 0, (char*)out_data[7]});
-    args.push_back({channel_index(Column_36_FROM_AIE), out_sz, 1, 0, (char*)out_data[8]});
-    args.push_back({channel_index(Column_37_FROM_AIE), out_sz, 1, 0, (char*)out_data[9]});
-    args.push_back({channel_index(Column_38_FROM_AIE), out_sz, 1, 0, (char*)out_data[10]});
-    args.push_back({channel_index(Column_39_FROM_AIE), out_sz, 1, 0, (char*)out_data[11]});
-    args.push_back({channel_index(Column_40_FROM_AIE), out_sz, 1, 0, (char*)out_data[12]});
-    args.push_back({channel_index(Column_41_FROM_AIE), out_sz, 1, 0, (char*)out_data[13]});
-    args.push_back({channel_index(Column_42_FROM_AIE), out_sz, 1, 0, (char*)out_data[14]});
-    args.push_back({channel_index(Column_43_FROM_AIE), out_sz, 1, 0, (char*)out_data[15]});
+    args.push_back({channel_index(PLIO_01_TO_AIE), in_sz, 1, 0, (char*)in_data[0]});
+    args.push_back({channel_index(PLIO_03_TO_AIE), in_sz, 1, 0, (char*)in_data[1]});
+    args.push_back({channel_index(PLIO_05_TO_AIE), in_sz, 1, 0, (char*)in_data[2]});
+    args.push_back({channel_index(PLIO_07_TO_AIE), in_sz, 1, 0, (char*)in_data[3]});
+    args.push_back({channel_index(PLIO_09_TO_AIE), in_sz, 1, 0, (char*)in_data[4]});
+    args.push_back({channel_index(PLIO_11_TO_AIE), in_sz, 1, 0, (char*)in_data[5]});
+    args.push_back({channel_index(PLIO_13_TO_AIE), in_sz, 1, 0, (char*)in_data[6]});
+    args.push_back({channel_index(PLIO_15_TO_AIE), in_sz, 1, 0, (char*)in_data[7]});
+    args.push_back({channel_index(PLIO_17_TO_AIE), in_sz, 1, 0, (char*)in_data[8]});
+    args.push_back({channel_index(PLIO_19_TO_AIE), in_sz, 1, 0, (char*)in_data[9]});
+    args.push_back({channel_index(PLIO_21_TO_AIE), in_sz, 1, 0, (char*)in_data[10]});
+    args.push_back({channel_index(PLIO_23_TO_AIE), in_sz, 1, 0, (char*)in_data[11]});
+    args.push_back({channel_index(PLIO_25_TO_AIE), in_sz, 1, 0, (char*)in_data[12]});
+    args.push_back({channel_index(PLIO_27_TO_AIE), in_sz, 1, 0, (char*)in_data[13]});
+    args.push_back({channel_index(PLIO_29_TO_AIE), in_sz, 1, 0, (char*)in_data[14]});
+    args.push_back({channel_index(PLIO_31_TO_AIE), in_sz, 1, 0, (char*)in_data[15]});
+    args.push_back({channel_index(PLIO_02_FROM_AIE), out_sz, 1, 0, (char*)out_data[0]});
+    args.push_back({channel_index(PLIO_04_FROM_AIE), out_sz, 1, 0, (char*)out_data[1]});
+    args.push_back({channel_index(PLIO_06_FROM_AIE), out_sz, 1, 0, (char*)out_data[2]});
+    args.push_back({channel_index(PLIO_08_FROM_AIE), out_sz, 1, 0, (char*)out_data[3]});
+    args.push_back({channel_index(PLIO_10_FROM_AIE), out_sz, 1, 0, (char*)out_data[4]});
+    args.push_back({channel_index(PLIO_12_FROM_AIE), out_sz, 1, 0, (char*)out_data[5]});
+    args.push_back({channel_index(PLIO_14_FROM_AIE), out_sz, 1, 0, (char*)out_data[6]});
+    args.push_back({channel_index(PLIO_16_FROM_AIE), out_sz, 1, 0, (char*)out_data[7]});
+    args.push_back({channel_index(PLIO_18_FROM_AIE), out_sz, 1, 0, (char*)out_data[8]});
+    args.push_back({channel_index(PLIO_20_FROM_AIE), out_sz, 1, 0, (char*)out_data[9]});
+    args.push_back({channel_index(PLIO_22_FROM_AIE), out_sz, 1, 0, (char*)out_data[10]});
+    args.push_back({channel_index(PLIO_24_FROM_AIE), out_sz, 1, 0, (char*)out_data[11]});
+    args.push_back({channel_index(PLIO_26_FROM_AIE), out_sz, 1, 0, (char*)out_data[12]});
+    args.push_back({channel_index(PLIO_28_FROM_AIE), out_sz, 1, 0, (char*)out_data[13]});
+    args.push_back({channel_index(PLIO_30_FROM_AIE), out_sz, 1, 0, (char*)out_data[14]});
+    args.push_back({channel_index(PLIO_32_FROM_AIE), out_sz, 1, 0, (char*)out_data[15]});
     mgr.runAIEGraph(0, 1);
     mgr.runTestHarness(args);
     mgr.waitForRes(10000);

@@ -30,14 +30,15 @@
 
 using namespace adf;
 
+// REQUIRED: Include the test harness header file
+#include "vck190_test_harness_graph.hpp"
+
 // ------------------------------------------------------------
 // Top Level Graph
 // ------------------------------------------------------------
 
 class m16_ssr8_graph : public graph {
    public:
-    static constexpr unsigned FIR_X = 22;
-    static constexpr unsigned DFT_X = 11;
     std::array<input_plio, 8> dft_i;
     std::array<output_plio, 8> dft_o;
     std::array<input_plio, 8> fbank_i;
@@ -53,9 +54,9 @@ class m16_ssr8_graph : public graph {
         for (int ii = 0; ii < 8; ii++) {
             // Note: There are no filenames on these ::create() routines because we either connect these up to
             //       the actual PL HLS blocks in 'system.cfg' or External Traffic Generators for debug
-            std::string plio_fbank_i = vck190_test_harness::in_names[ii * 2];
-            std::string plio_fbank_o = vck190_test_harness::out_names[ii * 2];
-            std::string plio_dft_i = vck190_test_harness::in_names[ii * 2 + 1];
+            std::string plio_fbank_i = vck190_test_harness::in_names[16 + ii * 2];
+            std::string plio_fbank_o = vck190_test_harness::out_names[16 + ii * 2 + 1];
+            std::string plio_dft_i = vck190_test_harness::in_names[ii * 2];
             std::string plio_dft_o = vck190_test_harness::out_names[ii * 2 + 1];
 
             std::string fname_fbank_i = "data/fir_i_" + std::to_string(ii) + ".txt";
@@ -72,31 +73,5 @@ class m16_ssr8_graph : public graph {
             connect<stream>(dft_i[ii].out[0], dut_dft.sig_i[ii]);
             connect<stream>(dut_dft.sig_o[ii], dft_o[ii].in[0]);
         }
-
-        location<graph>(dut_dft.dut_graphA) =
-            area_group({{aie_tile, DFT_X, 0, DFT_X + 3, 0}, {shim_tile, DFT_X, 0, DFT_X + 3, 0}});
-        location<graph>(dut_dft.dut_graphB) =
-            area_group({{aie_tile, DFT_X, 1, DFT_X + 3, 1}, {shim_tile, DFT_X, 0, DFT_X + 3, 0}});
-        location<graph>(dut_dft.dut_graphC) =
-            area_group({{aie_tile, DFT_X, 2, DFT_X + 3, 2}, {shim_tile, DFT_X, 0, DFT_X + 3, 0}});
-        location<graph>(dut_dft.dut_graphD) =
-            area_group({{aie_tile, DFT_X, 3, DFT_X + 3, 3}, {shim_tile, DFT_X, 0, DFT_X + 3, 0}});
-
-        location<graph>(dut_fbank.dut_graph0) =
-            area_group({{aie_tile, FIR_X, 0, FIR_X + 3, 1}, {shim_tile, FIR_X, 0, FIR_X + 3, 0}});
-        location<graph>(dut_fbank.dut_graph1) =
-            area_group({{aie_tile, FIR_X, 0, FIR_X + 3, 1}, {shim_tile, FIR_X, 0, FIR_X + 3, 0}});
-        location<graph>(dut_fbank.dut_graph2) =
-            area_group({{aie_tile, FIR_X, 0, FIR_X + 3, 1}, {shim_tile, FIR_X, 0, FIR_X + 3, 0}});
-        location<graph>(dut_fbank.dut_graph3) =
-            area_group({{aie_tile, FIR_X, 0, FIR_X + 3, 1}, {shim_tile, FIR_X, 0, FIR_X + 3, 0}});
-        location<graph>(dut_fbank.dut_graph4) =
-            area_group({{aie_tile, FIR_X, 0, FIR_X + 3, 1}, {shim_tile, FIR_X, 0, FIR_X + 3, 0}});
-        location<graph>(dut_fbank.dut_graph5) =
-            area_group({{aie_tile, FIR_X, 0, FIR_X + 3, 1}, {shim_tile, FIR_X, 0, FIR_X + 3, 0}});
-        location<graph>(dut_fbank.dut_graph6) =
-            area_group({{aie_tile, FIR_X, 0, FIR_X + 3, 1}, {shim_tile, FIR_X, 0, FIR_X + 3, 0}});
-        location<graph>(dut_fbank.dut_graph7) =
-            area_group({{aie_tile, FIR_X, 0, FIR_X + 3, 1}, {shim_tile, FIR_X, 0, FIR_X + 3, 0}});
     }
 };

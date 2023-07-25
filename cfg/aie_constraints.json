@@ -1,196 +1,78 @@
 {
   "NodeConstraints": {
-    "Column_12_TO_AIE": {
-      "shim": {
-        "column": 12,
-        "channel": 0
-      }
-    },
-    "Column_28_FROM_AIE": {
-      "shim": {
-        "column": 28,
-        "channel": 2
-      }
-    },
-    "Column_13_TO_AIE": {
-      "shim": {
-        "column": 13,
-        "channel": 0
-      }
-    },
-    "Column_29_FROM_AIE": {
-      "shim": {
-        "column": 29,
-        "channel": 2
-      }
-    },
-    "Column_14_TO_AIE": {
-      "shim": {
-        "column": 14,
-        "channel": 0
-      }
-    },
-    "Column_30_FROM_AIE": {
-      "shim": {
-        "column": 30,
-        "channel": 2
-      }
-    },    
-    "Column_15_TO_AIE": {
-      "shim": {
-        "column": 15,
-        "channel": 0
-      }
-    },
-    "Column_31_FROM_AIE": {
-      "shim": {
-        "column": 31,
-        "channel": 2
-      }
-    },    
-    "Column_16_TO_AIE": {
-      "shim": {
-        "column": 16,
-        "channel": 0
-      }
-    },
-    "Column_32_FROM_AIE": {
-      "shim": {
-        "column": 32,
-        "channel": 2
-      }
-    },
-    "Column_17_TO_AIE": {
-      "shim": {
-        "column": 17,
-        "channel": 0
-      }
-    },    
-    "Column_33_FROM_AIE": {
-      "shim": {
-        "column": 33,
-        "channel": 2
-      }
-    },
-    "Column_18_TO_AIE": {
-      "shim": {
-        "column": 18,
-        "channel": 0
-      }
-    },
-    "Column_34_FROM_AIE": {
-      "shim": {
-        "column": 34,
-        "channel": 2
-      }
-    },
-    "Column_19_TO_AIE": {
-      "shim": {
-        "column": 19,
-        "channel": 0
-      }
-    },
-    "Column_35_FROM_AIE": {
-      "shim": {
-        "column": 35,
-        "channel": 2
-      }
-    },
-    "Column_20_TO_AIE": {
-      "shim": {
-        "column": 20,
-        "channel": 0
-      }
-    },
-    "Column_36_FROM_AIE": {
-      "shim": {
-        "column": 36,
-        "channel": 2
-      }
-    },
-    "Column_21_TO_AIE": {
-      "shim": {
-        "column": 21,
-        "channel": 0
-      }
-    },
-    "Column_37_FROM_AIE": {
-      "shim": {
-        "column": 37,
-        "channel": 2
-      }
-    },
-    "Column_22_TO_AIE": {
-      "shim": {
-        "column": 22,
-        "channel": 0
-      }
-    },
-    "Column_38_FROM_AIE": {
-      "shim": {
-        "column": 38,
-        "channel": 2
-      }
-    },
-    "Column_23_TO_AIE": {
-      "shim": {
-        "column": 23,
-        "channel": 0
-      }
-    },
-    "Column_39_FROM_AIE": {
-      "shim": {
-        "column": 39,
-        "channel": 2
-      }
-    },
-    "Column_24_TO_AIE": {
-      "shim": {
-        "column": 24,
-        "channel": 0
-      }
-    },
-    "Column_40_FROM_AIE": {
-      "shim": {
-        "column": 40,
-        "channel": 2
-      }
-    },
-    "Column_25_TO_AIE": {
-      "shim": {
-        "column": 25,
-        "channel": 0
-      }
-    },
-    "Column_41_FROM_AIE": {
-      "shim": {
-        "column": 41,
-        "channel": 2
-      }
-    },
-    "Column_26_TO_AIE": {
-      "shim": {
-        "column": 26,
-        "channel": 0
-      }
-    },
-    "Column_42_FROM_AIE": {
-      "shim": {
-        "column": 42,
-        "channel": 2
-      }
-    },
-    "Column_27_TO_AIE": {
-      "shim": {
-        "column": 27,
-        "channel": 0
-      }
-    },
-    "Column_43_FROM_AIE": {
-      "shim": {
-        "column": 43,
-        "channel": 2
-      }
-    }       
-  }
+    "PLIO_01_TO_AIE":     {"shim": {"column":  6, "channel": 0 } },
+    "PLIO_02_TO_AIE":     {"shim": {"column":  6, "channel": 4 } },
+    "PLIO_03_TO_AIE":     {"shim": {"column":  7, "channel": 0 } },
+    "PLIO_04_TO_AIE":     {"shim": {"column":  7, "channel": 4 } },
+    "PLIO_05_TO_AIE":     {"shim": {"column":  8, "channel": 0 } },
+    "PLIO_06_TO_AIE":     {"shim": {"column":  8, "channel": 4 } },
+    "PLIO_07_TO_AIE":     {"shim": {"column":  9, "channel": 0 } },
+    "PLIO_08_TO_AIE":     {"shim": {"column":  9, "channel": 4 } },
+    "PLIO_09_TO_AIE":     {"shim": {"column": 10, "channel": 0 } },
+    "PLIO_10_TO_AIE":     {"shim": {"column": 10, "channel": 4 } },
+    "PLIO_11_TO_AIE":     {"shim": {"column": 11, "channel": 0 } },
+    "PLIO_12_TO_AIE":     {"shim": {"column": 11, "channel": 4 } },
+    "PLIO_13_TO_AIE":     {"shim": {"column": 12, "channel": 0 } },
+    "PLIO_14_TO_AIE":     {"shim": {"column": 12, "channel": 4 } },
+    "PLIO_15_TO_AIE":     {"shim": {"column": 13, "channel": 0 } },
+    "PLIO_16_TO_AIE":     {"shim": {"column": 13, "channel": 4 } },
+    "PLIO_17_TO_AIE":     {"shim": {"column": 14, "channel": 0 } },
+    "PLIO_18_TO_AIE":     {"shim": {"column": 14, "channel": 4 } },
+    "PLIO_19_TO_AIE":     {"shim": {"column": 15, "channel": 0 } },
+    "PLIO_20_TO_AIE":     {"shim": {"column": 15, "channel": 4 } },
+    "PLIO_21_TO_AIE":     {"shim": {"column": 16, "channel": 0 } },
+    "PLIO_22_TO_AIE":     {"shim": {"column": 16, "channel": 4 } },
+    "PLIO_23_TO_AIE":     {"shim": {"column": 17, "channel": 0 } },
+    "PLIO_24_TO_AIE":     {"shim": {"column": 17, "channel": 4 } },
+    "PLIO_25_TO_AIE":     {"shim": {"column": 18, "channel": 0 } },
+    "PLIO_26_TO_AIE":     {"shim": {"column": 18, "channel": 4 } },
+    "PLIO_27_TO_AIE":     {"shim": {"column": 19, "channel": 0 } },
+    "PLIO_28_TO_AIE":     {"shim": {"column": 19, "channel": 4 } },
+    "PLIO_29_TO_AIE":     {"shim": {"column": 20, "channel": 0 } },
+    "PLIO_30_TO_AIE":     {"shim": {"column": 20, "channel": 4 } },
+    "PLIO_31_TO_AIE":     {"shim": {"column": 21, "channel": 0 } },
+    "PLIO_32_TO_AIE":     {"shim": {"column": 21, "channel": 4 } },
+    "PLIO_33_TO_AIE":     {"shim": {"column": 22, "channel": 0 } },
+    "PLIO_34_TO_AIE":     {"shim": {"column": 22, "channel": 4 } },
+    "PLIO_35_TO_AIE":     {"shim": {"column": 23, "channel": 0 } },
+    "PLIO_36_TO_AIE":     {"shim": {"column": 23, "channel": 4 } },
+
+    "PLIO_01_FROM_AIE":   {"shim": {"column":  6, "channel": 0 } },
+    "PLIO_02_FROM_AIE":   {"shim": {"column":  6, "channel": 4 } },
+    "PLIO_03_FROM_AIE":   {"shim": {"column":  7, "channel": 0 } },
+    "PLIO_04_FROM_AIE":   {"shim": {"column":  7, "channel": 4 } },
+    "PLIO_05_FROM_AIE":   {"shim": {"column":  8, "channel": 0 } },
+    "PLIO_06_FROM_AIE":   {"shim": {"column":  8, "channel": 4 } },
+    "PLIO_07_FROM_AIE":   {"shim": {"column":  9, "channel": 0 } },
+    "PLIO_08_FROM_AIE":   {"shim": {"column":  9, "channel": 4 } },
+    "PLIO_09_FROM_AIE":   {"shim": {"column": 10, "channel": 0 } },
+    "PLIO_10_FROM_AIE":   {"shim": {"column": 10, "channel": 4 } },
+    "PLIO_11_FROM_AIE":   {"shim": {"column": 11, "channel": 0 } },
+    "PLIO_12_FROM_AIE":   {"shim": {"column": 11, "channel": 4 } },
+    "PLIO_13_FROM_AIE":   {"shim": {"column": 12, "channel": 0 } },
+    "PLIO_14_FROM_AIE":   {"shim": {"column": 12, "channel": 4 } },
+    "PLIO_15_FROM_AIE":   {"shim": {"column": 13, "channel": 0 } },
+    "PLIO_16_FROM_AIE":   {"shim": {"column": 13, "channel": 4 } },
+    "PLIO_17_FROM_AIE":   {"shim": {"column": 14, "channel": 0 } },
+    "PLIO_18_FROM_AIE":   {"shim": {"column": 14, "channel": 4 } },
+    "PLIO_19_FROM_AIE":   {"shim": {"column": 15, "channel": 0 } },
+    "PLIO_20_FROM_AIE":   {"shim": {"column": 15, "channel": 4 } },
+    "PLIO_21_FROM_AIE":   {"shim": {"column": 16, "channel": 0 } },
+    "PLIO_22_FROM_AIE":   {"shim": {"column": 16, "channel": 4 } },
+    "PLIO_23_FROM_AIE":   {"shim": {"column": 17, "channel": 0 } },
+    "PLIO_24_FROM_AIE":   {"shim": {"column": 17, "channel": 4 } },
+    "PLIO_25_FROM_AIE":   {"shim": {"column": 18, "channel": 0 } },
+    "PLIO_26_FROM_AIE":   {"shim": {"column": 18, "channel": 4 } },
+    "PLIO_27_FROM_AIE":   {"shim": {"column": 19, "channel": 0 } },
+    "PLIO_28_FROM_AIE":   {"shim": {"column": 19, "channel": 4 } },
+    "PLIO_29_FROM_AIE":   {"shim": {"column": 20, "channel": 0 } },
+    "PLIO_30_FROM_AIE":   {"shim": {"column": 20, "channel": 4 } },
+    "PLIO_31_FROM_AIE":   {"shim": {"column": 21, "channel": 0 } },
+    "PLIO_32_FROM_AIE":   {"shim": {"column": 21, "channel": 4 } },
+    "PLIO_33_FROM_AIE":   {"shim": {"column": 22, "channel": 0 } },
+    "PLIO_34_FROM_AIE":   {"shim": {"column": 22, "channel": 4 } },
+    "PLIO_35_FROM_AIE":   {"shim": {"column": 23, "channel": 0 } },
+    "PLIO_36_FROM_AIE":   {"shim": {"column": 23, "channel": 4 } }
+  } 
 }
+

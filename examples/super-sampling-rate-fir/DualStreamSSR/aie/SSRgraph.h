@@ -26,6 +26,8 @@
 #include <adf.h>
 #include "system_settings.h"
 #include "aie_kernels.h"
+
+// REQUIRED: Include the test harness header file
 #include "vck190_test_harness_graph.hpp"
 
 std::vector<cint16> taps = std::vector<cint16>(
@@ -164,38 +166,38 @@ class TopGraph : public adf::graph {
     output_plio plout[16]; // 8 columns, 2 streams per kernel
 
     TopGraph() {
-        plin[0] = input_plio::create("Column_12_TO_AIE", plio_128_bits, "data/PhaseIn_0_0.txt", 500);
-        plin[1] = input_plio::create("Column_13_TO_AIE", plio_128_bits, "data/PhaseIn_0_1.txt", 500);
-        plin[2] = input_plio::create("Column_14_TO_AIE", plio_128_bits, "data/PhaseIn_1_0.txt", 500);
-        plin[3] = input_plio::create("Column_15_TO_AIE", plio_128_bits, "data/PhaseIn_1_1.txt", 500);
-        plin[4] = input_plio::create("Column_16_TO_AIE", plio_128_bits, "data/PhaseIn_2_0.txt", 500);
-        plin[5] = input_plio::create("Column_17_TO_AIE", plio_128_bits, "data/PhaseIn_2_1.txt", 500);
-        plin[6] = input_plio::create("Column_18_TO_AIE", plio_128_bits, "data/PhaseIn_3_0.txt", 500);
-        plin[7] = input_plio::create("Column_19_TO_AIE", plio_128_bits, "data/PhaseIn_3_1.txt", 500);
-        plin[8] = input_plio::create("Column_20_TO_AIE", plio_128_bits, "data/PhaseIn_4_0.txt", 500);
-        plin[9] = input_plio::create("Column_21_TO_AIE", plio_128_bits, "data/PhaseIn_4_1.txt", 500);
-        plin[10] = input_plio::create("Column_22_TO_AIE", plio_128_bits, "data/PhaseIn_5_0.txt", 500);
-        plin[11] = input_plio::create("Column_23_TO_AIE", plio_128_bits, "data/PhaseIn_5_1.txt", 500);
-        plin[12] = input_plio::create("Column_24_TO_AIE", plio_128_bits, "data/PhaseIn_6_0.txt", 500);
-        plin[13] = input_plio::create("Column_25_TO_AIE", plio_128_bits, "data/PhaseIn_6_1.txt", 500);
-        plin[14] = input_plio::create("Column_26_TO_AIE", plio_128_bits, "data/PhaseIn_7_0.txt", 500);
-        plin[15] = input_plio::create("Column_27_TO_AIE", plio_128_bits, "data/PhaseIn_7_1.txt", 500);
-        plout[0] = output_plio::create("Column_28_FROM_AIE", plio_128_bits, "data/PhaseOut_0_0.txt", 500);
-        plout[1] = output_plio::create("Column_29_FROM_AIE", plio_128_bits, "data/PhaseOut_0_1.txt", 500);
-        plout[2] = output_plio::create("Column_30_FROM_AIE", plio_128_bits, "data/PhaseOut_1_0.txt", 500);
-        plout[3] = output_plio::create("Column_31_FROM_AIE", plio_128_bits, "data/PhaseOut_1_1.txt", 500);
-        plout[4] = output_plio::create("Column_32_FROM_AIE", plio_128_bits, "data/PhaseOut_2_0.txt", 500);
-        plout[5] = output_plio::create("Column_33_FROM_AIE", plio_128_bits, "data/PhaseOut_2_1.txt", 500);
-        plout[6] = output_plio::create("Column_34_FROM_AIE", plio_128_bits, "data/PhaseOut_3_0.txt", 500);
-        plout[7] = output_plio::create("Column_35_FROM_AIE", plio_128_bits, "data/PhaseOut_3_1.txt", 500);
-        plout[8] = output_plio::create("Column_36_FROM_AIE", plio_128_bits, "data/PhaseOut_4_0.txt", 500);
-        plout[9] = output_plio::create("Column_37_FROM_AIE", plio_128_bits, "data/PhaseOut_4_1.txt", 500);
-        plout[10] = output_plio::create("Column_38_FROM_AIE", plio_128_bits, "data/PhaseOut_5_0.txt", 500);
-        plout[11] = output_plio::create("Column_39_FROM_AIE", plio_128_bits, "data/PhaseOut_5_1.txt", 500);
-        plout[12] = output_plio::create("Column_40_FROM_AIE", plio_128_bits, "data/PhaseOut_6_0.txt", 500);
-        plout[13] = output_plio::create("Column_41_FROM_AIE", plio_128_bits, "data/PhaseOut_6_1.txt", 500);
-        plout[14] = output_plio::create("Column_42_FROM_AIE", plio_128_bits, "data/PhaseOut_7_0.txt", 500);
-        plout[15] = output_plio::create("Column_43_FROM_AIE", plio_128_bits, "data/PhaseOut_7_1.txt", 500);
+        plin[0] = input_plio::create("PLIO_01_TO_AIE", plio_128_bits, "data/PhaseIn_0_0.txt", 500);
+        plin[1] = input_plio::create("PLIO_03_TO_AIE", plio_128_bits, "data/PhaseIn_0_1.txt", 500);
+        plin[2] = input_plio::create("PLIO_05_TO_AIE", plio_128_bits, "data/PhaseIn_1_0.txt", 500);
+        plin[3] = input_plio::create("PLIO_07_TO_AIE", plio_128_bits, "data/PhaseIn_1_1.txt", 500);
+        plin[4] = input_plio::create("PLIO_09_TO_AIE", plio_128_bits, "data/PhaseIn_2_0.txt", 500);
+        plin[5] = input_plio::create("PLIO_11_TO_AIE", plio_128_bits, "data/PhaseIn_2_1.txt", 500);
+        plin[6] = input_plio::create("PLIO_13_TO_AIE", plio_128_bits, "data/PhaseIn_3_0.txt", 500);
+        plin[7] = input_plio::create("PLIO_15_TO_AIE", plio_128_bits, "data/PhaseIn_3_1.txt", 500);
+        plin[8] = input_plio::create("PLIO_17_TO_AIE", plio_128_bits, "data/PhaseIn_4_0.txt", 500);
+        plin[9] = input_plio::create("PLIO_19_TO_AIE", plio_128_bits, "data/PhaseIn_4_1.txt", 500);
+        plin[10] = input_plio::create("PLIO_21_TO_AIE", plio_128_bits, "data/PhaseIn_5_0.txt", 500);
+        plin[11] = input_plio::create("PLIO_23_TO_AIE", plio_128_bits, "data/PhaseIn_5_1.txt", 500);
+        plin[12] = input_plio::create("PLIO_25_TO_AIE", plio_128_bits, "data/PhaseIn_6_0.txt", 500);
+        plin[13] = input_plio::create("PLIO_27_TO_AIE", plio_128_bits, "data/PhaseIn_6_1.txt", 500);
+        plin[14] = input_plio::create("PLIO_29_TO_AIE", plio_128_bits, "data/PhaseIn_7_0.txt", 500);
+        plin[15] = input_plio::create("PLIO_31_TO_AIE", plio_128_bits, "data/PhaseIn_7_1.txt", 500);
+        plout[0] = output_plio::create("PLIO_02_FROM_AIE", plio_128_bits, "data/PhaseOut_0_0.txt", 500);
+        plout[1] = output_plio::create("PLIO_04_FROM_AIE", plio_128_bits, "data/PhaseOut_0_1.txt", 500);
+        plout[2] = output_plio::create("PLIO_06_FROM_AIE", plio_128_bits, "data/PhaseOut_1_0.txt", 500);
+        plout[3] = output_plio::create("PLIO_08_FROM_AIE", plio_128_bits, "data/PhaseOut_1_1.txt", 500);
+        plout[4] = output_plio::create("PLIO_10_FROM_AIE", plio_128_bits, "data/PhaseOut_2_0.txt", 500);
+        plout[5] = output_plio::create("PLIO_12_FROM_AIE", plio_128_bits, "data/PhaseOut_2_1.txt", 500);
+        plout[6] = output_plio::create("PLIO_14_FROM_AIE", plio_128_bits, "data/PhaseOut_3_0.txt", 500);
+        plout[7] = output_plio::create("PLIO_16_FROM_AIE", plio_128_bits, "data/PhaseOut_3_1.txt", 500);
+        plout[8] = output_plio::create("PLIO_18_FROM_AIE", plio_128_bits, "data/PhaseOut_4_0.txt", 500);
+        plout[9] = output_plio::create("PLIO_20_FROM_AIE", plio_128_bits, "data/PhaseOut_4_1.txt", 500);
+        plout[10] = output_plio::create("PLIO_22_FROM_AIE", plio_128_bits, "data/PhaseOut_5_0.txt", 500);
+        plout[11] = output_plio::create("PLIO_24_FROM_AIE", plio_128_bits, "data/PhaseOut_5_1.txt", 500);
+        plout[12] = output_plio::create("PLIO_26_FROM_AIE", plio_128_bits, "data/PhaseOut_6_0.txt", 500);
+        plout[13] = output_plio::create("PLIO_28_FROM_AIE", plio_128_bits, "data/PhaseOut_6_1.txt", 500);
+        plout[14] = output_plio::create("PLIO_30_FROM_AIE", plio_128_bits, "data/PhaseOut_7_0.txt", 500);
+        plout[15] = output_plio::create("PLIO_32_FROM_AIE", plio_128_bits, "data/PhaseOut_7_1.txt", 500);
         for (int i = 0; i < 8; i++) {
             connect<>(plin[2 * i].out[0], G1.in[2 * i]);
             connect<>(plin[2 * i + 1].out[0], G1.in[2 * i + 1]);

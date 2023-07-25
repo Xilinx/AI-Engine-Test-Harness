@@ -35,7 +35,6 @@
 #include "xrt/xrt_device.h"
 #include "xrt/xrt_kernel.h"
 #include "xrt/xrt_bo.h"
-#include "xrt/xrt_kernel.h"
 #include "xrt/xrt_graph.h"
 
 namespace vck190_test_harness {
@@ -160,38 +159,78 @@ class fastXM {
 };
 
 enum channel_index {
-    Column_12_TO_AIE,
-    Column_13_TO_AIE,
-    Column_14_TO_AIE,
-    Column_15_TO_AIE,
-    Column_16_TO_AIE,
-    Column_17_TO_AIE,
-    Column_18_TO_AIE,
-    Column_19_TO_AIE,
-    Column_20_TO_AIE,
-    Column_21_TO_AIE,
-    Column_22_TO_AIE,
-    Column_23_TO_AIE,
-    Column_24_TO_AIE,
-    Column_25_TO_AIE,
-    Column_26_TO_AIE,
-    Column_27_TO_AIE,
-    Column_28_FROM_AIE,
-    Column_29_FROM_AIE,
-    Column_30_FROM_AIE,
-    Column_31_FROM_AIE,
-    Column_32_FROM_AIE,
-    Column_33_FROM_AIE,
-    Column_34_FROM_AIE,
-    Column_35_FROM_AIE,
-    Column_36_FROM_AIE,
-    Column_37_FROM_AIE,
-    Column_38_FROM_AIE,
-    Column_39_FROM_AIE,
-    Column_40_FROM_AIE,
-    Column_41_FROM_AIE,
-    Column_42_FROM_AIE,
-    Column_43_FROM_AIE
+    PLIO_01_TO_AIE,
+    PLIO_02_TO_AIE,
+    PLIO_03_TO_AIE,
+    PLIO_04_TO_AIE,
+    PLIO_05_TO_AIE,
+    PLIO_06_TO_AIE,
+    PLIO_07_TO_AIE,
+    PLIO_08_TO_AIE,
+    PLIO_09_TO_AIE,
+    PLIO_10_TO_AIE,
+    PLIO_11_TO_AIE,
+    PLIO_12_TO_AIE,
+    PLIO_13_TO_AIE,
+    PLIO_14_TO_AIE,
+    PLIO_15_TO_AIE,
+    PLIO_16_TO_AIE,
+    PLIO_17_TO_AIE,
+    PLIO_18_TO_AIE,
+    PLIO_19_TO_AIE,
+    PLIO_20_TO_AIE,
+    PLIO_21_TO_AIE,
+    PLIO_22_TO_AIE,
+    PLIO_23_TO_AIE,
+    PLIO_24_TO_AIE,
+    PLIO_25_TO_AIE,
+    PLIO_26_TO_AIE,
+    PLIO_27_TO_AIE,
+    PLIO_28_TO_AIE,
+    PLIO_29_TO_AIE,
+    PLIO_30_TO_AIE,
+    PLIO_31_TO_AIE,
+    PLIO_32_TO_AIE,
+    PLIO_33_TO_AIE,
+    PLIO_34_TO_AIE,
+    PLIO_35_TO_AIE,
+    PLIO_36_TO_AIE,
+    PLIO_01_FROM_AIE,
+    PLIO_02_FROM_AIE,
+    PLIO_03_FROM_AIE,
+    PLIO_04_FROM_AIE,
+    PLIO_05_FROM_AIE,
+    PLIO_06_FROM_AIE,
+    PLIO_07_FROM_AIE,
+    PLIO_08_FROM_AIE,
+    PLIO_09_FROM_AIE,
+    PLIO_10_FROM_AIE,
+    PLIO_11_FROM_AIE,
+    PLIO_12_FROM_AIE,
+    PLIO_13_FROM_AIE,
+    PLIO_14_FROM_AIE,
+    PLIO_15_FROM_AIE,
+    PLIO_16_FROM_AIE,
+    PLIO_17_FROM_AIE,
+    PLIO_18_FROM_AIE,
+    PLIO_19_FROM_AIE,
+    PLIO_20_FROM_AIE,
+    PLIO_21_FROM_AIE,
+    PLIO_22_FROM_AIE,
+    PLIO_23_FROM_AIE,
+    PLIO_24_FROM_AIE,
+    PLIO_25_FROM_AIE,
+    PLIO_26_FROM_AIE,
+    PLIO_27_FROM_AIE,
+    PLIO_28_FROM_AIE,
+    PLIO_29_FROM_AIE,
+    PLIO_30_FROM_AIE,
+    PLIO_31_FROM_AIE,
+    PLIO_32_FROM_AIE,
+    PLIO_33_FROM_AIE,
+    PLIO_34_FROM_AIE,
+    PLIO_35_FROM_AIE,
+    PLIO_36_FROM_AIE
 };
 
 struct test_harness_args {
@@ -205,7 +244,8 @@ struct test_harness_args {
 class test_harness_mgr : public fastXM {
    public:
     /*
-     * test_harness_mgr() - Loads the xclbin on the devide and initializes the various test harness runtime objects
+     * test_harness_mgr() - Loads the xclbin on the devide and initializes the
+     * various test harness runtime objects
      *
      * @param device_index
      * The device id of the testing board, typically it will be zero
@@ -239,13 +279,18 @@ class test_harness_mgr : public fastXM {
         reset_cfg();
 
         if (!graph_started) {
-            std::cout << "Warning: you're trying to call 'runTestHarness' before calling 'runAIEGraph'." << std::endl;
+            std::cout << "Warning: you're trying to call 'runTestHarness' before "
+                         "calling 'runAIEGraph'."
+                      << std::endl;
             std::cout << "This might lead to result of 'printPerf' to be fluctuated." << std::endl;
-            std::cout << "It is strongly recommended to call 'runAIEGraph' before 'runTestHarness'." << std::endl;
+            std::cout << "It is strongly recommended to call 'runAIEGraph' before "
+                         "'runTestHarness'."
+                      << std::endl;
         }
 
         bool frame_size_valid = true;
         for (int i = 0; i < args.size(); i++) {
+            std::cout << "Check frame size CH[" << i << "]:    ";
             if (!check_frame_size(args[i].size_in_byte)) {
                 frame_size_valid = false;
             }
@@ -257,12 +302,12 @@ class test_harness_mgr : public fastXM {
                 {
                     int bias = 0;
                     int chn = 0;
-                    if (args[i].idx <= Column_27_TO_AIE) {
+                    if (args[i].idx <= PLIO_36_TO_AIE) {
                         bias = 0;
-                        chn = args[i].idx - Column_12_TO_AIE;
+                        chn = args[i].idx - PLIO_01_TO_AIE;
                     } else {
                         bias = 3;
-                        chn = args[i].idx - Column_28_FROM_AIE;
+                        chn = args[i].idx - PLIO_01_FROM_AIE;
                     }
 
                     cfg_ptr[N * bias + 0 * N + chn] = args[i].delay;
@@ -271,8 +316,8 @@ class test_harness_mgr : public fastXM {
                 }
 
                 {
-                    if (args[i].idx <= Column_27_TO_AIE) {
-                        int bias = (args[i].idx - Column_12_TO_AIE) * W * D;
+                    if (args[i].idx <= PLIO_36_TO_AIE) {
+                        int bias = (args[i].idx - PLIO_01_TO_AIE) * W * D;
                         memcpy(to_aie_ptr + bias, args[i].data, args[i].size_in_byte);
                     }
                 }
@@ -283,7 +328,9 @@ class test_harness_mgr : public fastXM {
                             {2, true, N * W * D, to_aie_ptr, 0},
                             {3, true, N * W * D, from_aie_ptr, 0}});
         } else {
-            std::cout << "ERROR: Arguments for test harness is not valid, won't run test harness!" << std::endl;
+            std::cout << "ERROR: Arguments for test harness is not valid, won't run "
+                         "test harness!"
+                      << std::endl;
         }
     }
 
@@ -297,8 +344,8 @@ class test_harness_mgr : public fastXM {
         graph_started = false;
         this->fetchRes();
         for (int i = 0; i < args_rec.size(); i++) {
-            if (args_rec[i].idx >= Column_28_FROM_AIE) {
-                int bias = (args_rec[i].idx - Column_28_FROM_AIE) * W * D;
+            if (args_rec[i].idx >= PLIO_01_FROM_AIE) {
+                int bias = (args_rec[i].idx - PLIO_01_FROM_AIE) * W * D;
                 memcpy(args_rec[i].data, from_aie_ptr + bias, args_rec[i].size_in_byte);
             }
         }
@@ -307,16 +354,16 @@ class test_harness_mgr : public fastXM {
 
     void printPerf() {
         for (int i = 0; i < args_rec.size(); i++) {
-            if (args_rec[i].idx <= Column_27_TO_AIE) {
-                int chn = args_rec[i].idx - Column_12_TO_AIE;
-                std::cout << "Column_" << chn + 12 << "_TO_AIE starts from cycle[" << args_rec[i].delay
+            if (args_rec[i].idx <= PLIO_36_TO_AIE) {
+                int chn = args_rec[i].idx - PLIO_01_TO_AIE;
+                std::cout << "PLIO_" << chn + 1 << "_TO_AIE starts from cycle[" << args_rec[i].delay
                           << "], ends at cycle[" << perf_ptr[chn] << "]." << std::endl;
             }
         }
         for (int i = 0; i < args_rec.size(); i++) {
-            if (args_rec[i].idx >= Column_27_TO_AIE) {
-                int chn = args_rec[i].idx - Column_28_FROM_AIE;
-                std::cout << "Column_" << chn + 28 << "_FROM_AIE starts from cycle[" << args_rec[i].delay
+            if (args_rec[i].idx >= PLIO_01_FROM_AIE) {
+                int chn = args_rec[i].idx - PLIO_01_FROM_AIE;
+                std::cout << "PLIO_" << chn + 1 << "_FROM_AIE starts from cycle[" << args_rec[i].delay
                           << "], ends at cycle[" << perf_ptr[chn + N] << "]." << std::endl;
             }
         }
@@ -330,9 +377,9 @@ class test_harness_mgr : public fastXM {
     }
 
    private:
-    static const unsigned int N = 16;
+    static const unsigned int N = 36;
     static const unsigned int W = 16;
-    static const unsigned int D = 8192;
+    static const unsigned int D = 4096;
     bool graph_started;
     uint64_t* cfg_ptr;
     uint64_t* perf_ptr;

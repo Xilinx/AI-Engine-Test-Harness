@@ -28,8 +28,8 @@ using namespace adf;
 clipped clipgraph; // A graph object 'clipgraph' is declared
 
 // REQUIRED: Instantiate a graph to occupy the PLIOs unused by the user graph.
-static std::vector<std::string> usedInputs = {"Column_12_TO_AIE"};
-static std::vector<std::string> usedOutputs = {"Column_28_FROM_AIE"};
+static std::vector<std::string> usedInputs = {"PLIO_01_TO_AIE"};
+static std::vector<std::string> usedOutputs = {"PLIO_01_FROM_AIE"};
 vck190_test_harness::occupyUnusedPLIO<1, 1> unusedPLIOs(usedInputs, usedOutputs);
 
 // This main() function runs only for AIESIM and X86Sim targets.

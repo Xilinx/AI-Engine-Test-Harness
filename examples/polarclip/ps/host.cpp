@@ -81,9 +81,9 @@ int main(int argc, char** argv) {
     // Configuration: channel index, size_in_bytes, repetition, delay, pointer to data
     std::vector<test_harness_args> args;
     args.push_back(
-        {channel_index(Column_12_TO_AIE), num_bytes(inputs), num_repetitions, num_delay, (char*)inputs.data()});
+        {channel_index(PLIO_01_TO_AIE), num_bytes(inputs), num_repetitions, num_delay, (char*)inputs.data()});
     args.push_back(
-        {channel_index(Column_28_FROM_AIE), num_bytes(outputs), num_repetitions, num_delay, (char*)outputs.data()});
+        {channel_index(PLIO_01_FROM_AIE), num_bytes(outputs), num_repetitions, num_delay, (char*)outputs.data()});
 
     printf("Running example POLARCLIP\n");
     printf(" - Number of graph iterations         : %8d\n", num_iterations);

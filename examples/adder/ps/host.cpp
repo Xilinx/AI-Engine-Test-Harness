@@ -66,11 +66,11 @@ int main(int argc, char** argv) {
     // configuration: channel index, size_in_bytes, repetition, delay, pointer to data
     std::vector<test_harness_args> args;
     args.push_back(
-        {channel_index(Column_12_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)a.data()});
+        {channel_index(PLIO_01_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)a.data()});
     args.push_back(
-        {channel_index(Column_13_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)b.data()});
+        {channel_index(PLIO_02_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)b.data()});
     args.push_back(
-        {channel_index(Column_28_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)s.data()});
+        {channel_index(PLIO_01_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)s.data()});
 
     printf("Running example ADDER\n");
     printf(" - Number of graph iterations         : %8d\n", num_iterations);
