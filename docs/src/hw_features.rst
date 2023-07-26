@@ -30,7 +30,7 @@ The test harness leverages a precompiled .xsa file which is used as an input pla
 PL DMA Engine
 =============
 
-The precompiled .xsa implements a DMA engine with 32 channels. 16 Tx channels send data from DDR to AIE and 16 Rx send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.
+The precompiled .xsa implements a DMA engine with 72 channels. 36 Tx channels send data from DDR to AIE and 36 Rx send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.
 
 - Each channel is connected to a unique AIE PLIO port using 128-bits wide AXI-Stream clocked at 312.5Mhz. This delivers an effective throughput of 5GB/sec (32-bits @ 1.25GHz)
 - Each channel contains its own 128KB URAM memory used to buffer data. This allows transferring data to or from the AIE without unwanted external performance size-effects and deliver maximum throughput.
@@ -55,7 +55,7 @@ The replay parameter specifies how many times each dataset should be replayed (s
 Performance Counter
 -------------------
 
-Each channel has its own built-in performance counter which will start counting cycles once the channel starts to send / receive data. It will stop counting once all sending / receiving are finished. The counter keeps counting even when the channel is stalled by the AIE graph. The performance counter helps profile the real throughput of the AI Engine application.
+Each channel has its own built-in performance counter which will start counting cycles once the channel starts to send/receive data. It will stop counting once all sending/receiving are finished. The counter keeps counting even when the channel is stalled by the AIE graph. The performance counter helps profile the real throughput of the AI Engine application.
 
 
 DMA Channel Operating Sequences
@@ -63,17 +63,17 @@ DMA Channel Operating Sequences
 
 Tx Channels sending data to the AI Engine work as follows:
 
-1. Each channel loads a user-defined quantity of data from DDR and stores it in its local URAM buffer.
-2. After all data has been stored in the URAM buffer, each channel starts a countdown based on its 'delay' parameter. This allows Tx channels to start sending data to the AIE at different times.
-3. Once the countdown reaches 0, each channel loads data from the URAM buffer and sends it to AIE. Each channel can repeat this step for a user-specified number of rounds.
-4. Each channel reports the latency (cycle count) between when it sent the first data and when it sent the last data to the AIE.
+1. Each channel loads a user-defined quantity of data from DDR and stores it in its own local URAM buffer.
+2. After all data has been stored in the URAM buffer, each channel starts a countdown based on its 'delay' parameter. This allows Tx channels to start sending data to the AIE at different time points.
+3. Once the countdown reaches 0, each channel loads data from the URAM buffer and sends it to AIE. Each channel can repeat this step based on an user-specified number of replays.
+4. Each channel reports the latency (cycle count) between when it sents the first data and when it sents the last data to the AIE.
 
 Rx Channels receiving data from the AI Engine work as follows:
 
-1. Each channel starts a countdown based on its 'delay' parameter. This allows Rx channels to start receiving data from the AIE at different times.
-2. Once the countdown reaches 0, each channel starts receiving a user-defined quantity of data from the AIE and stores it in its local URAM buffer. Each channel can repeat this step for a user-specified number of rounds.
-3. After all output channels have finished receiving data from the AIE, they write the output data from the URAM buffers to DDR.
-4. Each channel reports the latency (cycle count) between when it received the first data and when it received the last data to the AIE.
+1. Each channel starts a countdown based on its 'delay' parameter. This allows Rx channels to start receiving data from the AIE at different time points.
+2. Once the countdown reaches 0, each channel starts receiving an user-defined quantity of data from the AIE and stores it in its local URAM buffer. Each channel can repeat this step based on an user-specified number of replays.
+3. After all output channels have finished receiving data from the AIE, they move the output data from the URAM buffers to DDR.
+4. Each channel reports the latency (cycle count) between when it receives the first data and when it receives the last data to the AIE.
 
 
 .. _plio_placement:
@@ -82,34 +82,112 @@ Rx Channels receiving data from the AI Engine work as follows:
 Placement of AIE PLIOs
 ======================
 
-Each PLIO defined in the precompiled .xsa is assigned to a specific AIE interface file and is identified by a unique name. The name reflects the placement and the direction of the PLIO. 
+Each PLIO defined in the precompiled .xsa is assigned to an unique AIE SHIM channel, the name reflects the index and the direction of the PLIO. The placement can be described as follows:
 
-- PL to AIE PLIOs 1 to 16 are mapped to the AIE interface tiles on columns 12 to 27, respectively.
-- AIE to PL PLIOs 1 to 16 are mapped to the AIE interface tiles on columns 28 to 43, respectively.
-
-
-.. image:: /images/connection.png
-   :alt: stream sync Structure
-   :width: 80%
-   :align: center
+- ``PLIO_xx_TO_AIE``: these PLIOs are independent channels that could be used to send data from PL DDR to AIE.
+- ``PLIO_xx_FROM_AIE``: these PLIOs are independent channels that could be used to receive data from AIE to PL DDR.
 
 When declaring PLIOs in the AIE graph, the developer must use one these predefined PLIO names. This lets the developer control which AIE interface tiles are used and thereby, influence the results of the AIE mapper and router.
 
 
 The predefined PLIO names are listed in :url_to_repo:`include/vck190_test_harness_port_name.hpp`::
 
-   static std::vector<std::string> in_names = {
-       "Column_12_TO_AIE", "Column_13_TO_AIE", "Column_14_TO_AIE", "Column_15_TO_AIE",
-       "Column_16_TO_AIE", "Column_17_TO_AIE", "Column_18_TO_AIE", "Column_19_TO_AIE",
-       "Column_20_TO_AIE", "Column_21_TO_AIE", "Column_22_TO_AIE", "Column_23_TO_AIE",
-       "Column_24_TO_AIE", "Column_25_TO_AIE", "Column_26_TO_AIE", "Column_27_TO_AIE"};
-   static std::vector<std::string> out_names = {
-       "Column_28_FROM_AIE", "Column_29_FROM_AIE", "Column_30_FROM_AIE", "Column_31_FROM_AIE",
-       "Column_32_FROM_AIE", "Column_33_FROM_AIE", "Column_34_FROM_AIE", "Column_35_FROM_AIE",
-       "Column_36_FROM_AIE", "Column_37_FROM_AIE", "Column_38_FROM_AIE", "Column_39_FROM_AIE",
-       "Column_40_FROM_AIE", "Column_41_FROM_AIE", "Column_42_FROM_AIE", "Column_43_FROM_AIE"};
-   } 
+    static std::vector<std::string> in_names = {
+        "PLIO_01_TO_AIE", "PLIO_02_TO_AIE", "PLIO_03_TO_AIE", "PLIO_04_TO_AIE",
+        "PLIO_05_TO_AIE", "PLIO_06_TO_AIE", "PLIO_07_TO_AIE", "PLIO_08_TO_AIE",
+        "PLIO_09_TO_AIE", "PLIO_10_TO_AIE", "PLIO_11_TO_AIE", "PLIO_12_TO_AIE",
+        "PLIO_13_TO_AIE", "PLIO_14_TO_AIE", "PLIO_15_TO_AIE", "PLIO_16_TO_AIE",
+        "PLIO_17_TO_AIE", "PLIO_18_TO_AIE", "PLIO_19_TO_AIE", "PLIO_20_TO_AIE",
+        "PLIO_21_TO_AIE", "PLIO_22_TO_AIE", "PLIO_23_TO_AIE", "PLIO_24_TO_AIE",
+        "PLIO_25_TO_AIE", "PLIO_26_TO_AIE", "PLIO_27_TO_AIE", "PLIO_28_TO_AIE",
+        "PLIO_29_TO_AIE", "PLIO_30_TO_AIE", "PLIO_31_TO_AIE", "PLIO_32_TO_AIE",
+        "PLIO_33_TO_AIE", "PLIO_34_TO_AIE", "PLIO_35_TO_AIE", "PLIO_36_TO_AIE"};
+    static std::vector<std::string> out_names = {
+        "PLIO_01_FROM_AIE", "PLIO_02_FROM_AIE", "PLIO_03_FROM_AIE",
+        "PLIO_04_FROM_AIE", "PLIO_05_FROM_AIE", "PLIO_06_FROM_AIE",
+        "PLIO_07_FROM_AIE", "PLIO_08_FROM_AIE", "PLIO_09_FROM_AIE",
+        "PLIO_10_FROM_AIE", "PLIO_11_FROM_AIE", "PLIO_12_FROM_AIE",
+        "PLIO_13_FROM_AIE", "PLIO_14_FROM_AIE", "PLIO_15_FROM_AIE",
+        "PLIO_16_FROM_AIE", "PLIO_17_FROM_AIE", "PLIO_18_FROM_AIE",
+        "PLIO_19_FROM_AIE", "PLIO_20_FROM_AIE", "PLIO_21_FROM_AIE",
+        "PLIO_22_FROM_AIE", "PLIO_23_FROM_AIE", "PLIO_24_FROM_AIE",
+        "PLIO_25_FROM_AIE", "PLIO_26_FROM_AIE", "PLIO_27_FROM_AIE",
+        "PLIO_28_FROM_AIE", "PLIO_29_FROM_AIE", "PLIO_30_FROM_AIE",
+        "PLIO_31_FROM_AIE", "PLIO_32_FROM_AIE", "PLIO_33_FROM_AIE",
+        "PLIO_34_FROM_AIE", "PLIO_35_FROM_AIE", "PLIO_36_FROM_AIE"};
 
-Example: the PLIO named ``Column_12_TO_AIE`` is mapped to the interface tile on column 12 and is used for to transfer data to the AIE. 
+The placement of the PLIOs both ``TO_AIE`` and ``FROM_AIE`` can be seen in :url_to_repo:`cfg/aie_constraints.json`::
 
+    "PLIO_01_TO_AIE":     {"shim": {"column":  6, "channel": 0 } },
+    "PLIO_02_TO_AIE":     {"shim": {"column":  6, "channel": 4 } },
+    "PLIO_03_TO_AIE":     {"shim": {"column":  7, "channel": 0 } },
+    "PLIO_04_TO_AIE":     {"shim": {"column":  7, "channel": 4 } },
+    "PLIO_05_TO_AIE":     {"shim": {"column":  8, "channel": 0 } },
+    "PLIO_06_TO_AIE":     {"shim": {"column":  8, "channel": 4 } },
+    "PLIO_07_TO_AIE":     {"shim": {"column":  9, "channel": 0 } },
+    "PLIO_08_TO_AIE":     {"shim": {"column":  9, "channel": 4 } },
+    "PLIO_09_TO_AIE":     {"shim": {"column": 10, "channel": 0 } },
+    "PLIO_10_TO_AIE":     {"shim": {"column": 10, "channel": 4 } },
+    "PLIO_11_TO_AIE":     {"shim": {"column": 11, "channel": 0 } },
+    "PLIO_12_TO_AIE":     {"shim": {"column": 11, "channel": 4 } },
+    "PLIO_13_TO_AIE":     {"shim": {"column": 12, "channel": 0 } },
+    "PLIO_14_TO_AIE":     {"shim": {"column": 12, "channel": 4 } },
+    "PLIO_15_TO_AIE":     {"shim": {"column": 13, "channel": 0 } },
+    "PLIO_16_TO_AIE":     {"shim": {"column": 13, "channel": 4 } },
+    "PLIO_17_TO_AIE":     {"shim": {"column": 14, "channel": 0 } },
+    "PLIO_18_TO_AIE":     {"shim": {"column": 14, "channel": 4 } },
+    "PLIO_19_TO_AIE":     {"shim": {"column": 15, "channel": 0 } },
+    "PLIO_20_TO_AIE":     {"shim": {"column": 15, "channel": 4 } },
+    "PLIO_21_TO_AIE":     {"shim": {"column": 16, "channel": 0 } },
+    "PLIO_22_TO_AIE":     {"shim": {"column": 16, "channel": 4 } },
+    "PLIO_23_TO_AIE":     {"shim": {"column": 17, "channel": 0 } },
+    "PLIO_24_TO_AIE":     {"shim": {"column": 17, "channel": 4 } },
+    "PLIO_25_TO_AIE":     {"shim": {"column": 18, "channel": 0 } },
+    "PLIO_26_TO_AIE":     {"shim": {"column": 18, "channel": 4 } },
+    "PLIO_27_TO_AIE":     {"shim": {"column": 19, "channel": 0 } },
+    "PLIO_28_TO_AIE":     {"shim": {"column": 19, "channel": 4 } },
+    "PLIO_29_TO_AIE":     {"shim": {"column": 20, "channel": 0 } },
+    "PLIO_30_TO_AIE":     {"shim": {"column": 20, "channel": 4 } },
+    "PLIO_31_TO_AIE":     {"shim": {"column": 21, "channel": 0 } },
+    "PLIO_32_TO_AIE":     {"shim": {"column": 21, "channel": 4 } },
+    "PLIO_33_TO_AIE":     {"shim": {"column": 22, "channel": 0 } },
+    "PLIO_34_TO_AIE":     {"shim": {"column": 22, "channel": 4 } },
+    "PLIO_35_TO_AIE":     {"shim": {"column": 23, "channel": 0 } },
+    "PLIO_36_TO_AIE":     {"shim": {"column": 23, "channel": 4 } },
 
+    "PLIO_01_FROM_AIE":   {"shim": {"column":  6, "channel": 0 } },
+    "PLIO_02_FROM_AIE":   {"shim": {"column":  6, "channel": 4 } },
+    "PLIO_03_FROM_AIE":   {"shim": {"column":  7, "channel": 0 } },
+    "PLIO_04_FROM_AIE":   {"shim": {"column":  7, "channel": 4 } },
+    "PLIO_05_FROM_AIE":   {"shim": {"column":  8, "channel": 0 } },
+    "PLIO_06_FROM_AIE":   {"shim": {"column":  8, "channel": 4 } },
+    "PLIO_07_FROM_AIE":   {"shim": {"column":  9, "channel": 0 } },
+    "PLIO_08_FROM_AIE":   {"shim": {"column":  9, "channel": 4 } },
+    "PLIO_09_FROM_AIE":   {"shim": {"column": 10, "channel": 0 } },
+    "PLIO_10_FROM_AIE":   {"shim": {"column": 10, "channel": 4 } },
+    "PLIO_11_FROM_AIE":   {"shim": {"column": 11, "channel": 0 } },
+    "PLIO_12_FROM_AIE":   {"shim": {"column": 11, "channel": 4 } },
+    "PLIO_13_FROM_AIE":   {"shim": {"column": 12, "channel": 0 } },
+    "PLIO_14_FROM_AIE":   {"shim": {"column": 12, "channel": 4 } },
+    "PLIO_15_FROM_AIE":   {"shim": {"column": 13, "channel": 0 } },
+    "PLIO_16_FROM_AIE":   {"shim": {"column": 13, "channel": 4 } },
+    "PLIO_17_FROM_AIE":   {"shim": {"column": 14, "channel": 0 } },
+    "PLIO_18_FROM_AIE":   {"shim": {"column": 14, "channel": 4 } },
+    "PLIO_19_FROM_AIE":   {"shim": {"column": 15, "channel": 0 } },
+    "PLIO_20_FROM_AIE":   {"shim": {"column": 15, "channel": 4 } },
+    "PLIO_21_FROM_AIE":   {"shim": {"column": 16, "channel": 0 } },
+    "PLIO_22_FROM_AIE":   {"shim": {"column": 16, "channel": 4 } },
+    "PLIO_23_FROM_AIE":   {"shim": {"column": 17, "channel": 0 } },
+    "PLIO_24_FROM_AIE":   {"shim": {"column": 17, "channel": 4 } },
+    "PLIO_25_FROM_AIE":   {"shim": {"column": 18, "channel": 0 } },
+    "PLIO_26_FROM_AIE":   {"shim": {"column": 18, "channel": 4 } },
+    "PLIO_27_FROM_AIE":   {"shim": {"column": 19, "channel": 0 } },
+    "PLIO_28_FROM_AIE":   {"shim": {"column": 19, "channel": 4 } },
+    "PLIO_29_FROM_AIE":   {"shim": {"column": 20, "channel": 0 } },
+    "PLIO_30_FROM_AIE":   {"shim": {"column": 20, "channel": 4 } },
+    "PLIO_31_FROM_AIE":   {"shim": {"column": 21, "channel": 0 } },
+    "PLIO_32_FROM_AIE":   {"shim": {"column": 21, "channel": 4 } },
+    "PLIO_33_FROM_AIE":   {"shim": {"column": 22, "channel": 0 } },
+    "PLIO_34_FROM_AIE":   {"shim": {"column": 22, "channel": 4 } },
+    "PLIO_35_FROM_AIE":   {"shim": {"column": 23, "channel": 0 } },
+    "PLIO_36_FROM_AIE":   {"shim": {"column": 23, "channel": 4 } }

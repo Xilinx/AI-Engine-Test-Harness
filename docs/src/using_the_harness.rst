@@ -33,12 +33,12 @@ Before building the design with the AIE test harness, you need to source the ``s
     source <path to Vitis installation>/settings64.sh
     source <path to XRT installation>/setup.sh
 
-    source <test harness repo folder>/setup.sh
+    source <test harness repo root folder>/setup.sh
 
 Instrumenting the AI Engine Graph
 =================================
 
-The following modifications are needed to use an AIE graph with the test harness:
+The following modifications are needed to connect an AIE graph to the test harness:
 
 Test Harness Header File
 ------------------------
@@ -54,7 +54,7 @@ Mapping PLIOs
 
 The names and width of the usable PLIOs are predefined in the test harness. The original AIE graph must be mapped to these predefined PLIOs. 
 
-The graph must be modified to ensure that all PLIOs are 128 bits wide and use one of the PLIO names predefined in the harness.
+The graph must be modified to ensure that all PLIOs are 128 bits wide and use one of the PLIOs predefined in the test harness.
 
 The predefined PLIO names are listed in :url_to_repo:`include/vck190_test_harness_port_name.hpp`. The ``vck190_test_harness::in_names`` is the list of PLIO names which can be used to send data to AI Engine and ``out_names`` is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to build with test harness. 
 
@@ -62,14 +62,14 @@ The predefined PLIO names are listed in :url_to_repo:`include/vck190_test_harnes
 
 .. code-block:: c++
 
-    pl_in0 = input_plio::create("Column_12_TO_AIE"   , adf::plio_128_bits, "DataIn0.txt");
-    pl_in1 = input_plio::create("Column_13_TO_AIE"   , adf::plio_128_bits, "DataIn1.txt");
-    pl_out = output_plio::create("Column_28_FROM_AIE", adf::plio_128_bits, "DataOut0.txt");
+    pl_in0 = input_plio::create("PLIO_01_TO_AIE"   , adf::plio_128_bits, "DataIn0.txt");
+    pl_in1 = input_plio::create("PLIO_02_TO_AIE"   , adf::plio_128_bits, "DataIn1.txt");
+    pl_out = output_plio::create("PLIO_01_FROM_AIE", adf::plio_128_bits, "DataOut0.txt");
 
 Connecting unused PLIOs
 -----------------------
 
-All the PLIO ports defined in the harness must be connected. In case the AIE graph does not use all the PLIOs defined in the harness, an instance of the ``vck190_test_harness::occupyUnusedPLIO`` helper class must be added in the ``graph.cpp`` file. This class will connect all the PLIOs which are not used by the original AIE graph. 
+All the PLIO ports defined in the test harness must be connected. In case the AIE graph does not need all the PLIOs defined in the harness, an instance of the ``vck190_test_harness::occupyUnusedPLIO`` helper class must be added to the ``graph.cpp`` file. This class will help to occupy all the PLIOs which are not used by the original AIE graph. 
 
 .. code-block:: c++
 
@@ -104,19 +104,19 @@ All the PLIO ports defined in the harness must be connected. In case the AIE gra
 
     #include "vck190_test_harness_graph.hpp"
 
-    static std::vector<std::string> cust_in = {"Column_12_TO_AIE", "Column_13_TO_AIE"};
-    static std::vector<std::string> cust_out = {"Column_28_FROM_AIE"};
+    static std::vector<std::string> cust_in = {"PLIO_01_TO_AIE", "PLIO_02_TO_AIE"};
+    static std::vector<std::string> cust_out = {"PLIO_01_FROM_AIE"};
     vck190_test_harness::occupyUnusedPLIO<2, 1> unusedPLIOs(cust_in, cust_out);
 
 
 Creating the SW Application
 ===========================
 
-A SW application running on the embedded ARM core of the Versal is necessary to run the test. This SW application must be developped using the :ref:`test harness software APIs <sw_apis>`.
+A SW application running on the embedded ARM core (PS) of the Versal is necessary to run the test. This SW application must be developped using the :ref:`test harness software APIs <sw_apis>`.
 
-The application usually ressembles the structure and contents of graph.cpp file used in x86sim and AIEsim. The main difference is that a difference set of APIs is used to transfer data and interact with the AIE graph.
+The application usually ressembles the structure and contents of ``graph.cpp`` file used in x86sim and AIEsim. The main difference is that a different set of APIs is used to transfer data and interact with the AIE graph.
 
-For additional details, refer to the :ref:`step by step example <ps_app>` section of this documentation, or to one of the examples included in this repo, such as :url_to_repo:`examples/super-sampling-rate-fir/SingleKernel/ps/host.cpp`.
+For additional details, refer to the :ref:`step by step example <ps_app>` section in this documentation, or to one of the examples provided in this repo, such as :url_to_repo:`examples/super-sampling-rate-fir/SingleKernel/ps/host.cpp`.
 
 Testing on Hardware
 ===================
@@ -197,7 +197,7 @@ This mode allows testing the SW application and making sure that it works correc
 
 .. rubric:: Building the AI Engine Graph
 
-Building the AIE graph for software emulation is similar to building fit or HW, except that the ``x86sim`` target should be used:
+Building the AIE graph for software emulation is similar to building it for HW, except that the ``x86sim`` target should be used:
 
 .. code-block:: shell
 
@@ -248,7 +248,7 @@ Troubleshooting
 AIE Compilation
 ---------------
 
-**Issue:** The following error message is seen when compiling the AIE graph with the test harness XSA: ``ERROR: [aiecompiler 77-4252] For application port with annotation 'Column_12_TO_AIE' the buswidth is 32-bits, which is different than the buswidth of 128-bits as specified in incoming logical architecture``
+**Issue:** The following error message is seen when compiling the AIE graph with the test harness XSA: ``ERROR: [aiecompiler 77-4252] For application port with annotation 'PLIO_01_TO_AIE' the buswidth is 32-bits, which is different than the buswidth of 128-bits as specified in incoming logical architecture``
 
 - The width of the PLIOs in the prebuilt XSA is set to 128 bits. The PLIO widths in the AIE graph must align with the XSA. Set all PLIO width in the graph to ``adf::plio_128_bits``.
 
@@ -271,5 +271,5 @@ HW Testing
 
 **Issue:** When running on HW, the performance numbers reported by the test harness change a lot from run to run.
 
-- Make sure the start the AIE graph before starting the DMA engine. The performance counters start at the same time as the DMA engine. If the graph is not already started and ready to send and receive data, the performance counters will be incremented by an arbitrary number of cycles.
+- Making sure to start the AIE graph before starting the DMA engine. The performance counters start at the same time as the DMA engine. If the graph is not already started and ready to send and receive data, the performance counters will be incremented by an arbitrary number of cycles.
 

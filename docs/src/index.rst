@@ -14,7 +14,7 @@
 AIE Test Harness
 =================
 
-This repository provides a test harness to help AIE developers easily build and test their AIE graph on VCK190 boards. This test harness is designed to provide a very simple and natural transition from the AIE simulation environment to testing on hardware. With the test harness, AIE graphs running in simulation can be taken to hardware in just a few minutes and with only a few minor modifications. 
+This repository provides a test harness to help AIE developers easily build and test their AIE graph on VCK190 boards. This test harness is designed to provide a very simple and intuitive transition from the AIE simulation environment to testing on hardware. With the test harness, AIE graphs running in simulation can be taken to hardware in just a few minutes and with only a few minor modifications. 
 
 The test harness consists of three main elements:
 
@@ -31,7 +31,7 @@ The test harness consists of three main elements:
 
 The test harness leverages a precompiled .xsa file which is used as an input platform when compiling the AIE graph. This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image. This saves the most time-consuming part of the build process for on-board tests and allows for fast and predictable iterations.
 
-The precompiled .xsa implements a DMA engine with 32 channels. 16 channels send data from DDR to AIE and 16 send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.
+The precompiled .xsa implements a DMA engine with 72 channels. 36 channels send data from DDR to AIE and 36 send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.
 
 The software APIs enable to easily build SW applications to test an AIE graph using the test harness. The APIs are designed to structure test applications following these 5 simple steps:
 
