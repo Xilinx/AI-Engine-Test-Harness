@@ -63,18 +63,33 @@ int main(int argc, char** argv) {
     std::vector<cint16_t> golden_dft16_0;
     std::vector<cint16_t> golden_dft16_1;
 
-    read_data_from_file("./data/dft7_i_0.txt",  in_dft7_0);
-    read_data_from_file("./data/dft7_i_1.txt",  in_dft7_1);
-    read_data_from_file("./data/dft9_i_0.txt",  in_dft9_0);
-    read_data_from_file("./data/dft9_i_1.txt",  in_dft9_1);
-    read_data_from_file("./data/dft16_i_0.txt", in_dft16_0);
-    read_data_from_file("./data/dft16_i_1.txt", in_dft16_1);
-    read_data_from_file("./data/dft7_o_0.txt", golden_dft7_0);
-    read_data_from_file("./data/dft7_o_1.txt", golden_dft7_1);
-    read_data_from_file("./data/dft9_o_0.txt", golden_dft9_0);
-    read_data_from_file("./data/dft9_o_1.txt", golden_dft9_1);
-    read_data_from_file("./data/dft16_o_0.txt", golden_dft16_0);
-    read_data_from_file("./data/dft16_o_1.txt", golden_dft16_1);
+    std::string root_path = argv[2];
+    std::string in_dft7_0_path = root_path + "/dft7_i_0.txt";
+    std::string in_dft7_1_path = root_path + "/dft7_i_1.txt";
+    std::string in_dft9_0_path = root_path + "/dft9_i_0.txt";
+    std::string in_dft9_1_path = root_path + "/dft9_i_1.txt";
+    std::string in_dft16_0_path = root_path + "/dft16_i_0.txt";
+    std::string in_dft16_1_path = root_path + "/dft16_i_1.txt";
+    std::string out_dft7_0_path = root_path + "/dft7_o_0.txt";
+    std::string out_dft7_1_path = root_path + "/dft7_o_1.txt";
+    std::string out_dft9_0_path = root_path + "/dft9_o_0.txt";
+    std::string out_dft9_1_path = root_path + "/dft9_o_1.txt";
+    std::string out_dft16_0_path = root_path + "/dft16_o_0.txt";
+    std::string out_dft16_1_path = root_path + "/dft16_o_1.txt";
+
+    read_data_from_file(in_dft7_0_path, in_dft7_0);
+    read_data_from_file(in_dft7_1_path, in_dft7_1);
+    read_data_from_file(in_dft9_0_path, in_dft9_0);
+    read_data_from_file(in_dft9_1_path, in_dft9_1);
+    read_data_from_file(in_dft16_0_path, in_dft16_0);
+    read_data_from_file(in_dft16_1_path, in_dft16_1);
+    read_data_from_file(out_dft7_0_path, golden_dft7_0);
+    read_data_from_file(out_dft7_1_path, golden_dft7_1);
+    read_data_from_file(out_dft9_0_path, golden_dft9_0);
+    read_data_from_file(out_dft9_1_path, golden_dft9_1);
+    read_data_from_file(out_dft16_0_path, golden_dft16_0);
+    read_data_from_file(out_dft16_1_path, golden_dft16_1);
+
     out_dft7_0.resize(golden_dft7_0.size());
     out_dft7_1.resize(golden_dft7_1.size());
     out_dft9_0.resize(golden_dft9_0.size());

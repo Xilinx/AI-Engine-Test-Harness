@@ -59,7 +59,7 @@ ifeq ($(TARGET), sw_emu)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_sw_emu.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf
 endif
 ifeq ($(TARGET), hw)
-	${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf run_script.sh
+	${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf run_script.sh ./data/dft7_i_0.txt ./data/dft7_i_1.txt ./data/dft9_i_0.txt ./data/dft9_i_1.txt ./data/dft16_i_0.txt ./data/dft16_i_1.txt ./data/dft7_o_0.txt ./data/dft7_o_1.txt ./data/dft9_o_0.txt ./data/dft9_o_1.txt ./data/dft16_o_0.txt ./data/dft16_o_1.txt
 	ln -s ${PKG_DIR} package_hw
 endif
 
@@ -74,7 +74,7 @@ ifeq ($(TARGET), aiesim)
 endif
 ifeq ($(TARGET), sw_emu)
 	LD_LIBRARY_PATH=$(LIBRARY_PATH):$$LD_LIBRARY_PATH \
-	XCL_EMULATION_MODE=sw_emu $(PKG_DIR)/host_elf $(PKG_DIR)/vck190_test_harness.xclbin
+	XCL_EMULATION_MODE=sw_emu $(PKG_DIR)/host_elf $(PKG_DIR)/vck190_test_harness.xclbin "./data"
 endif
 
 #################### Clean ###################################
