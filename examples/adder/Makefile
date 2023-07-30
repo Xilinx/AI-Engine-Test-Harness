@@ -22,7 +22,7 @@ ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa:
 	cd ${TEST_HARNESS_REPO_PATH}/bin && ./download.sh
 
 ##################### Build AIE ##############################
-AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --pl-freq=250 --event-trace=runtime --event-trace-port=gmio --platform=$(TEST_HARNESS_REPO_PATH)/bin/vck190_test_harness.xsa
+AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --pl-freq=312.5 --event-trace=runtime --event-trace-port=gmio --platform=$(TEST_HARNESS_REPO_PATH)/bin/vck190_test_harness.xsa
 
 libadf.a: ./aie/graph.cpp ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa 
 	@echo "Compiling: libadf.a"
@@ -79,4 +79,4 @@ endif
 
 #################### Clean ###################################
 cleanall:
-	rm -rf AIECompiler.log Work $(TEMP_DIR) $(PKG_DIR) x86simulator_output xcd.log .Xil AIESimulator.log Map_Report.csv aiesimulator_output/ diag_report.log pl_sample_counts sol.db xsc_report.log v++*log _x libadf.a
+	rm -rf AIECompiler.log Work x86simulator_output xcd.log .Xil AIESimulator.log Map_Report.csv aiesimulator_output/ diag_report.log pl_sample_counts sol.db xsc_report.log v++* libadf.a pkg* _x* package_hw
