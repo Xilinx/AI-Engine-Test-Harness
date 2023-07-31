@@ -214,6 +214,7 @@ extern "C" void vck190_test_harness(ap_uint<64>* cfg,
         from_aie_strm19, from_aie_strm20, from_aie_strm21, from_aie_strm22, from_aie_strm23, from_aie_strm24,
         from_aie_strm25, from_aie_strm26, from_aie_strm27, from_aie_strm28, from_aie_strm29, from_aie_strm30,
         from_aie_strm31, from_aie_strm32, from_aie_strm33, from_aie_strm34, from_aie_strm35);
+
     inst.store_buff(from_aie_data);
     inst.store_perf(perf);
 }
