@@ -63,7 +63,7 @@ Running the AIE Graph
 
 .. cpp:function:: void test_harness_mgr::runAIEGraph(unsigned int g_idx, unsigned int iters)
 
-   Run the specified AI Engine graph for a specified number of iterations. To ensure accurate performance results, this function should be called after :cpp:func:`test_harness_mgr::runTestHarness`.  
+   Run the specified AI Engine graph for a specified number of iterations. To ensure accurate performance results, this function should be called **before** :cpp:func:`test_harness_mgr::runTestHarness`.  
 
 **Parameters**
 
