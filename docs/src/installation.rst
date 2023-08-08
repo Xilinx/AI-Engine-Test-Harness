@@ -47,7 +47,7 @@ Installation Instructions
 
 .. CAUTION::
    The prebuilt XSA can only be used with the 2023.1 version of the Vitis tools. 
-   To build and test your AI Engine graph using Vitis 2022.2, you must first rebuild the XSA with the 2022.2 version of the Vitis tools, as described in the section below.
+   To build and test your AI Engine graph using other version of Vitis, you must first rebuild the XSA with the corresponding version of the Vitis tools, as described in the section below.
 
 Rebuilding from Source
 ----------------------

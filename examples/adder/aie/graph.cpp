@@ -26,8 +26,8 @@
 test_graph gr;
 
 // REQUIRED: Instantiate a graph to occupy the PLIOs unused by the user graph.
-static std::vector<std::string> cust_in = {"Column_12_TO_AIE", "Column_13_TO_AIE"};
-static std::vector<std::string> cust_out = {"Column_28_FROM_AIE"};
+static std::vector<std::string> cust_in = {"PLIO_01_TO_AIE", "PLIO_02_TO_AIE"};
+static std::vector<std::string> cust_out = {"PLIO_01_FROM_AIE"};
 vck190_test_harness::occupyUnusedPLIO<2, 1> unusedPLIOs(cust_in, cust_out);
 
 #if defined(__AIESIM__) || defined(__X86SIM__)

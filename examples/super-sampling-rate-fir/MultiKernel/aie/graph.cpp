@@ -25,12 +25,14 @@
 
 #include "graph.h"
 
-std::vector<std::string> cust_in = {"Column_12_TO_AIE", "Column_13_TO_AIE", "Column_14_TO_AIE", "Column_15_TO_AIE"};
-std::vector<std::string> cust_out = {"Column_28_FROM_AIE"};
+// REQUIRED: Instantiate a graph to occupy the PLIOs unused by the user graph.
+static std::vector<std::string> cust_in = {"PLIO_01_TO_AIE", "PLIO_03_TO_AIE", "PLIO_05_TO_AIE", "PLIO_07_TO_AIE"};
+static std::vector<std::string> cust_out = {"PLIO_01_FROM_AIE"};
 
 TopGraph G;
 vck190_test_harness::occupyUnusedPLIO<4, 1> dummyGraph(cust_in, cust_out);
 
+#if defined(__AIESIM__) || defined(__X86SIM__)
 int main() {
     G.init();
     G.run(NFRAMES);
@@ -38,3 +40,4 @@ int main() {
 
     return (0);
 }
+#endif

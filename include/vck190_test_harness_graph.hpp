@@ -30,6 +30,8 @@
 #include <adf/stream/types.h>
 #include "vck190_test_harness_port_name.hpp"
 
+#define TEST_HARNESS_PLIO_NUM 36
+
 using namespace adf;
 using namespace std;
 
@@ -41,15 +43,15 @@ namespace vck190_test_harness {
 template <int used_in_plio, int used_out_plio>
 class occupyUnusedPLIO : public graph {
    public:
-    kernel k_in[16 - used_in_plio];
-    kernel k_out[16 - used_out_plio];
-    input_plio pl_in[16 - used_in_plio];
-    output_plio pl_out[16 - used_out_plio];
+    kernel k_in[TEST_HARNESS_PLIO_NUM - used_in_plio];
+    kernel k_out[TEST_HARNESS_PLIO_NUM - used_out_plio];
+    input_plio pl_in[TEST_HARNESS_PLIO_NUM - used_in_plio];
+    output_plio pl_out[TEST_HARNESS_PLIO_NUM - used_out_plio];
 
     occupyUnusedPLIO(std::vector<std::string> used_in_plio_names, std::vector<std::string> used_out_plio_names) {
         {
             int k = 0;
-            for (int i = 0; i < 16; i++) {
+            for (int i = 0; i < TEST_HARNESS_PLIO_NUM; i++) {
                 if (std::count(used_in_plio_names.begin(), used_in_plio_names.end(),
                                vck190_test_harness::in_names[i]) == 0) {
                     pl_in[k] =
@@ -64,7 +66,7 @@ class occupyUnusedPLIO : public graph {
         }
         {
             int k = 0;
-            for (int i = 0; i < 16; i++) {
+            for (int i = 0; i < TEST_HARNESS_PLIO_NUM; i++) {
                 if (std::count(used_out_plio_names.begin(), used_out_plio_names.end(),
                                vck190_test_harness::out_names[i]) == 0) {
                     pl_out[k] =

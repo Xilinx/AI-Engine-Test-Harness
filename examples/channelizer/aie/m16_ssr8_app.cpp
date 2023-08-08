@@ -26,12 +26,25 @@
 // Instantiate AIE graph:
 m16_ssr8_graph aie_dut;
 
-// Initialize and run the graph:
-int main(int argc, char **argv)
-{
-  aie_dut.init();
-  aie_dut.run(2);
-  aie_dut.end();
+// REQUIRED: Instantiate a graph to occupy the PLIOs unused by the user graph.
+static std::vector<std::string> cust_in = {"PLIO_01_TO_AIE", "PLIO_03_TO_AIE", "PLIO_05_TO_AIE", "PLIO_07_TO_AIE",
+                                           "PLIO_09_TO_AIE", "PLIO_11_TO_AIE", "PLIO_13_TO_AIE", "PLIO_15_TO_AIE",
+                                           "PLIO_17_TO_AIE", "PLIO_19_TO_AIE", "PLIO_21_TO_AIE", "PLIO_23_TO_AIE",
+                                           "PLIO_25_TO_AIE", "PLIO_27_TO_AIE", "PLIO_29_TO_AIE", "PLIO_31_TO_AIE"};
+static std::vector<std::string> cust_out = {
+    "PLIO_02_FROM_AIE", "PLIO_04_FROM_AIE", "PLIO_06_FROM_AIE", "PLIO_08_FROM_AIE",
+    "PLIO_10_FROM_AIE", "PLIO_12_FROM_AIE", "PLIO_14_FROM_AIE", "PLIO_16_FROM_AIE",
+    "PLIO_18_FROM_AIE", "PLIO_20_FROM_AIE", "PLIO_22_FROM_AIE", "PLIO_24_FROM_AIE",
+    "PLIO_26_FROM_AIE", "PLIO_28_FROM_AIE", "PLIO_30_FROM_AIE", "PLIO_32_FROM_AIE"};
+vck190_test_harness::occupyUnusedPLIO<16, 16> unusedPLIOs(cust_in, cust_out);
 
-  return 0;
+// Initialize and run the graph:
+#if defined(__AIESIM__) || defined(__X86SIM__)
+int main(int argc, char** argv) {
+    aie_dut.init();
+    aie_dut.run(2);
+    aie_dut.end();
+
+    return 0;
 }
+#endif

@@ -433,6 +433,191 @@ class test_harness {
         from_aie_ch[15].store_stream(from_aie_strm15, from_aie_delay[15], from_aie_frame[15], from_aie_rep[15],
                                      from_aie_last[15]);
     }
+
+    void load_store_stream(hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm0,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm1,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm2,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm3,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm4,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm5,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm6,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm7,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm8,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm9,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm10,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm11,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm12,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm13,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm14,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm15,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm16,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm17,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm18,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm19,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm20,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm21,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm22,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm23,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm24,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm25,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm26,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm27,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm28,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm29,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm30,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm31,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm32,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm33,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm34,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& to_aie_strm35,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm0,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm1,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm2,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm3,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm4,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm5,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm6,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm7,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm8,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm9,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm10,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm11,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm12,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm13,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm14,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm15,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm16,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm17,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm18,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm19,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm20,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm21,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm22,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm23,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm24,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm25,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm26,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm27,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm28,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm29,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm30,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm31,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm32,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm33,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm34,
+                           hls::stream<ap_axiu<W, 0, 0, 0> >& from_aie_strm35) {
+#pragma HLS dataflow
+
+        to_aie_ch[0].load_stream(to_aie_strm0, to_aie_delay[0], to_aie_frame[0], to_aie_rep[0], to_aie_last[0]);
+        to_aie_ch[1].load_stream(to_aie_strm1, to_aie_delay[1], to_aie_frame[1], to_aie_rep[1], to_aie_last[1]);
+        to_aie_ch[2].load_stream(to_aie_strm2, to_aie_delay[2], to_aie_frame[2], to_aie_rep[2], to_aie_last[2]);
+        to_aie_ch[3].load_stream(to_aie_strm3, to_aie_delay[3], to_aie_frame[3], to_aie_rep[3], to_aie_last[3]);
+        to_aie_ch[4].load_stream(to_aie_strm4, to_aie_delay[4], to_aie_frame[4], to_aie_rep[4], to_aie_last[4]);
+        to_aie_ch[5].load_stream(to_aie_strm5, to_aie_delay[5], to_aie_frame[5], to_aie_rep[5], to_aie_last[5]);
+        to_aie_ch[6].load_stream(to_aie_strm6, to_aie_delay[6], to_aie_frame[6], to_aie_rep[6], to_aie_last[6]);
+        to_aie_ch[7].load_stream(to_aie_strm7, to_aie_delay[7], to_aie_frame[7], to_aie_rep[7], to_aie_last[7]);
+        to_aie_ch[8].load_stream(to_aie_strm8, to_aie_delay[8], to_aie_frame[8], to_aie_rep[8], to_aie_last[8]);
+        to_aie_ch[9].load_stream(to_aie_strm9, to_aie_delay[9], to_aie_frame[9], to_aie_rep[9], to_aie_last[9]);
+        to_aie_ch[10].load_stream(to_aie_strm10, to_aie_delay[10], to_aie_frame[10], to_aie_rep[10], to_aie_last[10]);
+        to_aie_ch[11].load_stream(to_aie_strm11, to_aie_delay[11], to_aie_frame[11], to_aie_rep[11], to_aie_last[11]);
+        to_aie_ch[12].load_stream(to_aie_strm12, to_aie_delay[12], to_aie_frame[12], to_aie_rep[12], to_aie_last[12]);
+        to_aie_ch[13].load_stream(to_aie_strm13, to_aie_delay[13], to_aie_frame[13], to_aie_rep[13], to_aie_last[13]);
+        to_aie_ch[14].load_stream(to_aie_strm14, to_aie_delay[14], to_aie_frame[14], to_aie_rep[14], to_aie_last[14]);
+        to_aie_ch[15].load_stream(to_aie_strm15, to_aie_delay[15], to_aie_frame[15], to_aie_rep[15], to_aie_last[15]);
+        to_aie_ch[16].load_stream(to_aie_strm16, to_aie_delay[16], to_aie_frame[16], to_aie_rep[16], to_aie_last[16]);
+        to_aie_ch[17].load_stream(to_aie_strm17, to_aie_delay[17], to_aie_frame[17], to_aie_rep[17], to_aie_last[17]);
+        to_aie_ch[18].load_stream(to_aie_strm18, to_aie_delay[18], to_aie_frame[18], to_aie_rep[18], to_aie_last[18]);
+        to_aie_ch[19].load_stream(to_aie_strm19, to_aie_delay[19], to_aie_frame[19], to_aie_rep[19], to_aie_last[19]);
+        to_aie_ch[20].load_stream(to_aie_strm20, to_aie_delay[20], to_aie_frame[20], to_aie_rep[20], to_aie_last[20]);
+        to_aie_ch[21].load_stream(to_aie_strm21, to_aie_delay[21], to_aie_frame[21], to_aie_rep[21], to_aie_last[21]);
+        to_aie_ch[22].load_stream(to_aie_strm22, to_aie_delay[22], to_aie_frame[22], to_aie_rep[22], to_aie_last[22]);
+        to_aie_ch[23].load_stream(to_aie_strm23, to_aie_delay[23], to_aie_frame[23], to_aie_rep[23], to_aie_last[23]);
+        to_aie_ch[24].load_stream(to_aie_strm24, to_aie_delay[24], to_aie_frame[24], to_aie_rep[24], to_aie_last[24]);
+        to_aie_ch[25].load_stream(to_aie_strm25, to_aie_delay[25], to_aie_frame[25], to_aie_rep[25], to_aie_last[25]);
+        to_aie_ch[26].load_stream(to_aie_strm26, to_aie_delay[26], to_aie_frame[26], to_aie_rep[26], to_aie_last[26]);
+        to_aie_ch[27].load_stream(to_aie_strm27, to_aie_delay[27], to_aie_frame[27], to_aie_rep[27], to_aie_last[27]);
+        to_aie_ch[28].load_stream(to_aie_strm28, to_aie_delay[28], to_aie_frame[28], to_aie_rep[28], to_aie_last[28]);
+        to_aie_ch[29].load_stream(to_aie_strm29, to_aie_delay[29], to_aie_frame[29], to_aie_rep[29], to_aie_last[29]);
+        to_aie_ch[30].load_stream(to_aie_strm30, to_aie_delay[30], to_aie_frame[30], to_aie_rep[30], to_aie_last[30]);
+        to_aie_ch[31].load_stream(to_aie_strm31, to_aie_delay[31], to_aie_frame[31], to_aie_rep[31], to_aie_last[31]);
+        to_aie_ch[32].load_stream(to_aie_strm32, to_aie_delay[32], to_aie_frame[32], to_aie_rep[32], to_aie_last[32]);
+        to_aie_ch[33].load_stream(to_aie_strm33, to_aie_delay[33], to_aie_frame[33], to_aie_rep[33], to_aie_last[33]);
+        to_aie_ch[34].load_stream(to_aie_strm34, to_aie_delay[34], to_aie_frame[34], to_aie_rep[34], to_aie_last[34]);
+        to_aie_ch[35].load_stream(to_aie_strm35, to_aie_delay[35], to_aie_frame[35], to_aie_rep[35], to_aie_last[35]);
+
+        from_aie_ch[0].store_stream(from_aie_strm0, from_aie_delay[0], from_aie_frame[0], from_aie_rep[0],
+                                    from_aie_last[0]);
+        from_aie_ch[1].store_stream(from_aie_strm1, from_aie_delay[1], from_aie_frame[1], from_aie_rep[1],
+                                    from_aie_last[1]);
+        from_aie_ch[2].store_stream(from_aie_strm2, from_aie_delay[2], from_aie_frame[2], from_aie_rep[2],
+                                    from_aie_last[2]);
+        from_aie_ch[3].store_stream(from_aie_strm3, from_aie_delay[3], from_aie_frame[3], from_aie_rep[3],
+                                    from_aie_last[3]);
+        from_aie_ch[4].store_stream(from_aie_strm4, from_aie_delay[4], from_aie_frame[4], from_aie_rep[4],
+                                    from_aie_last[4]);
+        from_aie_ch[5].store_stream(from_aie_strm5, from_aie_delay[5], from_aie_frame[5], from_aie_rep[5],
+                                    from_aie_last[5]);
+        from_aie_ch[6].store_stream(from_aie_strm6, from_aie_delay[6], from_aie_frame[6], from_aie_rep[6],
+                                    from_aie_last[6]);
+        from_aie_ch[7].store_stream(from_aie_strm7, from_aie_delay[7], from_aie_frame[7], from_aie_rep[7],
+                                    from_aie_last[7]);
+        from_aie_ch[8].store_stream(from_aie_strm8, from_aie_delay[8], from_aie_frame[8], from_aie_rep[8],
+                                    from_aie_last[8]);
+        from_aie_ch[9].store_stream(from_aie_strm9, from_aie_delay[9], from_aie_frame[9], from_aie_rep[9],
+                                    from_aie_last[9]);
+        from_aie_ch[10].store_stream(from_aie_strm10, from_aie_delay[10], from_aie_frame[10], from_aie_rep[10],
+                                     from_aie_last[10]);
+        from_aie_ch[11].store_stream(from_aie_strm11, from_aie_delay[11], from_aie_frame[11], from_aie_rep[11],
+                                     from_aie_last[11]);
+        from_aie_ch[12].store_stream(from_aie_strm12, from_aie_delay[12], from_aie_frame[12], from_aie_rep[12],
+                                     from_aie_last[12]);
+        from_aie_ch[13].store_stream(from_aie_strm13, from_aie_delay[13], from_aie_frame[13], from_aie_rep[13],
+                                     from_aie_last[13]);
+        from_aie_ch[14].store_stream(from_aie_strm14, from_aie_delay[14], from_aie_frame[14], from_aie_rep[14],
+                                     from_aie_last[14]);
+        from_aie_ch[15].store_stream(from_aie_strm15, from_aie_delay[15], from_aie_frame[15], from_aie_rep[15],
+                                     from_aie_last[15]);
+        from_aie_ch[16].store_stream(from_aie_strm16, from_aie_delay[16], from_aie_frame[16], from_aie_rep[16],
+                                     from_aie_last[16]);
+        from_aie_ch[17].store_stream(from_aie_strm17, from_aie_delay[17], from_aie_frame[17], from_aie_rep[17],
+                                     from_aie_last[17]);
+        from_aie_ch[18].store_stream(from_aie_strm18, from_aie_delay[18], from_aie_frame[18], from_aie_rep[18],
+                                     from_aie_last[18]);
+        from_aie_ch[19].store_stream(from_aie_strm19, from_aie_delay[19], from_aie_frame[19], from_aie_rep[19],
+                                     from_aie_last[19]);
+        from_aie_ch[20].store_stream(from_aie_strm20, from_aie_delay[20], from_aie_frame[20], from_aie_rep[20],
+                                     from_aie_last[20]);
+        from_aie_ch[21].store_stream(from_aie_strm21, from_aie_delay[21], from_aie_frame[21], from_aie_rep[21],
+                                     from_aie_last[21]);
+        from_aie_ch[22].store_stream(from_aie_strm22, from_aie_delay[22], from_aie_frame[22], from_aie_rep[22],
+                                     from_aie_last[22]);
+        from_aie_ch[23].store_stream(from_aie_strm23, from_aie_delay[23], from_aie_frame[23], from_aie_rep[23],
+                                     from_aie_last[23]);
+        from_aie_ch[24].store_stream(from_aie_strm24, from_aie_delay[24], from_aie_frame[24], from_aie_rep[24],
+                                     from_aie_last[24]);
+        from_aie_ch[25].store_stream(from_aie_strm25, from_aie_delay[25], from_aie_frame[25], from_aie_rep[25],
+                                     from_aie_last[25]);
+        from_aie_ch[26].store_stream(from_aie_strm26, from_aie_delay[26], from_aie_frame[26], from_aie_rep[26],
+                                     from_aie_last[26]);
+        from_aie_ch[27].store_stream(from_aie_strm27, from_aie_delay[27], from_aie_frame[27], from_aie_rep[27],
+                                     from_aie_last[27]);
+        from_aie_ch[28].store_stream(from_aie_strm28, from_aie_delay[28], from_aie_frame[28], from_aie_rep[28],
+                                     from_aie_last[28]);
+        from_aie_ch[29].store_stream(from_aie_strm29, from_aie_delay[29], from_aie_frame[29], from_aie_rep[29],
+                                     from_aie_last[29]);
+        from_aie_ch[30].store_stream(from_aie_strm30, from_aie_delay[30], from_aie_frame[30], from_aie_rep[30],
+                                     from_aie_last[30]);
+        from_aie_ch[31].store_stream(from_aie_strm31, from_aie_delay[31], from_aie_frame[31], from_aie_rep[31],
+                                     from_aie_last[31]);
+        from_aie_ch[32].store_stream(from_aie_strm32, from_aie_delay[32], from_aie_frame[32], from_aie_rep[32],
+                                     from_aie_last[32]);
+        from_aie_ch[33].store_stream(from_aie_strm33, from_aie_delay[33], from_aie_frame[33], from_aie_rep[33],
+                                     from_aie_last[33]);
+        from_aie_ch[34].store_stream(from_aie_strm34, from_aie_delay[34], from_aie_frame[34], from_aie_rep[34],
+                                     from_aie_last[34]);
+        from_aie_ch[35].store_stream(from_aie_strm35, from_aie_delay[35], from_aie_frame[35], from_aie_rep[35],
+                                     from_aie_last[35]);
+    }
 };
 
 #endif

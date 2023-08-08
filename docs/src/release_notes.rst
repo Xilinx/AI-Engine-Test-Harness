@@ -24,14 +24,14 @@ Summary
 
 This is the first release of the AIE Test Harness. This release supports the following:
 
-- AIE graphs with up to 16 input PLIOs and 16 output PLIOs
-- PLIO throughput of 5GB/sec (32 bits @ 1.25GHz)
+- AIE graphs with up to 36 input PLIOs and 36 output PLIOs
+- PLIO throughput for each channel is 5GB/sec (32 bits @ 1.25GHz)
 - Input and output datasets up to 128KB in size
 - User-defined number of replay for each input and output dataset
 - User-defined start delay for each input and output PLIO
 - Built-in support for AIE event trace
 - SW APIs to develop a test application to run the AIE graph and transfer data to and from the AIE graph
-- Utility scripts to build the test for SW emulation and create a SD card image for VCK190
+- Utility scripts to build the test for SW emulation and create a SD card image for VCK190 board run
 
 
 Limitations
