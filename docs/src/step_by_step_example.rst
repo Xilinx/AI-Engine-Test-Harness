@@ -111,7 +111,7 @@ Because this example does not use all the PLIOs implemented in the test harness,
 
 .. code-block:: c++
 
-    static std::vector<std::string> cust_in = {"PLIO_02_TO_AIE"};
+    static std::vector<std::string> cust_in = {"PLIO_01_TO_AIE"};
     static std::vector<std::string> cust_out = {"PLIO_02_FROM_AIE"};
     TopGraph G;
     vck190_test_harness::occupyUnusedPLIO<1, 1> dummyGraph(cust_in, cust_out);
