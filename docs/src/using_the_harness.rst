@@ -137,12 +137,12 @@ To build the libadf.a for use with the test harness, it must be compiled using t
 
 .. code-block:: shell
 
-    aiecompiler --platform=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa
-                --target=hw 
-                --event-trace=runtime 
-                --event-trace-port=gmio 
-                -include=${TEST_HARNESS_REPO_PATH}/include/
-                [other user options]
+    v++ -mode aie --platform=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa
+                  --target=hw 
+                  --event-trace=runtime 
+                  --event-trace-port=gmio 
+                  -include=${TEST_HARNESS_REPO_PATH}/include/
+                  [other user options]
 
 
 Building the SW Application
@@ -201,12 +201,12 @@ Building the AIE graph for software emulation is similar to building it for HW, 
 
 .. code-block:: shell
 
-    aiecompiler --platform=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa
-                --target=x86sim 
-                --event-trace=runtime 
-                --event-trace-port=gmio 
-                -include=${TEST_HARNESS_REPO_PATH}/include/                
-                [other user options]
+    v++ -mode aie --platform=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa
+                  --target=x86sim 
+                  --event-trace=runtime 
+                  --event-trace-port=gmio 
+                  -include=${TEST_HARNESS_REPO_PATH}/include/                
+                  [other user options]
 
 
 .. rubric:: Building the SW Application
@@ -255,7 +255,7 @@ AIE Compilation
 
 **Issue:** The following error message is seen when compiling the AIE graph with the test harness XSA: ``ERROR: [aiecompiler 77-295] Cannot find port instance tf0_pi0 corresponding to Logical Arch Port M00_AXI``
 
-- The ``--event-trace=runtime --event-trace-port=gmio`` options are missing from the aiecompiler command
+- The ``--event-trace=runtime --event-trace-port=gmio`` options are missing from the ``v++ -mode aie`` command
 
 
 AIE Simulation

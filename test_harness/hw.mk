@@ -12,21 +12,70 @@
 #
 
 ifneq ($(findstring 2023.2, $(XILINX_VITIS)), )
+ifneq ($(findstring vck190, $(XSA_PLATFORM)), )
 TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202320_1/xilinx_vck190_base_dfx_202320_1.xpfm
+else
+TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vek280_es1_base_202320_1/xilinx_vek280_es1_base_202320_1.xpfm
+endif
 endif
 
 ifneq ($(findstring 2023.1, $(XILINX_VITIS)), )
+ifneq ($(findstring vck190, $(XSA_PLATFORM)), )
 TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202310_1/xilinx_vck190_base_dfx_202310_1.xpfm
+else
+TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vek280_es1_base_202310_1/xilinx_vek280_es1_base_202310_1.xpfm
+endif
 endif
 
 ifneq ($(findstring 2022.2, $(XILINX_VITIS)), )
+ifneq ($(findstring vck190, $(XSA_PLATFORM)), )
 TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202220_1/xilinx_vck190_base_dfx_202220_1.xpfm
+else
+$(error ERROR: VEK280 is not supported by Vitis 2022.2 or older versions)
+endif
 endif
 
-${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa:
-	@echo "Please download the pre-built vck190_test_harness.xsa to ${TEST_HARNESS_REPO_PATH}/bin"
-	@echo "Or you can go to ${TEST_HARNESS_REPO_PATH}/test_harness and run "make xsa" && false
+ifeq ($(TEST_MODE), FUNC)
+ifneq ($(findstring vck190, $(XSA_PLATFORM)), )
+${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa:
+	@echo "Please download the pre-built vck190_test_harness_func.xsa to ${TEST_HARNESS_REPO_PATH}/bin"
+	@echo "Or you can go to ${TEST_HARNESS_REPO_PATH}/test_harness and run "make vck190_func_xsa" && false
 
-sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa
-	v++ -p -t hw -o ${BUILD_DIR}/vck190_test_harness.xclbin ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} ${AIE_EXE}
+sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa
+	v++ -p -t hw -o ${BUILD_DIR}/vck190_test_harness.xclbin ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} ${AIE_EXE}
 	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} --package.rootfs ${SDKTARGETSYSROOT}/../../rootfs.ext4 --package.kernel_image ${SDKTARGETSYSROOT}/../../Image --package.boot_mode=sd --package.image_format=ext4 --package.sd_file ${BUILD_DIR}/vck190_test_harness.xclbin ${OTHER_FILE}
+else
+$(error ERROR: Only REP_MODE is supported on VEK280)
+endif
+endif
+
+ifeq ($(TEST_MODE), PERF)
+ifneq ($(findstring vck190, $(XSA_PLATFORM)), )
+${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa:
+	@echo "Please download the pre-built vck190_test_harness_perf.xsa to ${TEST_HARNESS_REPO_PATH}/bin"
+	@echo "Or you can go to ${TEST_HARNESS_REPO_PATH}/test_harness and run "make vck190_perf_xsa" && false
+
+sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa
+	v++ -p -t hw -o ${BUILD_DIR}/vck190_test_harness.xclbin ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} ${AIE_EXE}
+	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} --package.rootfs ${SDKTARGETSYSROOT}/../../rootfs.ext4 --package.kernel_image ${SDKTARGETSYSROOT}/../../Image --package.boot_mode=sd --package.image_format=ext4 --package.sd_file ${BUILD_DIR}/vck190_test_harness.xclbin ${OTHER_FILE}
+else
+$(error ERROR: Only REP_MODE is supported on VEK280)
+endif
+endif
+
+ifeq ($(TEST_MODE), REP)
+ifneq ($(findstring vck190, $(XSA_PLATFORM)), )
+${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa:
+	@echo "Please download the pre-built vck190_test_harness_perf.xsa to ${TEST_HARNESS_REPO_PATH}/bin"
+	@echo "Or you can go to ${TEST_HARNESS_REPO_PATH}/test_harness and run "make vck190_perf_xsa" && false
+
+sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa
+	v++ -p -t hw -o ${BUILD_DIR}/vck190_test_harness.xclbin ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} ${AIE_EXE}
+	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} --package.rootfs ${SDKTARGETSYSROOT}/../../rootfs.ext4 --package.kernel_image ${SDKTARGETSYSROOT}/../../Image --package.boot_mode=sd --package.image_format=ext4 --package.sd_file ${BUILD_DIR}/vck190_test_harness.xclbin ${OTHER_FILE}
+else
+sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
+	v++ -t hw --platform ${TEST_HARNESS_PLATFORM} -o ${BUILD_DIR}/vek280_test_harness.xclbin -p ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa ${AIE_EXE} --package.out_dir ${BUILD_DIR} --package.rootfs ${SDKTARGETSYSROOT}/../../rootfs.ext4 --package.kernel_image ${SDKTARGETSYSROOT}/../../Image --package.boot_mode sd ${OTHER_FILE}
+endif
+endif
+
+

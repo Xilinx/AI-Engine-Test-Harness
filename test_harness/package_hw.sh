@@ -12,23 +12,25 @@
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
 
-if [ $# -lt 2 ]
+if [ $# -lt 4 ]
   then
     echo "Incorrect arguments supplied"
-    echo "Usage: $(basename $0) <path of hw package> <libadf.a> <ps executable and other files to be packaged> "
+    echo "Usage: $(basename $0) <testing mode> <path to pre-built XSA> <path of hw package> <libadf.a> <ps executable and other files to be packaged> "
     exit 1
 fi
 
 arglist=($@)
-PACKAGE_PATH=$(realpath ${arglist[0]})
-AIE_EXE_PATH=$(realpath ${arglist[1]})
+TEST_MODE=${arglist[0]}
+XSA_PLATFORM=$(realpath ${arglist[1]})
+PACKAGE_PATH=$(realpath ${arglist[2]})
+AIE_EXE_PATH=$(realpath ${arglist[3]})
 
-xsa_name=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa
+xsa_name=${XSA_PLATFORM}
 adf_name=${AIE_EXE_PATH}
 
-xsa_ver=23.1
-adf_ver=23.1
-vts_ver=23.1
+xsa_ver=23.2
+adf_ver=23.2
+vts_ver=23.2
 
 if [ ! -f ${xsa_name} ]
     then
@@ -75,9 +77,9 @@ fi
 mkdir -p ${PACKAGE_PATH}
 
 PACKAGE_SD_FILE=""
-for (( c=2; c<$#; c++ ))
+for (( c=4; c<$#; c++ ))
 do
   PACKAGE_SD_FILE="${PACKAGE_SD_FILE} --package.sd_file $(realpath ${arglist[$c]})"
 done
 
-make sd_card -f ${TEST_HARNESS_REPO_PATH}/test_harness/hw.mk BUILD_DIR=$(realpath ${PACKAGE_PATH}) AIE_EXE=${AIE_EXE_PATH} OTHER_FILE="${PACKAGE_SD_FILE}"
+make sd_card -f ${TEST_HARNESS_REPO_PATH}/test_harness/hw.mk TEST_MODE=${TEST_MODE} XSA_PLATFORM=${XSA_PLATFORM} BUILD_DIR=$(realpath ${PACKAGE_PATH}) AIE_EXE=${AIE_EXE_PATH} OTHER_FILE="${PACKAGE_SD_FILE}"
