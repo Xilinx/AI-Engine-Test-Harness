@@ -24,57 +24,78 @@ Hardware Features
 Precompiled XSA
 ===============
 
-The test harness leverages a precompiled .xsa file which is used as an input platform when compiling the AIE graph. This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image. This saves the most time-consuming part of the build process for on-board tests and allows for fast and predictable iterations.
+The test harness leverages a precompiled .xsa file which is used as an input platform when compiling the AIE graph. This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image. This saves the most time-consuming part of the build process for on-board tests and allows to fast and predictable iterations.
 
 
 PL DMA Engine
 =============
 
-The precompiled .xsa implements a DMA engine with 72 channels. 36 Tx channels send data from DDR to AIE and 36 Rx send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.
+On VCK190, the precompiled .xsa implements a PL DMA engine with 72 channels. 36 Tx channels send data from DDR to AIE and 36 Rx receive data from AIE to DDR. On VEK280, it has 32 independent AXI stream channels that 16 channels can send data from DDR to AIE and 16 channels can receive data from AIE to DDR. For both of the DMA engines, they are designed to allow a maximum throughput on the PLIO interfaces (128-bit @ 312.5MHz from PL view), ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware (except for functional testing mode on VCK190).
 
-- Each channel is connected to a unique AIE PLIO port using 128-bits wide AXI-Stream clocked at 312.5Mhz. This delivers an effective throughput of 5GB/sec (32-bits @ 1.25GHz)
-- Each channel contains its own 128KB URAM memory used to buffer data. This allows transferring data to or from the AIE without unwanted external performance size-effects and deliver maximum throughput.
-- The channels are parametrized, allowing the user to control at runtime how data is transferred to or from the AI Engine. The software APIs are used configure these parameters (size, delay and replay).
+- Each channel is connected to an unique AIE PLIO port using 128-bit wide AXI-Stream clocked at 312.5MHz. This delivers an effective throughput of 5GB/sec (32-bits @ 1.25GHz from AIE view)
+- Each channel contains its own URAM memory (64kB for VCK190 / 128kB for VEK280) used to buffer data. This allows transferring data to or from the AIE without unwanted external performance side-effects and deliver maximum throughput.
+- The channels are parametrized, allowing the user to control at runtime how data is transferred to or from the AI Engine. The software APIs are used configure these parameters (size, delay, replay, input/output offset addresses if needed).
 
 
 Data Size
 ---------
 
-The data size parameter specifies the size in bytes of the dataset to be transferred (sent or received). The data size cannot be larger than 128KB and must be a multiple of 16 bytes.
+The data size parameter specifies the size in bytes of the dataset to be transferred (sent or received). For repetition mode, the data size cannot be larger than 64kB on VCK190 and 128kB on VEK280, and must be a multiple of 16 bytes. For VCK190, there are 2 exceptions, when using functional or performance testing mode, the data size capacity is unlimited.
+
+.. CAUTION::
+    In functional testing mode, the performance is not taken into consideration. 
+    In performance testing mode, as we concatenate the pre-cached data in the URAM with a sequence of random numbers, the results correctness is not guaranteed.
+
 
 Start Delay
 -----------
 
-The start delay parameter specifies the number of cycles that each channel should wait before it starts to send/receive data. This can be used to compose more granular tests and to model more realistic performance scenarios. By default, the start delay is 0.
+The start delay parameter specifies the number of cycles that each channel should be waiting before it starts to send/receive data. This can be used to compose more granular tests and to model more realistic performance scenarios. By default, the start delay is 0.
 
 Replay
 ------
 
-The replay parameter specifies how many times each dataset should be replayed (sent or received). The maximum size of a dataset is 128KB. The replay parameter is useful to generate longer test sequences by sending or receiving a dataset multiple times. By default, each dataset is transfered once.
+The replay parameter specifies how many times each dataset should be replayed (sent or received). The maximum size of a dataset is 64kB for VCK190 and 128kB for VEK280. The replay parameter is useful to generate longer test sequences by sending or receiving a dataset multiple times. By default, each dataset is transfered only once.
+
+Input/output Offset Addresses (Optional)
+----------------------------------------
+
+This is used only in functional testing mode on VCK190, to specify the starting byte offset of each channel in the buffer pool.
 
 Performance Counter
 -------------------
 
-Each channel has its own built-in performance counter which will start counting cycles once the channel starts to send/receive data. It will stop counting once all sending/receiving are finished. The counter keeps counting even when the channel is stalled by the AIE graph. The performance counter helps profile the real throughput of the AI Engine application.
+Each channel has its own built-in performance counter which starts counting cycles once the channel starts to send/receive data. It will stop counting once all sending/receiving are finished. The counter keeps counting even when the channel is stalled by the AIE graph. The performance counter helps to profile the real throughput of the AI Engine application.
 
 
 DMA Channel Operating Sequences
 -------------------------------
 
+* **Repetition Testing Mode**
+
 Tx Channels sending data to the AI Engine work as follows:
 
 1. Each channel loads a user-defined quantity of data from DDR and stores it in its own local URAM buffer.
-2. After all data has been stored in the URAM buffer, each channel starts a countdown based on its 'delay' parameter. This allows Tx channels to start sending data to the AIE at different time points.
+2. After all data has been stored in the URAM buffer, each channel starts a countdown based on its 'delay' parameter. This allows Tx channels to start sending data to the AIE at different starting time points.
 3. Once the countdown reaches 0, each channel loads data from the URAM buffer and sends it to AIE. Each channel can repeat this step based on an user-specified number of replays.
-4. Each channel reports the latency (cycle count) between when it sents the first data and when it sents the last data to the AIE.
+4. Each channel reports the latency (cycle count) between the time it starts to send the first data and it starts to send the last data to the AIE.
 
 Rx Channels receiving data from the AI Engine work as follows:
 
 1. Each channel starts a countdown based on its 'delay' parameter. This allows Rx channels to start receiving data from the AIE at different time points.
-2. Once the countdown reaches 0, each channel starts receiving an user-defined quantity of data from the AIE and stores it in its local URAM buffer. Each channel can repeat this step based on an user-specified number of replays.
-3. After all output channels have finished receiving data from the AIE, they move the output data from the URAM buffers to DDR.
+2. Once the countdown reaches 0, each channel starts receiving an user-defined quantity of data from the AIE through PLIOs and stores it in its local URAM buffer. Each channel can repeat this step based on an user-specified number of replays.
+3. After all output channels have finished receiving data from the AIE, they move the output data out from the URAM buffers to DDR.
 4. Each channel reports the latency (cycle count) between when it receives the first data and when it receives the last data to the AIE.
 
+* **Functional Testing Mode (VCK190 only)**
+
+Tx channels sending data directly from the DDR to the AIE PLIOs and RX channels receiving data directly from AIE PLIOs to the DDR.
+As the memory controller on DDR cannot work at II = 1 @ 312.5MHz, the performance in this mode cannot be taken into consideration.
+The software API warns out the invalidity of the performance numbers automatically.
+
+* **Performance Testing Mode (VCK190 only)**
+
+In this mode, the only difference comparing with the repetition testing mode is whether a sequence of random numbers is concatenated to the data header pre-stored in the URAM then send to the AIE or not, and from the receving side, the data overflows to the URAM buffer will be automatically dropped. Therefore, the results correctness is not guaranteed in this mode.
 
 .. _plio_placement:
 
@@ -87,10 +108,11 @@ Each PLIO defined in the precompiled .xsa is assigned to an unique AIE SHIM chan
 - ``PLIO_xx_TO_AIE``: these PLIOs are independent channels that could be used to send data from PL DDR to AIE.
 - ``PLIO_xx_FROM_AIE``: these PLIOs are independent channels that could be used to receive data from AIE to PL DDR.
 
-When declaring PLIOs in the AIE graph, the developer must use one these predefined PLIO names. This lets the developer control which AIE interface tiles are used and thereby, influence the results of the AIE mapper and router.
+When declaring PLIOs in the AIE graph, the developer must use one of these predefined PLIO names. This lets the developer control which AIE interface tiles are used and thereby, influence the results of the AIE mapper and router.
+To be noticed that the VEK280 only has 16 input PLIOs and 16 output PLIOs respectively, so the first 16 ``in_names`` and ``out_names`` of the VCK190 port names are used for VEK280.
 
 
-The predefined PLIO names are listed in :url_to_repo:`include/vck190_test_harness_port_name.hpp`::
+The predefined PLIO names are listed in :url_to_repo:`include/test_harness_port_name.hpp`::
 
     static std::vector<std::string> in_names = {
         "PLIO_01_TO_AIE", "PLIO_02_TO_AIE", "PLIO_03_TO_AIE", "PLIO_04_TO_AIE",
@@ -116,7 +138,7 @@ The predefined PLIO names are listed in :url_to_repo:`include/vck190_test_harnes
         "PLIO_31_FROM_AIE", "PLIO_32_FROM_AIE", "PLIO_33_FROM_AIE",
         "PLIO_34_FROM_AIE", "PLIO_35_FROM_AIE", "PLIO_36_FROM_AIE"};
 
-The placement of the PLIOs both ``TO_AIE`` and ``FROM_AIE`` can be seen in :url_to_repo:`cfg/aie_constraints.json`::
+The placement for VCK190 of the PLIOs both ``TO_AIE`` and ``FROM_AIE`` can be seen in :url_to_repo:`cfg/vck190_aie_constraints.json`::
 
     "PLIO_01_TO_AIE":     {"shim": {"column":  6, "channel": 0 } },
     "PLIO_02_TO_AIE":     {"shim": {"column":  6, "channel": 4 } },
@@ -191,3 +213,39 @@ The placement of the PLIOs both ``TO_AIE`` and ``FROM_AIE`` can be seen in :url_
     "PLIO_34_FROM_AIE":   {"shim": {"column": 22, "channel": 4 } },
     "PLIO_35_FROM_AIE":   {"shim": {"column": 23, "channel": 0 } },
     "PLIO_36_FROM_AIE":   {"shim": {"column": 23, "channel": 4 } }
+
+The placement for VEK280 of the PLIOs both ``TO_AIE`` and ``FROM_AIE`` can be seen in :url_to_repo:`cfg/vek280_aie_constraints.json`::
+
+    "PLIO_01_TO_AIE":     {"shim": {"column": 12, "channel": 0 } },
+    "PLIO_02_TO_AIE":     {"shim": {"column": 13, "channel": 0 } },
+    "PLIO_03_TO_AIE":     {"shim": {"column": 14, "channel": 0 } },
+    "PLIO_04_TO_AIE":     {"shim": {"column": 15, "channel": 0 } },
+    "PLIO_05_TO_AIE":     {"shim": {"column": 16, "channel": 0 } },
+    "PLIO_06_TO_AIE":     {"shim": {"column": 17, "channel": 0 } },
+    "PLIO_07_TO_AIE":     {"shim": {"column": 18, "channel": 0 } },
+    "PLIO_08_TO_AIE":     {"shim": {"column": 19, "channel": 0 } },
+    "PLIO_09_TO_AIE":     {"shim": {"column": 20, "channel": 0 } },
+    "PLIO_10_TO_AIE":     {"shim": {"column": 21, "channel": 0 } },
+    "PLIO_11_TO_AIE":     {"shim": {"column": 22, "channel": 0 } },
+    "PLIO_12_TO_AIE":     {"shim": {"column": 23, "channel": 0 } },
+    "PLIO_13_TO_AIE":     {"shim": {"column": 24, "channel": 0 } },
+    "PLIO_14_TO_AIE":     {"shim": {"column": 25, "channel": 0 } },
+    "PLIO_15_TO_AIE":     {"shim": {"column": 26, "channel": 0 } },
+    "PLIO_16_TO_AIE":     {"shim": {"column": 27, "channel": 0 } },
+
+    "PLIO_01_FROM_AIE":   {"shim": {"column": 12, "channel": 0 } },
+    "PLIO_02_FROM_AIE":   {"shim": {"column": 13, "channel": 0 } },
+    "PLIO_03_FROM_AIE":   {"shim": {"column": 14, "channel": 0 } },
+    "PLIO_04_FROM_AIE":   {"shim": {"column": 15, "channel": 0 } },
+    "PLIO_05_FROM_AIE":   {"shim": {"column": 16, "channel": 0 } },
+    "PLIO_06_FROM_AIE":   {"shim": {"column": 17, "channel": 0 } },
+    "PLIO_07_FROM_AIE":   {"shim": {"column": 18, "channel": 0 } },
+    "PLIO_08_FROM_AIE":   {"shim": {"column": 19, "channel": 0 } },
+    "PLIO_09_FROM_AIE":   {"shim": {"column": 20, "channel": 0 } },
+    "PLIO_10_FROM_AIE":   {"shim": {"column": 21, "channel": 0 } },
+    "PLIO_11_FROM_AIE":   {"shim": {"column": 22, "channel": 0 } },
+    "PLIO_12_FROM_AIE":   {"shim": {"column": 23, "channel": 0 } },
+    "PLIO_13_FROM_AIE":   {"shim": {"column": 24, "channel": 0 } },
+    "PLIO_14_FROM_AIE":   {"shim": {"column": 25, "channel": 0 } },
+    "PLIO_15_FROM_AIE":   {"shim": {"column": 26, "channel": 0 } },
+    "PLIO_16_FROM_AIE":   {"shim": {"column": 27, "channel": 0 } }

@@ -24,7 +24,7 @@ Installation
 Prerequisites
 -------------
 
-To use the test harness, up-to-date installations of the following softwares are needed:
+To use the test harness, up-to-date installations of the following softwares and libraries are needed:
 
 - Vitis tools (https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html)
 
@@ -32,22 +32,25 @@ To use the test harness, up-to-date installations of the following softwares are
 
 - Versal common image for Vitis embedded platforms (https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html)
 
+- Vitis Accelerated Libraries (https://github.com/Xilinx/Vitis_Libraries)
+
 
 Installation Instructions
 -------------------------
 
-1. Clone this repository::
+1. Clone test harness repository and Vitis accelerated libraries::
 
     git clone https://github.com/Xilinx/AI-Engine-Test-Harness.git
+    git clone https://github.com/Xilinx/Vitis_Libraries.git
 
-2. Download the prebuilt test harness XSA::
+2. Download the prebuilt test harness XSAs::
 
     cd Test_Harness/bin
     source download.sh
 
 .. CAUTION::
-   The prebuilt XSA can only be used with the 2023.1 version of the Vitis tools. 
-   To build and test your AI Engine graph using other version of Vitis, you must first rebuild the XSA with the corresponding version of the Vitis tools, as described in the section below.
+   The prebuilt XSAs can only be used with the 2023.2 version of the Vitis tools. 
+   To build and test your AI Engine graph using other versions of Vitis, you must first rebuild the XSA with the corresponding version of the Vitis tools, as described in the section below.
 
 Rebuilding from Source
 ----------------------
@@ -56,4 +59,8 @@ The prebuilt test harness XSA can optionally be rebuilt from source as follows::
 
     cd Test_Harness/test_harness
     source <path to Vitis installation>/settings64.sh
-    make xsa
+    make clean
+    # To build functional/performance testing mode XSA for VCK190
+    make <vck190_func_xsa/vck190_perf_xsa> TARGET=hw DEVICE=vck190
+    # Or to build repetition testing mode only XSA for VEK280
+    make vek280_xsa TARGET=hw DEVICE=vek280

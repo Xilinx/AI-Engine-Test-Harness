@@ -14,32 +14,38 @@
 AIE Test Harness
 =================
 
-This repository provides a test harness to help AIE developers easily build and test their AIE graph on VCK190 boards. This test harness is designed to provide a very simple and intuitive transition from the AIE simulation environment to testing on hardware. With the test harness, AIE graphs running in simulation can be taken to hardware in just a few minutes and with only a few minor modifications. 
+This repository provides a test harness to help AIE developers easily build and test their AIE graph on both VCK190 and VEK280 devices. This test harness is designed to provide a very simple and intuitive transition from the AIE simulation environment to testing user AIE graph on hardware. With the test harness, AIE graphs running in simulation can be taken to hardware in just a few minutes and with only a few minor modifications required.
 
-The test harness consists of three main elements:
+Either VCK190 test harness or VEK280 test harness consists of three main parts:
 
-1. A precompiled .xsa implementing a DMA engine to transfer data between DDR and a set of predefined AI Engine PLIOs.
+1. A precompiled .xsa which has a PL DMA engine to transfer data between DDR and a set of predefined 128-bit AI Engine PLIOs. It is important to be noticed that we have enhanced the VCK190 test harness in this release, where the number of PLIOs are extended from 16x to 36x and the functional testing mode and performance testing mode are supported on this device as well (see systeam block diagram of VCK190 test harness below). The VEK280 test harness has the same feature as what we have implemented for VCK190 in 2023.1 release (16x PLIOs with repetition testing mode only, corresponding systeam block diagram is shown below).
 2. A set of software APIs to facilitate the development of the application used to initialize the device and run the tests.
-3. A script to easily package the user's libadf.a and test application, and generate the boot image for VCK190.
+3. A set of scripts to easily package the user's libadf.a and test application, and generate the boot image for harware board-run.
 
 
-.. image:: /images/sys_diagram.png
-   :alt: stream sync Structure
+.. image:: /images/vck190_sys_diagram.png
+   :alt: VCK190 System Structure
    :width: 80%
    :align: center
 
 
-The test harness leverages a precompiled .xsa file which is used as an input platform when compiling the AIE graph. This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image. This saves the most time-consuming part of the build process for on-board tests and allows for fast and predictable iterations.
+.. image:: /images/vek280_sys_diagram.png
+   :alt: VCK190 System Structure
+   :width: 80%
+   :align: center
 
-The precompiled .xsa implements a DMA engine with 72 channels. 36 channels send data from DDR to AIE and 36 send data from AIE to DDR. The DMA engine is designed to allow maximum throughput on the PLIO interfaces, ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.
 
-The software APIs enable to easily build SW applications to test an AIE graph using the test harness. The APIs are designed to structure test applications following these 5 simple steps:
+The test harness leverages a precompiled .xsa file which is used as an input platform when compiling the AIE graph (providing necessary hardware information). This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image. This saves the most time-consuming part of the build process for on-board tests and allows to fast and predictable iterations.
 
-1. Initialize the device and load the xclbin
+On VCK190, the precompiled .xsa implements a PL DMA engine with 72 independent AXI stream channels. 36 channels send data from DDR to AIE and 36 channels receive data from AIE to DDR. On VEK280, it has 32 independent AXI stream channels that 16 channels can send data from DDR to AIE and 16 channels can receive data from AIE to DDR. For both of the DMA engines, they are designed to allow a maximum throughput on the PLIO interfaces (128-bit @ 312.5MHz), ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware (except for functional testing mode on VCK190).
+
+The software APIs enable pure AIE designers to easily build SW applications to test an AIE graph using the test harness. The APIs are designed to structure test applications following these 5 simple steps:
+
+1. Initialize the device, load the xclbin, and select the testing mode
 2. Configure how each DMA channel with transfer data to or from the AIE graph
-3. Run the AIE graph
-4. Wait for all the data to be received
-5. Check correctness of results and performance for each channel
+3. Run the AIE graph as well as the PL data mover
+4. Wait for all the data to be sent/received
+5. Check correctness of results on functional/repetition testing modes, and profile performance on performance/repetition modes for each channel
 
 
 .. toctree::

@@ -39,7 +39,7 @@ else
 $(error ERROR: Only REP_MODE is supported by AIE test harness on VEK280)
 endif
 
-DSPLIB_ROOT ?= /proj/xcohdstaff2/leol/xf_dsp
+DSPLIB_ROOT ?= ${TEST_HARNESS_REPO_PATH}/../Vitis_Libraries/dsp
 
 ##################### Build AIE ##############################
 AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --aie.pl-freq=312.5 --aie.event-trace=runtime --aie.event-trace-port=gmio --platform=$(XSA_PLATFORM) --aie.workdir=./Work
