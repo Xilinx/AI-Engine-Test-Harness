@@ -74,7 +74,7 @@ sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa
 	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} --package.rootfs ${SDKTARGETSYSROOT}/../../rootfs.ext4 --package.kernel_image ${SDKTARGETSYSROOT}/../../Image --package.boot_mode=sd --package.image_format=ext4 --package.sd_file ${BUILD_DIR}/vck190_test_harness.xclbin ${OTHER_FILE}
 else
 sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
-	v++ -t hw --platform ${TEST_HARNESS_PLATFORM} -o ${BUILD_DIR}/vek280_test_harness.xclbin -p ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa ${AIE_EXE} --package.out_dir ${BUILD_DIR} --package.rootfs ${SDKTARGETSYSROOT}/../../rootfs.ext4 --package.kernel_image ${SDKTARGETSYSROOT}/../../Image --package.boot_mode sd ${OTHER_FILE}
+	v++ -t hw --platform ${TEST_HARNESS_PLATFORM} -o ${BUILD_DIR}/vek280_test_harness.xclbin --advanced.param package.enableAiePartitionDrc=0 -p ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa ${AIE_EXE} --package.out_dir ${BUILD_DIR} --package.rootfs ${SDKTARGETSYSROOT}/../../rootfs.ext4 --package.kernel_image ${SDKTARGETSYSROOT}/../../Image --package.boot_mode sd ${OTHER_FILE}
 endif
 endif
 
