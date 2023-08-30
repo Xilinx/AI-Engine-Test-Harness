@@ -1,8 +1,7 @@
-#!/bin/bash
 # MIT License
 #
 # Copyright (C) 2023 Advanced Micro Devices, Inc.
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 #
 # The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -12,23 +11,23 @@
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
 
-if [ $# -lt 3 ]
-  then
-    echo "Incorrect arguments supplied"
-    echo "Usage: $(basename $0) <path of sw_emu package> <func_libadf.a> <perf_libadf.a> <ps executable and other files to be packaged> "
-    exit 1
-fi
+ifneq ($(findstring 2023.2, $(XILINX_VITIS)), )
+TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vek280_es1_base_202320_1/xilinx_vek280_es1_base_202320_1.xpfm
+endif
 
-arglist=($@)
-PACKAGE_PATH=$(realpath ${arglist[0]})
-FUNC_AIE_EXE_PATH=$(realpath ${arglist[1]})
-PERF_AIE_EXE_PATH=$(realpath ${arglist[2]})
+ifneq ($(findstring 2023.1, $(XILINX_VITIS)), )
+TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vek280_es1_base_202310_1/xilinx_vek280_es1_base_202310_1.xpfm
+endif
 
-mkdir -p ${PACKAGE_PATH}
+ifneq ($(findstring 2022.2, $(XILINX_VITIS)), )
+$(error ERROR: VEK280 is not supported by Vitis 2022.2 or older versions)
+endif
 
-make xsa -f ${TEST_HARNESS_REPO_PATH}/test_harness/sw_emu.mk BUILD_DIR=${PACKAGE_PATH} FUNC_AIE_EXE=${FUNC_AIE_EXE_PATH} PERF_AIE_EXE=${PERF_AIE_EXE_PATH}
+${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa:
+	@echo "Please download the pre-built vek280_test_harness.xsa to ${TEST_HARNESS_REPO_PATH}/bin"
+	@echo "Or you can go to ${TEST_HARNESS_REPO_PATH}/test_harness and run "make vek280_xsa TARGET=hw DEVICE=vck190" && false
 
-for (( c=3; c<$#; c++ ))
-do  
-    cp -rp $(realpath ${arglist[$c]}) ${PACKAGE_PATH}
-done
+sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
+	v++ -t hw --platform ${TEST_HARNESS_PLATFORM} -o ${BUILD_DIR}/vek280_test_harness.xclbin --advanced.param package.enableAiePartitionDrc=0 -p ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa ${AIE_EXE} --package.out_dir ${BUILD_DIR} --package.rootfs ${SDKTARGETSYSROOT}/../../rootfs.ext4 --package.kernel_image ${SDKTARGETSYSROOT}/../../Image --package.boot_mode sd ${OTHER_FILE}
+
+

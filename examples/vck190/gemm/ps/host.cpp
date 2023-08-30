@@ -43,6 +43,26 @@ int main(int argc, char** argv) {
     std::cout << "MATA_SZ = " << MATA_SZ << std::endl;
     std::cout << "MATB_SZ = " << MATB_SZ << std::endl;
     std::cout << "MATC_SZ = " << MATC_SZ << std::endl;
+    // REP_MODE by default, please take adder case as example for how to use FUNC_MODE/PERF_MODE
+    uint64_t test_mode = REP_MODE;
+    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE) && (test_mode != REP_MODE)) {
+        std::cout << "Only FUNC_MODE, PERF_MODE, and REP_MODE are supported by AIE test harness on VCK190.\n";
+        exit(1);
+    }
+
+    std::string xclbin_path(argv[1]);
+    if (test_mode == FUNC_MODE) {
+        xclbin_path.insert(xclbin_path.find(".xclbin"), "_func");
+        std::cout << "Testing mode: FUNC_MODE\n";
+    } else if (test_mode == PERF_MODE) {
+        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
+        std::cout << "Testing mode: PERF_MODE\n";
+    } else {
+        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
+        std::cout << "Testing mode: REP_MODE\n";
+    }
+    std::cout << "Using XCLBIN file: " << xclbin_path << std::endl;
+
     // Prepare data
     const int in_ch_a = 4;
     const int in_ch_b = 32;
@@ -71,7 +91,7 @@ int main(int argc, char** argv) {
     }
 
     // run test with test harness
-    test_harness_mgr<36, 16, 4096> mgr(0, argv[1], {"vck190_test_harness_perf"}, {"g"}, REP_MODE, "vck190");
+    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"vck190_test_harness_perf"}, {"g"}, REP_MODE, "vck190");
     std::vector<test_harness_args> args;
     args.push_back({channel_index(PLIO_01_TO_AIE), MATA_SZ * 16, 1, 0, 0, 0, (char*)in_data_a[0]});
     args.push_back({channel_index(PLIO_02_TO_AIE), MATA_SZ * 16, 1, 0, 0, 0, (char*)in_data_a[1]});

@@ -42,6 +42,25 @@ int main(int argc, char** argv) {
     // Prepare data
     int in_sz = 1008 * 16;
     int out_sz = 1008 * 16;
+    // REP_MODE by default, please take adder case as example for how to use FUNC_MODE/PERF_MODE
+    int64_t test_mode = REP_MODE;
+    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE) && (test_mode != REP_MODE)) {
+        std::cout << "Only FUNC_MODE, PERF_MODE, and REP_MODE are supported by AIE test harness on VCK190.\n";
+        exit(1);
+    }
+
+    std::string xclbin_path(argv[1]);
+    if (test_mode == FUNC_MODE) {
+        xclbin_path.insert(xclbin_path.find(".xclbin"), "_func");
+        std::cout << "Testing mode: FUNC_MODE\n";
+    } else if (test_mode == PERF_MODE) {
+        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
+        std::cout << "Testing mode: PERF_MODE\n";
+    } else {
+        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
+        std::cout << "Testing mode: REP_MODE\n";
+    }
+    std::cout << "Using XCLBIN file: " << xclbin_path << std::endl;
 
     std::vector<cint16_t> in_dft7_0;
     std::vector<cint16_t> in_dft7_1;
@@ -97,7 +116,7 @@ int main(int argc, char** argv) {
     out_dft16_1.resize(golden_dft16_1.size());
 
     // run test with test harness
-    test_harness_mgr<36, 16, 4096> mgr(0, argv[1], {"vck190_test_harness_perf"}, {"aie_dut"}, REP_MODE, "vck190");
+    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"vck190_test_harness_perf"}, {"aie_dut"}, REP_MODE, "vck190");
     std::vector<test_harness_args> args;
     args.push_back({channel_index(PLIO_01_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft7_0.data()});
     args.push_back({channel_index(PLIO_03_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft9_0.data()});

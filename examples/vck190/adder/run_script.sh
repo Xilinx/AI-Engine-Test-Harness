@@ -17,12 +17,23 @@ export XILINX_XRT=/usr
 if [ -f platform_desc.txt  ]; then
         cp platform_desc.txt /etc/xocl.txt
 fi
-./host_elf vck190_test_harness.xclbin
+echo "Performing functional testing mode"
+./host_elf vck190_test_harness.xclbin 1 1 0 0
 return_code=$?
 if [ $return_code -ne 0 ]; then
-        echo "ERROR: TEST FAILED, RC=$return_code"
+    echo "ERROR: TEST FAILED, RC=$return_code"
+    exit $return_code
 else
-        echo "INFO: TEST PASSED, RC=0"
+    echo "INFO: TEST PASSED, RC=0"
+fi
+echo "Performing performance testing mode"
+./host_elf vck190_test_harness.xclbin 1 1 0 1
+return_code=$?
+if [ $return_code -ne 0 ]; then
+    echo "ERROR: TEST FAILED, RC=$return_code"
+    exit $return_code
+else
+    echo "INFO: TEST PASSED, RC=0"
 fi
 echo "INFO: Embedded host run completed."
 exit $return_code

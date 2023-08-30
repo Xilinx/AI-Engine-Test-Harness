@@ -23,26 +23,12 @@ ifneq ($(findstring 2022.2, $(XILINX_VITIS)), )
 TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202220_1/xilinx_vck190_base_dfx_202220_1.xpfm
 endif
 
-${BUILD_DIR}/vck190_test_harness_func.xo: ${TEST_HARNESS_REPO_PATH}/src/pl/test_harness.cpp
-	v++ -c -t sw_emu --platform ${TEST_HARNESS_PLATFORM} -I ./ -I ${TEST_HARNESS_REPO_PATH}/include -k vck190_test_harness_func --hls.clock 312500000:vck190_test_harness_func $^ -o $@
+${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa:
+	@echo "Please download the pre-built vck190_test_harness_func.xsa and vck190_test_harness_perf.xsa to ${TEST_HARNESS_REPO_PATH}/bin"
+	@echo "Or you can go to ${TEST_HARNESS_REPO_PATH}/test_harness and run "make <vck190_func_xsa/vck190_perf_xsa> TARGET=hw DEVICE=vck190" && false
 
-${BUILD_DIR}/vck190_test_harness_func.xsa: ${BUILD_DIR}/vck190_test_harness_func.xo ${FUNC_AIE_EXE}
-	v++ -l -t sw_emu --platform ${TEST_HARNESS_PLATFORM} --config ${TEST_HARNESS_REPO_PATH}/cfg/vck190_func_system.cfg $^ -o $@
-
-${BUILD_DIR}/vck190_test_harness_func.xclbin: ${BUILD_DIR}/vck190_test_harness_func.xsa ${FUNC_AIE_EXE}
-	v++ -p -t sw_emu  --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} $^ -o $@
-
-${BUILD_DIR}/vck190_test_harness_perf.xo: ${TEST_HARNESS_REPO_PATH}/src/pl/test_harness.cpp
-	v++ -c -t sw_emu --platform ${TEST_HARNESS_PLATFORM} -I ./ -I ${TEST_HARNESS_REPO_PATH}/include -k vck190_test_harness_perf --hls.clock 400000000:vck190_test_harness_perf $^ -o $@
-
-${BUILD_DIR}/vck190_test_harness_perf.xsa: ${BUILD_DIR}/vck190_test_harness_perf.xo ${PERF_AIE_EXE}
-	v++ -l -t sw_emu --platform ${TEST_HARNESS_PLATFORM} --config ${TEST_HARNESS_REPO_PATH}/cfg/vck190_perf_system.cfg $^ -o $@
-
-${BUILD_DIR}/vck190_test_harness_perf.xclbin: ${BUILD_DIR}/vck190_test_harness_perf.xsa ${PERF_AIE_EXE}
-	v++ -p -t sw_emu  --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} $^ -o $@
-
-${BUILD_DIR}/emconfig.json: ${BUILD_DIR}/vck190_test_harness_perf.xsa
-	emconfigutil --platform ${TEST_HARNESS_PLATFORM} --od ${BUILD_DIR}
-
-xsa: ${BUILD_DIR}/vck190_test_harness_func.xclbin ${BUILD_DIR}/vck190_test_harness_perf.xclbin ${BUILD_DIR}/emconfig.json
+sd_card: ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa
+	v++ -p --advanced.param package.enableAiePartitionDrc=0 -t hw -o ${BUILD_DIR}/vck190_test_harness_func.xclbin ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} ${FUNC_AIE_EXE}
+	v++ -p --advanced.param package.enableAiePartitionDrc=0 -t hw -o ${BUILD_DIR}/vck190_test_harness_perf.xclbin ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} ${PERF_AIE_EXE}
+	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} --package.rootfs ${SDKTARGETSYSROOT}/../../rootfs.ext4 --package.kernel_image ${SDKTARGETSYSROOT}/../../Image --package.boot_mode=sd --package.image_format=ext4 --package.sd_file ${BUILD_DIR}/vck190_test_harness_func.xclbin --package.sd_file ${BUILD_DIR}/vck190_test_harness_perf.xclbin ${OTHER_FILE}
 

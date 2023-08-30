@@ -30,19 +30,13 @@ $(error ERROR: VEK280 is not supported by Vitis 2022.2 or older versions)
 endif
 
 ################### Download XSA #############################
-TEST_MODE ?= REP
-ifeq ($(TEST_MODE), REP)
-XSA_PLATFORM := ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
 ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa:
 	cd ${TEST_HARNESS_REPO_PATH}/bin && ./download.sh
-else
-$(error ERROR: Only REP_MODE is supported by AIE test harness on VEK280)
-endif
 
 DSPLIB_ROOT ?= ${TEST_HARNESS_REPO_PATH}/../Vitis_Libraries/dsp
 
 ##################### Build AIE ##############################
-AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --aie.pl-freq=312.5 --aie.event-trace=runtime --aie.event-trace-port=gmio --platform=$(XSA_PLATFORM) --aie.workdir=./Work
+AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --aie.pl-freq=312.5 --aie.event-trace=runtime --aie.event-trace-port=gmio --platform=${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa --aie.workdir=./Work
 AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/include/aie
 AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/src/aie
 AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/inc
@@ -50,9 +44,8 @@ AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/src
 AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/include/aie
 AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/tests/aie/common/inc
 
-libadf.a: ./aie/test.cpp $(XSA_PLATFORM)
+libadf.a: ./aie/test.cpp ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
 	@echo "Compiling: libadf.a"
-	mkdir -p $(dir $@)
 	v++ -c --mode aie $(AIE_CXX_FLAGS) $^ 
 
 ##################### Build Host #############################
@@ -86,8 +79,7 @@ endif
 
 package: $(RUN_DEPS)
 ifeq ($(TARGET), hw)
-	${TEST_HARNESS_REPO_PATH}/test_harness/package_hw.sh ${TEST_MODE} ${XSA_PLATFORM} ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf run_script.sh
-	ln -s ${PKG_DIR} package_hw
+	${TEST_HARNESS_REPO_PATH}/test_harness/package_vek280_hw.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf run_script.sh
 endif
 
 ##################### Build All + Run Emulation ##############

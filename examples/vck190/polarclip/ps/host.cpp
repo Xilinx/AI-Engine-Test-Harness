@@ -43,10 +43,29 @@ typedef std::complex<int16_t> cint16_t;
 int main(int argc, char** argv) {
     auto num_repetitions = (argc >= 3) ? atoi(argv[2]) : 1;
     auto num_delay = (argc >= 4) ? atoi(argv[3]) : 0;
+    // REP_MODE by default, please take adder case as example for how to use FUNC_MODE/PERF_MODE
+    uint64_t test_mode = REP_MODE;
+    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE) && (test_mode != REP_MODE)) {
+        std::cout << "Only FUNC_MODE, PERF_MODE, and REP_MODE are supported by AIE test harness on VCK190.\n";
+        exit(1);
+    }
 
     std::vector<cint16_t> inputs;
     std::vector<int32_t> outputs;
     std::vector<int32_t> golden;
+
+    std::string xclbin_path(argv[1]);
+    if (test_mode == FUNC_MODE) {
+        xclbin_path.insert(xclbin_path.find(".xclbin"), "_func");
+        std::cout << "Testing mode: FUNC_MODE\n";
+    } else if (test_mode == PERF_MODE) {
+        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
+        std::cout << "Testing mode: PERF_MODE\n";
+    } else {
+        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
+        std::cout << "Testing mode: REP_MODE\n";
+    }
+    std::cout << "Using XCLBIN file: " << xclbin_path << std::endl;
 
     read_data_from_file("./input.txt", inputs);
     read_data_from_file("./golden_32iters.txt", golden);
@@ -76,7 +95,7 @@ int main(int argc, char** argv) {
     check_size("Output", outputs);
 
     // Instantiate the test harness and load the xclbin on device 0
-    test_harness_mgr<36, 16, 4096> mgr(0, argv[1], {"vck190_test_harness_perf"}, {"clipgraph"}, REP_MODE, "vck190");
+    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"vck190_test_harness_perf"}, {"clipgraph"}, REP_MODE, "vck190");
 
     // Configuration: channel index, size_in_bytes, repetition, delay, pointer to data
     std::vector<test_harness_args> args;
