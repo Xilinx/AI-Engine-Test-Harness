@@ -95,4 +95,4 @@ endif
 #################### Clean ###################################
 cleanall:
 	rm -rf AIECompiler.log Work x86simulator_output xcd.log .Xil AIESimulator.log Map_Report.csv aiesimulator_output/ diag_report.log pl_sample_counts sol.db xsc_report.log v++* libadf.a pkg* _x* package_hw
-	rm pl_sample_count*
+	rm pl_sample_count* .AIE_SIM_CMD_LINE_OPTIONS
