@@ -56,10 +56,10 @@ int main(int argc, char** argv) {
     const int out_ch = 16;
     int in_sz = 4096 * 16;
     int out_sz = 4096 * 16;
-    // REP_MODE by default, please take adder case as example for how to use FUNC_MODE/PERF_MODE
-    uint64_t test_mode = REP_MODE;
-    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE) && (test_mode != REP_MODE)) {
-        std::cout << "Only FUNC_MODE, PERF_MODE, and REP_MODE are supported by AIE test harness on VCK190.\n";
+    // PERF_MODE by default, please take adder case as example for how to use FUNC_MODE
+    uint64_t test_mode = PERF_MODE;
+    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE)) {
+        std::cout << "Only FUNC_MODE & PERF_MODE are supported by AIE test harness on VCK190.\n";
         exit(1);
     }
 
@@ -67,12 +67,9 @@ int main(int argc, char** argv) {
     if (test_mode == FUNC_MODE) {
         xclbin_path.insert(xclbin_path.find(".xclbin"), "_func");
         std::cout << "Testing mode: FUNC_MODE\n";
-    } else if (test_mode == PERF_MODE) {
-        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: PERF_MODE\n";
     } else {
         xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: REP_MODE\n";
+        std::cout << "Testing mode: PERF_MODE\n";
     }
     std::cout << "Using XCLBIN file: " << xclbin_path << std::endl;
 
@@ -209,91 +206,94 @@ int main(int argc, char** argv) {
     out_fir_7.resize(golden_fir_7.size());
 
     // run test with test harness
-    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"vck190_test_harness_perf"}, {"aie_dut"}, REP_MODE, "vck190");
+    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"aie_dut"});
     std::vector<test_harness_args> args;
-    args.push_back({channel_index(PLIO_01_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft_0.data()});
-    args.push_back({channel_index(PLIO_03_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft_1.data()});
-    args.push_back({channel_index(PLIO_05_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft_2.data()});
-    args.push_back({channel_index(PLIO_07_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft_3.data()});
-    args.push_back({channel_index(PLIO_09_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft_4.data()});
-    args.push_back({channel_index(PLIO_11_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft_5.data()});
-    args.push_back({channel_index(PLIO_13_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft_6.data()});
-    args.push_back({channel_index(PLIO_15_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_dft_7.data()});
-    args.push_back({channel_index(PLIO_17_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_fir_0.data()});
-    args.push_back({channel_index(PLIO_19_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_fir_1.data()});
-    args.push_back({channel_index(PLIO_21_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_fir_2.data()});
-    args.push_back({channel_index(PLIO_23_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_fir_3.data()});
-    args.push_back({channel_index(PLIO_25_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_fir_4.data()});
-    args.push_back({channel_index(PLIO_27_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_fir_5.data()});
-    args.push_back({channel_index(PLIO_29_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_fir_6.data()});
-    args.push_back({channel_index(PLIO_31_TO_AIE), in_sz, 1, 0, 0, 0, (char*)in_fir_7.data()});
-    args.push_back({channel_index(PLIO_02_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_dft_0.data()});
-    args.push_back({channel_index(PLIO_04_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_dft_1.data()});
-    args.push_back({channel_index(PLIO_06_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_dft_2.data()});
-    args.push_back({channel_index(PLIO_08_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_dft_3.data()});
-    args.push_back({channel_index(PLIO_10_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_dft_4.data()});
-    args.push_back({channel_index(PLIO_12_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_dft_5.data()});
-    args.push_back({channel_index(PLIO_14_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_dft_6.data()});
-    args.push_back({channel_index(PLIO_16_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_dft_7.data()});
-    args.push_back({channel_index(PLIO_18_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_fir_0.data()});
-    args.push_back({channel_index(PLIO_20_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_fir_1.data()});
-    args.push_back({channel_index(PLIO_22_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_fir_2.data()});
-    args.push_back({channel_index(PLIO_24_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_fir_3.data()});
-    args.push_back({channel_index(PLIO_26_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_fir_4.data()});
-    args.push_back({channel_index(PLIO_28_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_fir_5.data()});
-    args.push_back({channel_index(PLIO_30_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_fir_6.data()});
-    args.push_back({channel_index(PLIO_32_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_fir_7.data()});
+    args.push_back({channel_index(PLIO_01_TO_AIE), in_sz, 1, 0, (char*)in_dft_0.data()});
+    args.push_back({channel_index(PLIO_03_TO_AIE), in_sz, 1, 0, (char*)in_dft_1.data()});
+    args.push_back({channel_index(PLIO_05_TO_AIE), in_sz, 1, 0, (char*)in_dft_2.data()});
+    args.push_back({channel_index(PLIO_07_TO_AIE), in_sz, 1, 0, (char*)in_dft_3.data()});
+    args.push_back({channel_index(PLIO_09_TO_AIE), in_sz, 1, 0, (char*)in_dft_4.data()});
+    args.push_back({channel_index(PLIO_11_TO_AIE), in_sz, 1, 0, (char*)in_dft_5.data()});
+    args.push_back({channel_index(PLIO_13_TO_AIE), in_sz, 1, 0, (char*)in_dft_6.data()});
+    args.push_back({channel_index(PLIO_15_TO_AIE), in_sz, 1, 0, (char*)in_dft_7.data()});
+    args.push_back({channel_index(PLIO_17_TO_AIE), in_sz, 1, 0, (char*)in_fir_0.data()});
+    args.push_back({channel_index(PLIO_19_TO_AIE), in_sz, 1, 0, (char*)in_fir_1.data()});
+    args.push_back({channel_index(PLIO_21_TO_AIE), in_sz, 1, 0, (char*)in_fir_2.data()});
+    args.push_back({channel_index(PLIO_23_TO_AIE), in_sz, 1, 0, (char*)in_fir_3.data()});
+    args.push_back({channel_index(PLIO_25_TO_AIE), in_sz, 1, 0, (char*)in_fir_4.data()});
+    args.push_back({channel_index(PLIO_27_TO_AIE), in_sz, 1, 0, (char*)in_fir_5.data()});
+    args.push_back({channel_index(PLIO_29_TO_AIE), in_sz, 1, 0, (char*)in_fir_6.data()});
+    args.push_back({channel_index(PLIO_31_TO_AIE), in_sz, 1, 0, (char*)in_fir_7.data()});
+    args.push_back({channel_index(PLIO_02_FROM_AIE), out_sz, 1, 0, (char*)out_dft_0.data()});
+    args.push_back({channel_index(PLIO_04_FROM_AIE), out_sz, 1, 0, (char*)out_dft_1.data()});
+    args.push_back({channel_index(PLIO_06_FROM_AIE), out_sz, 1, 0, (char*)out_dft_2.data()});
+    args.push_back({channel_index(PLIO_08_FROM_AIE), out_sz, 1, 0, (char*)out_dft_3.data()});
+    args.push_back({channel_index(PLIO_10_FROM_AIE), out_sz, 1, 0, (char*)out_dft_4.data()});
+    args.push_back({channel_index(PLIO_12_FROM_AIE), out_sz, 1, 0, (char*)out_dft_5.data()});
+    args.push_back({channel_index(PLIO_14_FROM_AIE), out_sz, 1, 0, (char*)out_dft_6.data()});
+    args.push_back({channel_index(PLIO_16_FROM_AIE), out_sz, 1, 0, (char*)out_dft_7.data()});
+    args.push_back({channel_index(PLIO_18_FROM_AIE), out_sz, 1, 0, (char*)out_fir_0.data()});
+    args.push_back({channel_index(PLIO_20_FROM_AIE), out_sz, 1, 0, (char*)out_fir_1.data()});
+    args.push_back({channel_index(PLIO_22_FROM_AIE), out_sz, 1, 0, (char*)out_fir_2.data()});
+    args.push_back({channel_index(PLIO_24_FROM_AIE), out_sz, 1, 0, (char*)out_fir_3.data()});
+    args.push_back({channel_index(PLIO_26_FROM_AIE), out_sz, 1, 0, (char*)out_fir_4.data()});
+    args.push_back({channel_index(PLIO_28_FROM_AIE), out_sz, 1, 0, (char*)out_fir_5.data()});
+    args.push_back({channel_index(PLIO_30_FROM_AIE), out_sz, 1, 0, (char*)out_fir_6.data()});
+    args.push_back({channel_index(PLIO_32_FROM_AIE), out_sz, 1, 0, (char*)out_fir_7.data()});
     mgr.runAIEGraph(0, 2);
     mgr.runTestHarness(args);
     mgr.waitForRes(10000);
+    bool is_valid = mgr.result_valid;
 
     int NUM_SAMPLES = out_sz / (sizeof(int16_t) * 2); // complex type
     int errorCount = 0;
-    for (int i = 0; i < NUM_SAMPLES; i++) {
-        int16_t err_re_dft_0 = abs(real(golden_dft_0[i]) - real(out_dft_0[i]));
-        int16_t err_im_dft_0 = abs(imag(golden_dft_0[i]) - imag(out_dft_0[i]));
-        int16_t err_re_dft_1 = abs(real(golden_dft_1[i]) - real(out_dft_1[i]));
-        int16_t err_im_dft_1 = abs(imag(golden_dft_1[i]) - imag(out_dft_1[i]));
-        int16_t err_re_dft_2 = abs(real(golden_dft_2[i]) - real(out_dft_2[i]));
-        int16_t err_im_dft_2 = abs(imag(golden_dft_2[i]) - imag(out_dft_2[i]));
-        int16_t err_re_dft_3 = abs(real(golden_dft_3[i]) - real(out_dft_3[i]));
-        int16_t err_im_dft_3 = abs(imag(golden_dft_3[i]) - imag(out_dft_3[i]));
-        int16_t err_re_dft_4 = abs(real(golden_dft_4[i]) - real(out_dft_4[i]));
-        int16_t err_im_dft_4 = abs(imag(golden_dft_4[i]) - imag(out_dft_4[i]));
-        int16_t err_re_dft_5 = abs(real(golden_dft_5[i]) - real(out_dft_5[i]));
-        int16_t err_im_dft_5 = abs(imag(golden_dft_5[i]) - imag(out_dft_5[i]));
-        int16_t err_re_dft_6 = abs(real(golden_dft_6[i]) - real(out_dft_6[i]));
-        int16_t err_im_dft_6 = abs(imag(golden_dft_6[i]) - imag(out_dft_6[i]));
-        int16_t err_re_dft_7 = abs(real(golden_dft_7[i]) - real(out_dft_7[i]));
-        int16_t err_im_dft_7 = abs(imag(golden_dft_7[i]) - imag(out_dft_7[i]));
-        int16_t err_re_fir_0 = abs(real(golden_fir_0[i]) - real(out_fir_0[i]));
-        int16_t err_im_fir_0 = abs(imag(golden_fir_0[i]) - imag(out_fir_0[i]));
-        int16_t err_re_fir_1 = abs(real(golden_fir_1[i]) - real(out_fir_1[i]));
-        int16_t err_im_fir_1 = abs(imag(golden_fir_1[i]) - imag(out_fir_1[i]));
-        int16_t err_re_fir_2 = abs(real(golden_fir_2[i]) - real(out_fir_2[i]));
-        int16_t err_im_fir_2 = abs(imag(golden_fir_2[i]) - imag(out_fir_2[i]));
-        int16_t err_re_fir_3 = abs(real(golden_fir_3[i]) - real(out_fir_3[i]));
-        int16_t err_im_fir_3 = abs(imag(golden_fir_3[i]) - imag(out_fir_3[i]));
-        int16_t err_re_fir_4 = abs(real(golden_fir_4[i]) - real(out_fir_4[i]));
-        int16_t err_im_fir_4 = abs(imag(golden_fir_4[i]) - imag(out_fir_4[i]));
-        int16_t err_re_fir_5 = abs(real(golden_fir_5[i]) - real(out_fir_5[i]));
-        int16_t err_im_fir_5 = abs(imag(golden_fir_5[i]) - imag(out_fir_5[i]));
-        int16_t err_re_fir_6 = abs(real(golden_fir_6[i]) - real(out_fir_6[i]));
-        int16_t err_im_fir_6 = abs(imag(golden_fir_6[i]) - imag(out_fir_6[i]));
-        int16_t err_re_fir_7 = abs(real(golden_fir_7[i]) - real(out_fir_7[i]));
-        int16_t err_im_fir_7 = abs(imag(golden_fir_7[i]) - imag(out_fir_7[i]));
-        if ((err_re_dft_0 > CHANNELIZER_TOLERANCE) || (err_im_dft_0 > CHANNELIZER_TOLERANCE) || (err_re_dft_1 > CHANNELIZER_TOLERANCE) ||
-            (err_im_dft_1 > CHANNELIZER_TOLERANCE) || (err_re_dft_2 > CHANNELIZER_TOLERANCE) || (err_im_dft_2 > CHANNELIZER_TOLERANCE) ||
-            (err_re_dft_3 > CHANNELIZER_TOLERANCE) || (err_im_dft_3 > CHANNELIZER_TOLERANCE) || (err_re_dft_4 > CHANNELIZER_TOLERANCE) ||
-            (err_im_dft_4 > CHANNELIZER_TOLERANCE) || (err_re_dft_5 > CHANNELIZER_TOLERANCE) || (err_im_dft_5 > CHANNELIZER_TOLERANCE) ||
-            (err_re_dft_6 > CHANNELIZER_TOLERANCE) || (err_im_dft_6 > CHANNELIZER_TOLERANCE) || (err_re_dft_7 > CHANNELIZER_TOLERANCE) ||
-            (err_im_dft_7 > CHANNELIZER_TOLERANCE) || (err_re_fir_0 > CHANNELIZER_TOLERANCE) || (err_im_fir_0 > CHANNELIZER_TOLERANCE) ||
-            (err_re_fir_1 > CHANNELIZER_TOLERANCE) || (err_im_fir_1 > CHANNELIZER_TOLERANCE) || (err_re_fir_2 > CHANNELIZER_TOLERANCE) ||
-            (err_im_fir_2 > CHANNELIZER_TOLERANCE) || (err_re_fir_3 > CHANNELIZER_TOLERANCE) || (err_im_fir_3 > CHANNELIZER_TOLERANCE) ||
-            (err_re_fir_4 > CHANNELIZER_TOLERANCE) || (err_im_fir_4 > CHANNELIZER_TOLERANCE) || (err_re_fir_5 > CHANNELIZER_TOLERANCE) ||
-            (err_im_fir_5 > CHANNELIZER_TOLERANCE) || (err_re_fir_6 > CHANNELIZER_TOLERANCE) || (err_im_fir_6 > CHANNELIZER_TOLERANCE) ||
-            (err_re_fir_7 > CHANNELIZER_TOLERANCE) || (err_im_fir_7 > CHANNELIZER_TOLERANCE)) {
-            errorCount++;
+    if (is_valid) {
+        for (int i = 0; i < NUM_SAMPLES; i++) {
+            int16_t err_re_dft_0 = abs(real(golden_dft_0[i]) - real(out_dft_0[i]));
+            int16_t err_im_dft_0 = abs(imag(golden_dft_0[i]) - imag(out_dft_0[i]));
+            int16_t err_re_dft_1 = abs(real(golden_dft_1[i]) - real(out_dft_1[i]));
+            int16_t err_im_dft_1 = abs(imag(golden_dft_1[i]) - imag(out_dft_1[i]));
+            int16_t err_re_dft_2 = abs(real(golden_dft_2[i]) - real(out_dft_2[i]));
+            int16_t err_im_dft_2 = abs(imag(golden_dft_2[i]) - imag(out_dft_2[i]));
+            int16_t err_re_dft_3 = abs(real(golden_dft_3[i]) - real(out_dft_3[i]));
+            int16_t err_im_dft_3 = abs(imag(golden_dft_3[i]) - imag(out_dft_3[i]));
+            int16_t err_re_dft_4 = abs(real(golden_dft_4[i]) - real(out_dft_4[i]));
+            int16_t err_im_dft_4 = abs(imag(golden_dft_4[i]) - imag(out_dft_4[i]));
+            int16_t err_re_dft_5 = abs(real(golden_dft_5[i]) - real(out_dft_5[i]));
+            int16_t err_im_dft_5 = abs(imag(golden_dft_5[i]) - imag(out_dft_5[i]));
+            int16_t err_re_dft_6 = abs(real(golden_dft_6[i]) - real(out_dft_6[i]));
+            int16_t err_im_dft_6 = abs(imag(golden_dft_6[i]) - imag(out_dft_6[i]));
+            int16_t err_re_dft_7 = abs(real(golden_dft_7[i]) - real(out_dft_7[i]));
+            int16_t err_im_dft_7 = abs(imag(golden_dft_7[i]) - imag(out_dft_7[i]));
+            int16_t err_re_fir_0 = abs(real(golden_fir_0[i]) - real(out_fir_0[i]));
+            int16_t err_im_fir_0 = abs(imag(golden_fir_0[i]) - imag(out_fir_0[i]));
+            int16_t err_re_fir_1 = abs(real(golden_fir_1[i]) - real(out_fir_1[i]));
+            int16_t err_im_fir_1 = abs(imag(golden_fir_1[i]) - imag(out_fir_1[i]));
+            int16_t err_re_fir_2 = abs(real(golden_fir_2[i]) - real(out_fir_2[i]));
+            int16_t err_im_fir_2 = abs(imag(golden_fir_2[i]) - imag(out_fir_2[i]));
+            int16_t err_re_fir_3 = abs(real(golden_fir_3[i]) - real(out_fir_3[i]));
+            int16_t err_im_fir_3 = abs(imag(golden_fir_3[i]) - imag(out_fir_3[i]));
+            int16_t err_re_fir_4 = abs(real(golden_fir_4[i]) - real(out_fir_4[i]));
+            int16_t err_im_fir_4 = abs(imag(golden_fir_4[i]) - imag(out_fir_4[i]));
+            int16_t err_re_fir_5 = abs(real(golden_fir_5[i]) - real(out_fir_5[i]));
+            int16_t err_im_fir_5 = abs(imag(golden_fir_5[i]) - imag(out_fir_5[i]));
+            int16_t err_re_fir_6 = abs(real(golden_fir_6[i]) - real(out_fir_6[i]));
+            int16_t err_im_fir_6 = abs(imag(golden_fir_6[i]) - imag(out_fir_6[i]));
+            int16_t err_re_fir_7 = abs(real(golden_fir_7[i]) - real(out_fir_7[i]));
+            int16_t err_im_fir_7 = abs(imag(golden_fir_7[i]) - imag(out_fir_7[i]));
+            if ((err_re_dft_0 > CHANNELIZER_TOLERANCE) || (err_im_dft_0 > CHANNELIZER_TOLERANCE) || (err_re_dft_1 > CHANNELIZER_TOLERANCE) ||
+                (err_im_dft_1 > CHANNELIZER_TOLERANCE) || (err_re_dft_2 > CHANNELIZER_TOLERANCE) || (err_im_dft_2 > CHANNELIZER_TOLERANCE) ||
+                (err_re_dft_3 > CHANNELIZER_TOLERANCE) || (err_im_dft_3 > CHANNELIZER_TOLERANCE) || (err_re_dft_4 > CHANNELIZER_TOLERANCE) ||
+                (err_im_dft_4 > CHANNELIZER_TOLERANCE) || (err_re_dft_5 > CHANNELIZER_TOLERANCE) || (err_im_dft_5 > CHANNELIZER_TOLERANCE) ||
+                (err_re_dft_6 > CHANNELIZER_TOLERANCE) || (err_im_dft_6 > CHANNELIZER_TOLERANCE) || (err_re_dft_7 > CHANNELIZER_TOLERANCE) ||
+                (err_im_dft_7 > CHANNELIZER_TOLERANCE) || (err_re_fir_0 > CHANNELIZER_TOLERANCE) || (err_im_fir_0 > CHANNELIZER_TOLERANCE) ||
+                (err_re_fir_1 > CHANNELIZER_TOLERANCE) || (err_im_fir_1 > CHANNELIZER_TOLERANCE) || (err_re_fir_2 > CHANNELIZER_TOLERANCE) ||
+                (err_im_fir_2 > CHANNELIZER_TOLERANCE) || (err_re_fir_3 > CHANNELIZER_TOLERANCE) || (err_im_fir_3 > CHANNELIZER_TOLERANCE) ||
+                (err_re_fir_4 > CHANNELIZER_TOLERANCE) || (err_im_fir_4 > CHANNELIZER_TOLERANCE) || (err_re_fir_5 > CHANNELIZER_TOLERANCE) ||
+                (err_im_fir_5 > CHANNELIZER_TOLERANCE) || (err_re_fir_6 > CHANNELIZER_TOLERANCE) || (err_im_fir_6 > CHANNELIZER_TOLERANCE) ||
+                (err_re_fir_7 > CHANNELIZER_TOLERANCE) || (err_im_fir_7 > CHANNELIZER_TOLERANCE)) {
+                errorCount++;
+            }
         }
     }
     if (errorCount)

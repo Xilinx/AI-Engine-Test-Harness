@@ -43,10 +43,10 @@ typedef std::complex<int16_t> cint16_t;
 int main(int argc, char** argv) {
     auto num_repetitions = (argc >= 3) ? atoi(argv[2]) : 1;
     auto num_delay = (argc >= 4) ? atoi(argv[3]) : 0;
-    // REP_MODE by default, please take adder case as example for how to use FUNC_MODE/PERF_MODE
-    uint64_t test_mode = REP_MODE;
-    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE) && (test_mode != REP_MODE)) {
-        std::cout << "Only FUNC_MODE, PERF_MODE, and REP_MODE are supported by AIE test harness on VCK190.\n";
+    // PERF_MODE by default, please take adder case as example for how to use FUNC_MODE
+    uint64_t test_mode = PERF_MODE;
+    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE)) {
+        std::cout << "Only FUNC_MODE & PERF_MODE are supported by AIE test harness on VCK190.\n";
         exit(1);
     }
 
@@ -58,12 +58,9 @@ int main(int argc, char** argv) {
     if (test_mode == FUNC_MODE) {
         xclbin_path.insert(xclbin_path.find(".xclbin"), "_func");
         std::cout << "Testing mode: FUNC_MODE\n";
-    } else if (test_mode == PERF_MODE) {
-        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: PERF_MODE\n";
     } else {
         xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: REP_MODE\n";
+        std::cout << "Testing mode: PERF_MODE\n";
     }
     std::cout << "Using XCLBIN file: " << xclbin_path << std::endl;
 
@@ -95,14 +92,14 @@ int main(int argc, char** argv) {
     check_size("Output", outputs);
 
     // Instantiate the test harness and load the xclbin on device 0
-    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"vck190_test_harness_perf"}, {"clipgraph"}, REP_MODE, "vck190");
+    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"clipgraph"});
 
     // Configuration: channel index, size_in_bytes, repetition, delay, pointer to data
     std::vector<test_harness_args> args;
     args.push_back(
-        {channel_index(PLIO_01_TO_AIE), num_bytes(inputs), num_repetitions, num_delay, 0, 0, (char*)inputs.data()});
+        {channel_index(PLIO_01_TO_AIE), num_bytes(inputs), num_repetitions, num_delay, (char*)inputs.data()});
     args.push_back(
-        {channel_index(PLIO_01_FROM_AIE), num_bytes(outputs), num_repetitions, num_delay, 0, 0, (char*)outputs.data()});
+        {channel_index(PLIO_01_FROM_AIE), num_bytes(outputs), num_repetitions, num_delay, (char*)outputs.data()});
 
     printf("Running example POLARCLIP\n");
     printf(" - Number of graph iterations         : %8d\n", num_iterations);
@@ -124,8 +121,11 @@ int main(int argc, char** argv) {
     // The argument is an optional timeout (in millisecond) for the AIE graph.
     mgr.waitForRes(0);
 
+    // Get validity of the result
+    bool is_valid = mgr.result_valid;
+
     int errorCount = 0;
-    {
+    if (is_valid) {
         for (int i = 0; i < num_outputs; i++) {
             if (outputs[i] != golden[i]) {
                 // printf("Error found @ %d, %d != %d\n", i, outputs[i], golden[i]);

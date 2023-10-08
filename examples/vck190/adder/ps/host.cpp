@@ -36,7 +36,7 @@ using namespace test_harness;
 // Utilities (read_data_from_file, check_size...)
 #include "utils.hpp"
 
-//#define KERNEL_LOOP_ITERS 512
+//#define KERNEL_LOOP_ITERS 512 // XXX: this should be changed along with the same macro in aie/common.h
 #define KERNEL_LOOP_ITERS (16 * 1024)
 #define KERNEL_WORDS_PER_ITER 4
 
@@ -47,8 +47,8 @@ int main(int argc, char** argv) {
     auto num_values = num_iterations * KERNEL_LOOP_ITERS * KERNEL_WORDS_PER_ITER;
     // FUNC_MODE by default
     uint64_t test_mode = (argc >= 6) ? atoi(argv[5]) : 0;
-    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE) && (test_mode != REP_MODE)) {
-        std::cout << "Only FUNC_MODE, PERF_MODE, and REP_MODE are supported by AIE test harness on VCK190.\n";
+    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE)) {
+        std::cout << "Only FUNC_MODE & PERF_MODE are supported by AIE test harness on VCK190.\n";
         exit(1);
     }
 
@@ -56,12 +56,9 @@ int main(int argc, char** argv) {
     if (test_mode == FUNC_MODE) {
         xclbin_path.insert(xclbin_path.find(".xclbin"), "_func");
         std::cout << "Testing mode: FUNC_MODE\n";
-    } else if (test_mode == PERF_MODE) {
-        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: PERF_MODE\n";
     } else {
         xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: REP_MODE\n";
+        std::cout << "Testing mode: PERF_MODE\n";
     }
     std::cout << "Using XCLBIN file: " << xclbin_path << std::endl;
 
@@ -82,18 +79,16 @@ int main(int argc, char** argv) {
     printf(" - Number of graph iterations (total) : %8d\n", num_iterations * num_repetitions);
     printf(" - Channel delay                      : %8d cycles\n", num_delay);
 
+    bool is_valid;
     // Instantiate the test harness.
     // This loads the xclbin on device 0 and creates the necessary XRT kernel handles
     if (test_mode == FUNC_MODE) {
-        test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"vck190_test_harness_func"}, {"gr"}, FUNC_MODE, "vck190");
+        test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"gr"});
         // configuration: channel index, size_in_bytes, repetition, delay, pointer to data
         std::vector<test_harness_args> args;
-        args.push_back({channel_index(PLIO_01_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, 0, 0,
-                        (char*)a.data()});
-        args.push_back({channel_index(PLIO_03_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay,
-                        num_values * sizeof(int), 0, (char*)b.data()});
-        args.push_back({channel_index(PLIO_02_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, 0, 0,
-                        (char*)s.data()});
+        args.push_back({channel_index(PLIO_01_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)a.data()});
+        args.push_back({channel_index(PLIO_03_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)b.data()});
+        args.push_back({channel_index(PLIO_02_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)s.data()});
         // Run the AIE graph(s).
         // The first parameter is the index of the desired graph in the vector of graph names set during initialization.
         // If there is a single user graph, the index is 0. The second parameter is the desired number of graph
@@ -106,16 +101,16 @@ int main(int argc, char** argv) {
         // Wait for all DMA transactions and for the AIE graph to finish.
         // The argument is an optional timeout (in millisecond) for the AIE graph.
         mgr.waitForRes(0);
-    } else if (test_mode == PERF_MODE) {
-        test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"vck190_test_harness_perf"}, {"gr"}, PERF_MODE, "vck190");
+
+        // Get the validity of the result
+        is_valid = mgr.result_valid;
+    } else {
+        test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"gr"});
         // configuration: channel index, size_in_bytes, repetition, delay, pointer to data
         std::vector<test_harness_args> args;
-        args.push_back({channel_index(PLIO_01_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, 0, 0,
-                        (char*)a.data()});
-        args.push_back({channel_index(PLIO_03_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, 0, 0,
-                        (char*)b.data()});
-        args.push_back({channel_index(PLIO_02_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, 0, 0,
-                        (char*)s.data()});
+        args.push_back({channel_index(PLIO_01_TO_AIE),  num_values * sizeof(int), num_repetitions, num_delay, (char*)a.data()});
+        args.push_back({channel_index(PLIO_03_TO_AIE),  num_values * sizeof(int), num_repetitions, num_delay, (char*)b.data()});
+        args.push_back({channel_index(PLIO_02_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)s.data()});
         // Run the AIE graph(s).
         // The first parameter is the index of the desired graph in the vector of graph names set during initialization.
         // If there is a single user graph, the index is 0. The second parameter is the desired number of graph
@@ -128,41 +123,21 @@ int main(int argc, char** argv) {
         // Wait for all DMA transactions and for the AIE graph to finish.
         // The argument is an optional timeout (in millisecond) for the AIE graph.
         mgr.waitForRes(0);
-    } else if (test_mode == REP_MODE) {
-        test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"vck190_test_harness_perf"}, {"gr"}, REP_MODE, "vck190");
-        // configuration: channel index, size_in_bytes, repetition, delay, pointer to data
-        std::vector<test_harness_args> args;
-        args.push_back({channel_index(PLIO_01_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, 0, 0,
-                        (char*)a.data()});
-        args.push_back({channel_index(PLIO_03_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, 0, 0,
-                        (char*)b.data()});
-        args.push_back({channel_index(PLIO_02_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, 0, 0,
-                        (char*)s.data()});
-        // Run the AIE graph(s).
-        // The first parameter is the index of the desired graph in the vector of graph names set during initialization.
-        // If there is a single user graph, the index is 0. The second parameter is the desired number of graph
-        // iterations.
-        mgr.runAIEGraph(0, num_iterations * num_repetitions);
 
-        // Start the DMA engine
-        mgr.runTestHarness(args);
-
-        // Wait for all DMA transactions and for the AIE graph to finish.
-        // The argument is an optional timeout (in millisecond) for the AIE graph.
-        mgr.waitForRes(0);
+        // Get the validity of the result
+        is_valid = mgr.result_valid;
     }
 
     // Comparing the execution data to the golden data
     int errorCount = 0;
     {
-        if (test_mode == PERF_MODE) {
-            printf("Result checking is not valid in performance testing mode.\n");
+        if (!is_valid) {
+            printf("[INFO]: Result checking is not valid if test size is beyond the capacity of URAM in each channel.\n");
         } else {
             for (int i = 0; i < num_values; i++) {
                 auto golden = a[i] + b[i];
                 // Access values in the output buffer
                 if ((signed)s[i] != golden) {
-                    // printf("Error found @ %4d, %4d != %4d (%4d + %4d)\n", i, s[i], golden, a[i], b[i]);
                     errorCount++;
                 }
             }

@@ -43,12 +43,13 @@ int main(int argc, char** argv) {
     out_data = (char*)malloc(out_sz);
 
     // run test with test harness
-    test_harness_mgr<16, 16, 8192> mgr(0, argv[1], {"vek280_test_harness"}, {"ddsMix"}, REP_MODE, "vek280");
+    test_harness_mgr<16, 16, 8192> mgr(0, argv[1], {"ddsMix"});
     std::vector<test_harness_args> args;
-    args.push_back({channel_index(PLIO_02_FROM_AIE), out_sz, 1, 0, 0, 0, (char*)out_data});
+    args.push_back({channel_index(PLIO_02_FROM_AIE), out_sz, 1, 0, (char*)out_data});
     mgr.runAIEGraph(0, NITER);
     mgr.runTestHarness(args);
     mgr.waitForRes(10000);
+    bool is_valid = mgr.result_valid;
 
     //
     free(out_data);

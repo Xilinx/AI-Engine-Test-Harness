@@ -38,8 +38,6 @@
 #include "xrt/xrt_bo.h"
 #include "xrt/xrt_graph.h"
 
-#define MAX_MEM_CAPACITY (512 * 1024)
-
 enum TestMode { FUNC_MODE = 0, PERF_MODE, REP_MODE };
 
 namespace test_harness {
@@ -50,7 +48,6 @@ struct plKernelArg {
     unsigned int size_in_byte;
     char* data;
     unsigned int scalar;
-    bool need_realloc;
 };
 
 class fastXM {
@@ -98,28 +95,16 @@ class fastXM {
         const int& kk = kernel_index;
         auto tmp_pl_k_r_hdl = xrtRunOpen(pl_k_hdl[kk]);
 
-        xrtBufferHandle tmp_bo_hdl, sub_bo_hdl;
-        char* tmp_bo_ptr;
-        char* sub_bo_ptr;
         for (int i = 0; i < argument.size(); i++) {
             if (argument[i].isBO) {
-                if(argument[i].need_realloc) {
-                    tmp_bo_hdl = xrtBOAlloc(d_hdl, argument[i].size_in_byte, 0,
+                if (argument[i].size_in_byte) {
+                    auto tmp_bo_hdl = xrtBOAlloc(d_hdl, argument[i].size_in_byte, 0,
                                                  xrtKernelArgGroupId(pl_k_hdl[kk], argument[i].arg_idx));
-                    tmp_bo_ptr = reinterpret_cast<char*>(xrtBOMap(tmp_bo_hdl));
+                    char* tmp_bo_ptr = reinterpret_cast<char*>(xrtBOMap(tmp_bo_hdl));
                     memcpy(tmp_bo_ptr, argument[i].data, argument[i].size_in_byte);
                     xrtBOSync(tmp_bo_hdl, XCL_BO_SYNC_BO_TO_DEVICE, argument[i].size_in_byte, 0);
                     xrtRunSetArg(tmp_pl_k_r_hdl, argument[i].arg_idx, tmp_bo_hdl);
                     bo_hdl[kk].push_back(tmp_bo_hdl);
-                    bo_src_ptr[kk].push_back(argument[i].data);
-                    bo_src_size[kk].push_back(argument[i].size_in_byte);
-                } else {
-                    sub_bo_hdl = xrtBOSubAlloc(tmp_bo_hdl, argument[i].size_in_byte, 0);
-                    sub_bo_ptr = reinterpret_cast<char*>(xrtBOMap(sub_bo_hdl));
-                    memcpy(sub_bo_ptr, argument[i].data, argument[i].size_in_byte);
-                    xrtBOSync(sub_bo_hdl, XCL_BO_SYNC_BO_TO_DEVICE, argument[i].size_in_byte, 0);
-                    xrtRunSetArg(tmp_pl_k_r_hdl, argument[i].arg_idx, sub_bo_hdl);
-                    bo_hdl[kk].push_back(sub_bo_hdl);
                     bo_src_ptr[kk].push_back(argument[i].data);
                     bo_src_size[kk].push_back(argument[i].size_in_byte);
                 }
@@ -258,8 +243,6 @@ struct test_harness_args {
     unsigned int size_in_byte;
     unsigned int repetition;
     uint64_t delay;
-    unsigned int in_byte_offt;
-    unsigned int out_byte_offt;
     char* data;
 };
 
@@ -280,45 +263,29 @@ class test_harness_mgr : public fastXM {
      * @param device_index
      * The device id of the testing board, typically it will be zero
      * @param xclbin_file_path
-     * The name, including its full path, to the xclbin file to be tested
-     * @param pl_krl_name
-     * The vector of PL kernel names in the pre-built XSA and packaged in the xclbin file
+     * The name, including its full path, to the xclbin file to be tested.
+     * Valid xclbin name list: vck190_test_harness_func, vck190_test_harness_perf, vek280_test_harness.
      * @param graph_name
      * The vector of graph names in the libadf.a and packaged in the xclbin file
-     * @param test_mode
-     * Testing mode, including functional, performance, and repetition
-     * @param device_type
-     * vck190 or vek280, others are not supported
      */
-    test_harness_mgr(unsigned int device_index, std::string xclbin_file_path, std::vector<std::string> pl_krl_name, std::vector<std::string> graph_name, uint64_t test_mode, std::string device_type) : fastXM(device_index, xclbin_file_path, pl_krl_name, graph_name) {
-        mode = test_mode;
-        device.assign(device_type);
-        if (device_type.compare("vck190") == 0) {
-            if (test_mode == FUNC_MODE) {
-                to_aie_ptr = (char*)malloc(MAX_MEM_CAPACITY);
-                from_aie_ptr = (char*)malloc(MAX_MEM_CAPACITY);
-            } else if (test_mode == PERF_MODE || test_mode == REP_MODE) {
-                to_aie_ptr = (char*)malloc(N * W * D);
-                from_aie_ptr = (char*)malloc(N * W * D);
-            } else {
-                std::cout << "[ERROR]: Only functional, performance, and repetition testing modes are supported on vck190 device.\n";
-            }
-        } else if (device_type.compare("vek280") == 0) {
-            if (test_mode == REP_MODE) {
-                to_aie_ptr = (char*)malloc(N * W * D);
-                from_aie_ptr = (char*)malloc(N * W * D);
-            } else {
-                std::cout << "[ERROR]: Only repetition mode is supported on vek280 device.\n";
-            }
-        } else {
-            std::cout << "[ERROR]: Only vck190 or vek280 are supported by AIE test harness.\n";
-        }
-       
-        cfg_ptr = (uint64_t*)malloc((N * 2 * 4 + 1) * sizeof(uint64_t));
-        perf_ptr = (uint64_t*)malloc(N * 2 * sizeof(uint64_t));
+    test_harness_mgr(unsigned int device_index, std::string xclbin_file_path, std::vector<std::string> graph_name) : fastXM(device_index, xclbin_file_path, {xclbin_file_path.substr(xclbin_file_path.find_last_of("/") + 1).substr(0, xclbin_file_path.substr(xclbin_file_path.find_last_of("/") + 1).find("."))}, graph_name) {
         graph_started = false;
-
-        reset_cfg();
+        result_valid = true;
+        
+        std::string xclbin_name = xclbin_file_path.substr(xclbin_file_path.find_last_of("/") + 1);
+        if (std::string::npos != xclbin_name.find("vek280_test_harness")) {
+            mode = REP_MODE;
+            device.assign("vek280");
+        } else if (std::string::npos != xclbin_name.find("vck190_test_harness_func")) {
+            mode = FUNC_MODE;
+            device.assign("vck190");
+        } else if (std::string::npos != xclbin_name.find("vck190_test_harness_perf")) {
+            // REP_MODE by default as it is more conservative than the PERF_MODE, will chagne the testing mode according to the buffer size that is required by the user in runTestHarness
+            mode = REP_MODE; 
+            device.assign("vck190");
+        } else {
+            std::cout << "[ERROR]: Please provide the valid xclbin name <vck190_test_harness_func.xclbin/vck190_test_harness_perf.xclbin/vek280_test_harness.xclbin>.\n";
+        }
     }
 
     void reset_cfg() {
@@ -332,10 +299,8 @@ class test_harness_mgr : public fastXM {
     }
 
     void runTestHarness(std::vector<test_harness_args> args) {
-        reset_cfg();
-
         if (!graph_started) {
-            std::cout << "Warning: you're trying to call 'runTestHarness' before "
+            std::cout << "[WARNING]: you're trying to call 'runTestHarness' before "
                          "calling 'runAIEGraph'."
                       << std::endl;
             std::cout << "This might lead to result of 'printPerf' to be fluctuated." << std::endl;
@@ -343,71 +308,153 @@ class test_harness_mgr : public fastXM {
                          "'runTestHarness'."
                       << std::endl;
         }
-
-        bool frame_size_valid = true;
-        for (int i = 0; i < args.size(); i++) {
-            std::cout << "Check frame size CH[" << i << "]:    ";
-            if (mode == FUNC_MODE) {
-                if (args[i].idx <= PLIO_36_TO_AIE) {
-                    if (!check_frame_size(args[i].size_in_byte, args[i].in_byte_offt)) {
-                        frame_size_valid = false;
-                    }
-                } else {
-                    if (!check_frame_size(args[i].size_in_byte, args[i].out_byte_offt)) {
-                        frame_size_valid = false;
-                    }
-                }
-            } else {
-                if (!check_frame_size(args[i].size_in_byte)) {
-                    frame_size_valid = false;
+        
+        // XXX: vek280 is not supporting PERF_MODE
+        // Switch REP_MODE to PERF_MODE for vck190 if frame size is lager than capacity of URAM in each channel
+        if ((device == "vck190") && mode == REP_MODE) {
+            for (int i = 0; i < args.size(); i++) {
+                if (args[i].size_in_byte > (W * D)) {
+                    mode = PERF_MODE;
+                    result_valid = false;
+                    std::cout << "[WARNING]: channel " << i << " is larger than the URAM capacity, the result is not valid in this condition\n";
                 }
             }
         }
 
-        if (frame_size_valid) {
+        bool frame_aligned = true;
+        unsigned int total_to_byte[6];
+        unsigned int total_from_byte[6];
+        for (int i = 0; i < 6; i++) {
+            total_to_byte[i] = 0;
+            total_from_byte[i] = 0;
+        }
+        for (int i = 0; i < args.size(); i++) {
+            std::cout << "[INFO]: Check frame size CH[" << i << "]:    ";
+            if (!check_frame_align(args[i].size_in_byte)) {
+                frame_aligned = false;
+            }
+            // to accumulate the buffer size for each group of streams for FUNC_MODE
+            if ((args[i].idx >= PLIO_01_TO_AIE) && (args[i].idx <= PLIO_06_TO_AIE)) {
+                total_to_byte[0] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_07_TO_AIE) && (args[i].idx <= PLIO_12_TO_AIE)) {
+                total_to_byte[1] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_13_TO_AIE) && (args[i].idx <= PLIO_18_TO_AIE)) {
+                total_to_byte[2] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_19_TO_AIE) && (args[i].idx <= PLIO_24_TO_AIE)) {
+                total_to_byte[3] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_25_TO_AIE) && (args[i].idx <= PLIO_30_TO_AIE)) {
+                total_to_byte[4] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_31_TO_AIE) && (args[i].idx <= PLIO_36_TO_AIE)) {
+                total_to_byte[5] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_01_FROM_AIE) && (args[i].idx <= PLIO_06_FROM_AIE)) {
+                total_from_byte[0] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_07_FROM_AIE) && (args[i].idx <= PLIO_12_FROM_AIE)) {
+                total_from_byte[1] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_13_FROM_AIE) && (args[i].idx <= PLIO_18_FROM_AIE)) {
+                total_from_byte[2] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_19_FROM_AIE) && (args[i].idx <= PLIO_24_FROM_AIE)) {
+                total_from_byte[3] += args[i].size_in_byte;
+            } else if ((args[i].idx >= PLIO_25_FROM_AIE) && (args[i].idx <= PLIO_30_FROM_AIE)) {
+                total_from_byte[4] += args[i].size_in_byte;
+            } else {
+                total_from_byte[5] += args[i].size_in_byte;
+            }
+        }
+
+        cfg_ptr = (uint64_t*)malloc((N * 2 * 4 + 1) * sizeof(uint64_t));
+        perf_ptr = (uint64_t*)malloc(N * 2 * sizeof(uint64_t));
+        reset_cfg();
+        if (frame_aligned) {
             cfg_ptr[0] = mode;
             if ((device.compare("vck190") == 0) && mode == FUNC_MODE) {
+                unsigned int to_byte_offt[6];
+                unsigned int from_byte_offt[6];
+                for (int i = 0; i < 6; i++) {
+                    to_aie_ptr[i] = (char*)malloc(total_to_byte[i]);
+                    to_byte_offt[i] = 0;
+                    from_aie_ptr[i] = (char*)malloc(total_from_byte[i]);
+                    from_byte_offt[i] = 0;
+                }
                 for (int i = 0; i < args.size(); i++) {
                     args_rec.push_back(args[i]);
-                    {
-                        int bias = 0;
-                        int chn = 0;
-                        if (args[i].idx <= PLIO_36_TO_AIE) {
-                            bias = 0;
-                            chn = args[i].idx - PLIO_01_TO_AIE;
-                        } else {
-                            bias = 4;
-                            chn = args[i].idx - PLIO_01_FROM_AIE;
-                        }
-
+                    int bias = 0;
+                    int chn = 0;
+                    if (args[i].idx <= PLIO_36_TO_AIE) {
+                        bias = 0;
+                        chn = args[i].idx - PLIO_01_TO_AIE;
                         cfg_ptr[1 + N * bias + 0 * N + chn] = args[i].delay;
                         cfg_ptr[1 + N * bias + 1 * N + chn] = args[i].size_in_byte / W;
                         cfg_ptr[1 + N * bias + 2 * N + chn] = args[i].repetition;
-                        cfg_ptr[1 + N * bias + 3 * N + chn] = args[i].in_byte_offt / W;
-                    }
-
-                    {
-                        if (args[i].idx <= PLIO_36_TO_AIE) {
-                            memcpy(to_aie_ptr + args[i].in_byte_offt, args[i].data, args[i].size_in_byte);
+                        if ((args[i].idx >= PLIO_01_TO_AIE) && (args[i].idx <= PLIO_06_TO_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = to_byte_offt[0] / W;
+                            memcpy(to_aie_ptr[0] + to_byte_offt[0], args[i].data, args[i].size_in_byte);
+                            to_byte_offt[0] += args[i].size_in_byte;
+                        } else if ((args[i].idx >= PLIO_07_TO_AIE) && (args[i].idx <= PLIO_12_TO_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = to_byte_offt[1] / W;
+                            memcpy(to_aie_ptr[1] + to_byte_offt[1], args[i].data, args[i].size_in_byte);
+                            to_byte_offt[1] += args[i].size_in_byte;
+                        } else if ((args[i].idx >= PLIO_13_TO_AIE) && (args[i].idx <= PLIO_18_TO_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = to_byte_offt[2] / W;
+                            memcpy(to_aie_ptr[2] + to_byte_offt[2], args[i].data, args[i].size_in_byte);
+                            to_byte_offt[2] += args[i].size_in_byte;
+                        } else if ((args[i].idx >= PLIO_19_TO_AIE) && (args[i].idx <= PLIO_24_TO_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = to_byte_offt[3] / W;
+                            memcpy(to_aie_ptr[3] + to_byte_offt[3], args[i].data, args[i].size_in_byte);
+                            to_byte_offt[3] += args[i].size_in_byte;
+                        } else if ((args[i].idx >= PLIO_25_TO_AIE) && (args[i].idx <= PLIO_30_TO_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = to_byte_offt[4] / W;
+                            memcpy(to_aie_ptr[4] + to_byte_offt[4], args[i].data, args[i].size_in_byte);
+                            to_byte_offt[4] += args[i].size_in_byte;
+                        } else {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = to_byte_offt[5] / W;
+                            memcpy(to_aie_ptr[5] + to_byte_offt[5], args[i].data, args[i].size_in_byte);
+                            to_byte_offt[5] += args[i].size_in_byte;
+                        }
+                    } else {
+                        bias = 4;
+                        chn = args[i].idx - PLIO_01_FROM_AIE;
+                        cfg_ptr[1 + N * bias + 0 * N + chn] = args[i].delay;
+                        cfg_ptr[1 + N * bias + 1 * N + chn] = args[i].size_in_byte / W;
+                        cfg_ptr[1 + N * bias + 2 * N + chn] = args[i].repetition;
+                        if ((args[i].idx >= PLIO_01_FROM_AIE) && (args[i].idx <= PLIO_06_FROM_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = from_byte_offt[0];
+                            from_byte_offt[0] += args[i].size_in_byte / W;
+                        } else if ((args[i].idx >= PLIO_07_FROM_AIE) && (args[i].idx <= PLIO_12_FROM_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = from_byte_offt[1];
+                            from_byte_offt[1] += args[i].size_in_byte / W;
+                        } else if ((args[i].idx >= PLIO_13_FROM_AIE) && (args[i].idx <= PLIO_18_FROM_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = from_byte_offt[2];
+                            from_byte_offt[2] += args[i].size_in_byte / W;
+                        } else if ((args[i].idx >= PLIO_19_FROM_AIE) && (args[i].idx <= PLIO_24_FROM_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = from_byte_offt[3];
+                            from_byte_offt[3] += args[i].size_in_byte / W;
+                        } else if ((args[i].idx >= PLIO_25_FROM_AIE) && (args[i].idx <= PLIO_30_FROM_AIE)) {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = from_byte_offt[4];
+                            from_byte_offt[4] += args[i].size_in_byte / W;
+                        } else {
+                            cfg_ptr[1 + N * bias + 3 * N + chn] = from_byte_offt[5];
+                            from_byte_offt[5] += args[i].size_in_byte / W;
                         }
                     }
                 }
 
-                this->runPL(0, {{0, true, (N * 2 * 4 + 1) * sizeof(uint64_t), (char*)cfg_ptr, 0, true},
-                                {1, true, N * 2 * sizeof(uint64_t), (char*)perf_ptr, 0, true},
-                                {2, true, MAX_MEM_CAPACITY, to_aie_ptr, 0, true},
-                                {3, true, MAX_MEM_CAPACITY, to_aie_ptr, 0, false},
-                                {4, true, MAX_MEM_CAPACITY, to_aie_ptr, 0, false},
-                                {5, true, MAX_MEM_CAPACITY, to_aie_ptr, 0, false},
-                                {6, true, MAX_MEM_CAPACITY, to_aie_ptr, 0, false},
-                                {7, true, MAX_MEM_CAPACITY, to_aie_ptr, 0, false},
-                                {8, true, MAX_MEM_CAPACITY, from_aie_ptr, 0, true},
-                                {9, true, MAX_MEM_CAPACITY, from_aie_ptr, 0, false},
-                                {10, true, MAX_MEM_CAPACITY, from_aie_ptr, 0, false},
-                                {11, true, MAX_MEM_CAPACITY, from_aie_ptr, 0, false},
-                                {12, true, MAX_MEM_CAPACITY, from_aie_ptr, 0, false},
-                                {13, true, MAX_MEM_CAPACITY, from_aie_ptr, 0, false}});
+                this->runPL(0, {{0, true, (N * 2 * 4 + 1) * sizeof(uint64_t), (char*)cfg_ptr, 0},
+                                {1, true, N * 2 * sizeof(uint64_t), (char*)perf_ptr, 0},
+                                {2, true, total_to_byte[0], to_aie_ptr[0], 0},
+                                {3, true, total_to_byte[1], to_aie_ptr[1], 0},
+                                {4, true, total_to_byte[2], to_aie_ptr[2], 0},
+                                {5, true, total_to_byte[3], to_aie_ptr[3], 0},
+                                {6, true, total_to_byte[4], to_aie_ptr[4], 0},
+                                {7, true, total_to_byte[5], to_aie_ptr[5], 0},
+                                {8, true, total_from_byte[0], from_aie_ptr[0], 0},
+                                {9, true, total_from_byte[1], from_aie_ptr[1], 0},
+                                {10, true, total_from_byte[2], from_aie_ptr[2], 0},
+                                {11, true, total_from_byte[3], from_aie_ptr[3], 0},
+                                {12, true, total_from_byte[4], from_aie_ptr[4], 0},
+                                {13, true, total_from_byte[5], from_aie_ptr[5], 0}});
             } else if ((device.compare("vck190") == 0) && mode == PERF_MODE) {
+                to_aie_ptr[0] = (char*)malloc(N * W * D);
+                from_aie_ptr[0] = (char*)malloc(N * W * D);
                 for (int i = 0; i < args.size(); i++) {
                     args_rec.push_back(args[i]);
                     {
@@ -424,26 +471,28 @@ class test_harness_mgr : public fastXM {
                         cfg_ptr[1 + N * bias + 0 * N + chn] = args[i].delay;
                         cfg_ptr[1 + N * bias + 1 * N + chn] = args[i].size_in_byte / W;
                         cfg_ptr[1 + N * bias + 2 * N + chn] = args[i].repetition;
-                        cfg_ptr[1 + N * bias + 3 * N + chn] = args[i].in_byte_offt / W;
+                        cfg_ptr[1 + N * bias + 3 * N + chn] = 0;
                     }
 
                     {
                         if (args[i].idx <= PLIO_36_TO_AIE) {
                             int bias = (args[i].idx - PLIO_01_TO_AIE) * W * D;
                             if (args[i].size_in_byte > W * D) {
-                                memcpy(to_aie_ptr + bias, args[i].data, W * D);
+                                memcpy(to_aie_ptr[0] + bias, args[i].data, W * D);
                             } else {
-                                memcpy(to_aie_ptr + bias, args[i].data, args[i].size_in_byte);
+                                memcpy(to_aie_ptr[0] + bias, args[i].data, args[i].size_in_byte);
                             }
                         }
                     }
                 }
 
-                this->runPL(0, {{0, true, (N * 2 * 4 + 1) * sizeof(uint64_t), (char*)cfg_ptr, 0, true},
-                                {1, true, N * 2 * sizeof(uint64_t), (char*)perf_ptr, 0, true},
-                                {2, true, N * W * D, to_aie_ptr, 0, true},
-                                {3, true, N * W * D, from_aie_ptr, 0, true}});
+                this->runPL(0, {{0, true, (N * 2 * 4 + 1) * sizeof(uint64_t), (char*)cfg_ptr, 0},
+                                {1, true, N * 2 * sizeof(uint64_t), (char*)perf_ptr, 0},
+                                {2, true, N * W * D, to_aie_ptr[0], 0},
+                                {3, true, N * W * D, from_aie_ptr[0], 0}});
             } else if (mode == REP_MODE) {
+                to_aie_ptr[0] = (char*)malloc(N * W * D);
+                from_aie_ptr[0] = (char*)malloc(N * W * D);
                 for (int i = 0; i < args.size(); i++) {
                     args_rec.push_back(args[i]);
                     {
@@ -460,34 +509,35 @@ class test_harness_mgr : public fastXM {
                         cfg_ptr[1 + N * bias + 0 * N + chn] = args[i].delay;
                         cfg_ptr[1 + N * bias + 1 * N + chn] = args[i].size_in_byte / W;
                         cfg_ptr[1 + N * bias + 2 * N + chn] = args[i].repetition;
-                        cfg_ptr[1 + N * bias + 3 * N + chn] = args[i].in_byte_offt / W;
+                        cfg_ptr[1 + N * bias + 3 * N + chn] = 0;
                     }
 
                     {
                         if (args[i].idx <= PLIO_36_TO_AIE) {
                             int bias = (args[i].idx - PLIO_01_TO_AIE) * W * D;
                             if (args[i].size_in_byte > W * D) {
-                                memcpy(to_aie_ptr + bias, args[i].data, W * D);
+                                memcpy(to_aie_ptr[0] + bias, args[i].data, W * D);
                             } else {
-                                memcpy(to_aie_ptr + bias, args[i].data, args[i].size_in_byte);
+                                memcpy(to_aie_ptr[0] + bias, args[i].data, args[i].size_in_byte);
                             }
                         }
                     }
                 }
 
-                this->runPL(0, {{0, true, (N * 2 * 4 + 1) * sizeof(uint64_t), (char*)cfg_ptr, 0, true},
-                                {1, true, N * 2 * sizeof(uint64_t), (char*)perf_ptr, 0, true},
-                                {2, true, N * W * D, to_aie_ptr, 0, true},
-                                {3, true, N * W * D, from_aie_ptr, 0, true}});
+                this->runPL(0, {{0, true, (N * 2 * 4 + 1) * sizeof(uint64_t), (char*)cfg_ptr, 0},
+                                {1, true, N * 2 * sizeof(uint64_t), (char*)perf_ptr, 0},
+                                {2, true, N * W * D, to_aie_ptr[0], 0},
+                                {3, true, N * W * D, from_aie_ptr[0], 0}});
             } else {
                 std::cout << "[ERROR]: Please use the valid device (VCK190/VEK280) with the supported testing modes.\n";
-                std::cout << "[INFO]: FUNC_MODE, PERF_MODE, and REP_MODE are supported on VCK190.\n";
-                std::cout << "[INFO]: Only REP_MODE is supported on VEK280.\n";
+                std::cout << "[INFO]: FUNC_MODE & PERF_MODE are supported on VCK190.\n";
+                std::cout << "[INFO]: Only PERF_MODE (limited capacity) is supported on VEK280.\n";
             }
         } else {
             std::cout << "[ERROR]: Arguments for test harness is not valid, won't run "
                          "test harness!"
                       << std::endl;
+            exit(1);
         }
     }
 
@@ -500,23 +550,43 @@ class test_harness_mgr : public fastXM {
         this->waitDone(graph_timeout_millisec);
         graph_started = false;
         this->fetchRes();
+        unsigned int out_byte_offt[6];
+        for (int i = 0; i < 6; i++) {
+            out_byte_offt[i] = 0;
+        }
         for (int i = 0; i < args_rec.size(); i++) {
             if (mode == FUNC_MODE) {
-                if (args_rec[i].idx >= PLIO_01_FROM_AIE) {
-                    memcpy(args_rec[i].data, from_aie_ptr + args_rec[i].out_byte_offt, args_rec[i].size_in_byte);
+                if ((args_rec[i].idx >= PLIO_01_FROM_AIE) && (args_rec[i].idx <= PLIO_06_FROM_AIE)) {
+                    memcpy(args_rec[i].data, from_aie_ptr[0] + out_byte_offt[0], args_rec[i].size_in_byte);
+                    out_byte_offt[0] += args_rec[i].size_in_byte;
+                } else if ((args_rec[i].idx >= PLIO_07_FROM_AIE) && (args_rec[i].idx <= PLIO_12_FROM_AIE)) {
+                    memcpy(args_rec[i].data, from_aie_ptr[1] + out_byte_offt[1], args_rec[i].size_in_byte);
+                    out_byte_offt[1] += args_rec[i].size_in_byte;
+                } else if ((args_rec[i].idx >= PLIO_13_FROM_AIE) && (args_rec[i].idx <= PLIO_18_FROM_AIE)) {
+                    memcpy(args_rec[i].data, from_aie_ptr[2] + out_byte_offt[2], args_rec[i].size_in_byte);
+                    out_byte_offt[2] += args_rec[i].size_in_byte;
+                } else if ((args_rec[i].idx >= PLIO_19_FROM_AIE) && (args_rec[i].idx <= PLIO_24_FROM_AIE)) {
+                    memcpy(args_rec[i].data, from_aie_ptr[3] + out_byte_offt[3], args_rec[i].size_in_byte);
+                    out_byte_offt[3] += args_rec[i].size_in_byte;
+                } else if ((args_rec[i].idx >= PLIO_25_FROM_AIE) && (args_rec[i].idx <= PLIO_30_FROM_AIE)) {
+                    memcpy(args_rec[i].data, from_aie_ptr[4] + out_byte_offt[4], args_rec[i].size_in_byte);
+                    out_byte_offt[4] += args_rec[i].size_in_byte;
+                } else if ((args_rec[i].idx >= PLIO_31_FROM_AIE) && (args_rec[i].idx <= PLIO_36_FROM_AIE)) {
+                    memcpy(args_rec[i].data, from_aie_ptr[5] + out_byte_offt[5], args_rec[i].size_in_byte);
+                    out_byte_offt[5] += args_rec[i].size_in_byte;
                 }
             } else if (mode == REP_MODE) {
                 if (args_rec[i].idx >= PLIO_01_FROM_AIE) {
                     int bias = (args_rec[i].idx - PLIO_01_FROM_AIE) * W * D;
-                    memcpy(args_rec[i].data, from_aie_ptr + bias, args_rec[i].size_in_byte);
+                    memcpy(args_rec[i].data, from_aie_ptr[0] + bias, args_rec[i].size_in_byte);
                 }
             } else { // mode == PERF_MODE
                 if (args_rec[i].idx >= PLIO_01_FROM_AIE) {
                     int bias = (args_rec[i].idx - PLIO_01_FROM_AIE) * W * D;
                     if (args_rec[i].size_in_byte > W * D) {
-                        memcpy(args_rec[i].data, from_aie_ptr + bias, W * D);
+                        memcpy(args_rec[i].data, from_aie_ptr[0] + bias, W * D);
                     } else {
-                        memcpy(args_rec[i].data, from_aie_ptr + bias, args_rec[i].size_in_byte);
+                        memcpy(args_rec[i].data, from_aie_ptr[0] + bias, args_rec[i].size_in_byte);
                     }
                 }
             }
@@ -531,14 +601,14 @@ class test_harness_mgr : public fastXM {
             for (int i = 0; i < args_rec.size(); i++) {
                 if (args_rec[i].idx <= PLIO_36_TO_AIE) {
                     int chn = args_rec[i].idx - PLIO_01_TO_AIE;
-                    std::cout << "PLIO_" << chn + 1 << "_TO_AIE starts from cycle[" << args_rec[i].delay
+                    std::cout << "[INFO]: PLIO_" << chn + 1 << "_TO_AIE starts from cycle[" << args_rec[i].delay
                               << "], ends at cycle[" << perf_ptr[chn] << "]." << std::endl;
                 }
             }
             for (int i = 0; i < args_rec.size(); i++) {
                 if (args_rec[i].idx >= PLIO_01_FROM_AIE) {
                     int chn = args_rec[i].idx - PLIO_01_FROM_AIE;
-                    std::cout << "PLIO_" << chn + 1 << "_FROM_AIE starts from cycle[" << args_rec[i].delay
+                    std::cout << "[INFO]: PLIO_" << chn + 1 << "_FROM_AIE starts from cycle[" << args_rec[i].delay
                               << "], ends at cycle[" << perf_ptr[chn + N] << "]." << std::endl;
                 }
             }
@@ -548,43 +618,31 @@ class test_harness_mgr : public fastXM {
     ~test_harness_mgr() {
         free(cfg_ptr);
         free(perf_ptr);
-        free(to_aie_ptr);
-        free(from_aie_ptr);
+        free(to_aie_ptr[0]);
+        free(from_aie_ptr[0]);
+        if (mode == FUNC_MODE) {
+            for(int i = 1; i < 6; i++) {
+                free(to_aie_ptr[i]);
+                free(from_aie_ptr[i]);
+            }
+        }
     }
+
+    bool result_valid;
 
    private:
     bool graph_started;
     uint64_t* cfg_ptr;
     uint64_t* perf_ptr;
-    char* to_aie_ptr;
-    char* from_aie_ptr;
+    char* to_aie_ptr[6];
+    char* from_aie_ptr[6];
     uint64_t mode;
     std::string device;
     std::vector<test_harness_args> args_rec;
 
     // for REP_MODE + PERF_MODE
-    bool check_frame_size(unsigned int sz) {
+    bool check_frame_align(unsigned int sz) {
         std::cout << "N = " << N << ", W = " << W << ", D = " << D << std::endl;
-        if ((mode == REP_MODE) && (sz > (W * D))) {
-            std::cout << "[ERROR]: Frame size " << sz << " > " << D * W
-                      << ", is not valid because it's beyond capacity of one channel." << std::endl;
-            return false;
-        }
-        if (sz % W != 0) {
-            std::cout << "[ERROR]: Frame size = " << sz << ", is not valid because it is not divisible by 16"
-                      << std::endl;
-            return false;
-        }
-        return true;
-    }
-
-    // for FUNC_MODE only
-    bool check_frame_size(unsigned int sz, unsigned int offt) {
-        std::cout << "N = " << N << ", W = " << W << ", D = " << D << std::endl;
-        if (offt + sz > MAX_MEM_CAPACITY) {
-            std::cout << "[ERROR]: Exceeding maximum memory capacity " << (double)(MAX_MEM_CAPACITY) / 1024.0 / 1024.0 << " MB. Requiring " << (double)(offt + sz) / 1024.0 / 1024.0 << "MB.\n";
-            return false;
-        }
         if (sz % W != 0) {
             std::cout << "[ERROR]: Frame size = " << sz << ", is not valid because it is not divisible by 16"
                       << std::endl;

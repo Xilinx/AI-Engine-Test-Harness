@@ -38,10 +38,10 @@ int main(int argc, char** argv) {
     int out_sz = 512 * 4;
     char* in_data[in_ch];
     char* out_data[out_ch];
-    // REP_MODE by default, please take adder case as example for how to use FUNC_MODE/PERF_MODE
-    uint64_t test_mode = REP_MODE;
-    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE) && (test_mode != REP_MODE)) {
-        std::cout << "Only FUNC_MODE, PERF_MODE, and REP_MODE are supported by AIE test harness on VCK190.\n";
+    // PERF_MODE by default, please take adder case as example for how to use FUNC_MODE
+    uint64_t test_mode = PERF_MODE;
+    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE)) {
+        std::cout << "Only FUNC_MODE & PERF_MODE are supported by AIE test harness on VCK190.\n";
         exit(1);
     }
 
@@ -49,12 +49,9 @@ int main(int argc, char** argv) {
     if (test_mode == FUNC_MODE) {
         xclbin_path.insert(xclbin_path.find(".xclbin"), "_func");
         std::cout << "Testing mode: FUNC_MODE\n";
-    } else if (test_mode == PERF_MODE) {
-        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: PERF_MODE\n";
     } else {
         xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: REP_MODE\n";
+        std::cout << "Testing mode: PERF_MODE\n";
     }
     std::cout << "Using XCLBIN file: " << xclbin_path << std::endl;
 
@@ -66,15 +63,16 @@ int main(int argc, char** argv) {
         out_data[i] = (char*)malloc(out_sz);
     }
     // run test with test harness
-    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"vck190_test_harness_perf"}, {"G"}, REP_MODE, "vck190");
+    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"G"});
     std::vector<test_harness_args> args;
     for (int i = 0; i < 4; i++) {
-        args.push_back({channel_index(PLIO_01_TO_AIE + 2 * i), in_sz, 1, 0, 0, 0, (char*)in_data[i]});
-        args.push_back({channel_index(PLIO_02_FROM_AIE + 2 * i), out_sz, 1, 0, 0, 0, (char*)out_data[i]});
+        args.push_back({channel_index(PLIO_01_TO_AIE + 2 * i), in_sz, 1, 0, (char*)in_data[i]});
+        args.push_back({channel_index(PLIO_02_FROM_AIE + 2 * i), out_sz, 1, 0, (char*)out_data[i]});
     }
     mgr.runAIEGraph(0, 1);
     mgr.runTestHarness(args);
     mgr.waitForRes(10000);
+    bool is_valid = mgr.result_valid;
 
     //
     for (int i = 0; i < in_ch; i++) {
