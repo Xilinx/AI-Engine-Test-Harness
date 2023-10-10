@@ -33,16 +33,8 @@ endif
 ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa:
 	cd ${TEST_HARNESS_REPO_PATH}/bin && ./download.sh
 
-DSPLIB_ROOT ?= ${TEST_HARNESS_REPO_PATH}/../Vitis_Libraries/dsp
-
 ##################### Build AIE ##############################
 AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --aie.pl-freq=312.5 --aie.event-trace=runtime --aie.event-trace-port=gmio --platform=${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa --aie.workdir=./Work
-AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/include/aie
-AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/src/aie
-AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/inc
-AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/src
-AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/include/aie
-AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/tests/aie/common/inc
 
 libadf.a: ./aie/test.cpp ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
 	@echo "Compiling: libadf.a"
@@ -52,12 +44,6 @@ libadf.a: ./aie/test.cpp ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
 ./Work/ps/c_rts/aie_control_xrt.cpp: libadf.a
 
 HOST_CXX_FLAGS := -I ./ -I ./aie -I ./ps -I ${TEST_HARNESS_REPO_PATH}/include -I $(XILINX_VITIS)/aietools/include -I $(XILINX_XRT)/include -std=c++14
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/include/aie
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/src/aie
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/inc
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/src
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/include/aie
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/tests/aie/common/inc
 HOST_LD_FLAGS := -pthread -lxrt_coreutil -ladf_api_xrt
 
 ifneq ($(filter x86sim, $(TARGET)),)

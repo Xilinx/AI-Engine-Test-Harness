@@ -34,16 +34,8 @@ endif
 ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa:
 	cd ${TEST_HARNESS_REPO_PATH}/bin && ./download.sh
 
-DSPLIB_ROOT ?= ${TEST_HARNESS_REPO_PATH}/../Vitis_Libraries/dsp
-
 ##################### Build AIE ##############################
 FUNC_AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --aie.pl-freq=200.0 --aie.event-trace=runtime --aie.event-trace-port=gmio --platform=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa --aie.workdir=./Work_func --aie.output-archive=./func_libadf.a
-FUNC_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/include/aie
-FUNC_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/src/aie
-FUNC_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/inc
-FUNC_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/src
-FUNC_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/include/aie
-FUNC_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/tests/aie/common/inc
 FUNC_AIE_CXX_FLAGS += --aie.Xchess "-std=c++17" --aie.xlopt 1 --aie.log-level 5 --aie.Xmapper BufferOptLevel9 
 
 func_libadf.a: ./aie/graph.cpp ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa
@@ -51,12 +43,6 @@ func_libadf.a: ./aie/graph.cpp ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness
 	v++ -c --mode aie $(FUNC_AIE_CXX_FLAGS) $^ 
 
 PERF_AIE_CXX_FLAGS := -I $(XILINX_VITIS)/aietools/include -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include -I ${TEST_HARNESS_REPO_PATH}/src/aie --target=$(AIETARGET) --aie.pl-freq=312.5 --aie.event-trace=runtime --aie.event-trace-port=gmio --platform=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa --aie.workdir=./Work_perf --aie.output-archive=./perf_libadf.a
-PERF_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/include/aie
-PERF_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/src/aie
-PERF_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/inc
-PERF_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/src
-PERF_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/include/aie
-PERF_AIE_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/tests/aie/common/inc
 PERF_AIE_CXX_FLAGS += --aie.Xchess "-std=c++17" --aie.xlopt 1 --aie.log-level 5 --aie.Xmapper BufferOptLevel9 
 
 perf_libadf.a: ./aie/graph.cpp ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa
@@ -68,12 +54,6 @@ perf_libadf.a: ./aie/graph.cpp ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness
 ./Work_perf/ps/c_rts/aie_control_xrt.cpp: perf_libadf.a
 
 HOST_CXX_FLAGS := -I ./ -I ./aie -I ./ps -I ${TEST_HARNESS_REPO_PATH}/include -I $(XILINX_VITIS)/aietools/include -I $(XILINX_XRT)/include -std=c++14
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/include/aie
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/src/aie
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/inc
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L1/tests/aie/src
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/include/aie
-HOST_CXX_FLAGS += -I $(DSPLIB_ROOT)/L2/tests/aie/common/inc
 HOST_LD_FLAGS := -pthread -lxrt_coreutil -ladf_api_xrt
 
 ifneq ($(filter x86sim sw_emu, $(TARGET)),)

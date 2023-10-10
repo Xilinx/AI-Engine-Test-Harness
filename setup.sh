@@ -15,4 +15,3 @@
 export TEST_HARNESS_REPO_PATH=$(dirname $(realpath ${BASH_SOURCE[0]}))
 echo "Please setup environment variable 'SDKTARGETSYSROOT' to where the edge common SW is installed"
 echo "Please do remember include the GCC library path to 'LD_LIBRARY_PATH' before running the design"
-echo "Please setup environment 'DSPLIB_ROOT' to locate the Vitis DSP Library as there are examples depends on cases inside this library"
