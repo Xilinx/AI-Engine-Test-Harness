@@ -28,9 +28,9 @@ In this release, we have enhanced the features of the test harness on VCK190 dev
 
 - AIE graphs with up to 36 input PLIOs and 36 output PLIOs on VCK190 and 16 input PLIOs and 16 output PLIOs on VEK280
 - PLIO throughput for each channel is 5GB/sec (32 bits @ 1.25GHz)
-- Input and output datasets up to 64kB for repetition mode on VCK190 and 128kB for repetition mode on VEK280
+- Guaranteed correctness of the result & performance with limited datasets up to 64kB for each channel on VCK190 and 128kB for each channel on VEK280
 - Unlimited datasets for functional/performance testing modes on VCK190
-- User-defined number of replays for repetition mode on each input and output dataset
+- User-defined number of replays for upscaling the datasets in performance testing mode on each input and output dataset
 - User-defined start delay for each input and output PLIO
 - Built-in support for AIE event trace
 - SW APIs to develop a test application to run the AIE graph and transfer data to and from the AIE graph
@@ -40,11 +40,12 @@ In this release, we have enhanced the features of the test harness on VCK190 dev
 * **Limitations**
 
 - The vck190_test_harness_func.xsa only supports functional testing mode on VCK190
-- The vck190_test_harness_perf.xsa supports both performance and repetition testing mode on VCK190
-- The vek280_test_harness.xsa only supports repetition testing mode on VEK280
+- The vck190_test_harness_perf.xsa only supports performance testing mode on VCK190
+- The vek280_test_harness.xsa only supports performance testing mode on VEK280
+- Correctness of the result is not guaranteed when datasets is larger than 64kB for performance testing mode on VCK190
 - AIE graphs with GMIOs are not supported
-- For repetition testing mode, datasets larger than 64kB are not supported on VCK190 and datasets larger than 128kB arenot supported on VEK280
-- For longer input / output sequences, considering using the "replay" functionality on repetition mode, or functional/performance testing modes on VCK190.
+- Datasets larger than 128kB are not supported on VEK280
+- For longer input / output sequences, considering using the "replay" functionality on performance testing mode on VEK280, or functional/performance testing modes on VCK190.
 - The size (in bytes) of input and output datasets must be a multiple of 16
 
 
