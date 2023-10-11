@@ -22,16 +22,16 @@
 Step by Step Example
 ********************
 
-This repository includes `5 examples <https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/examples/vck190>`_ from the `Vitis Tutorials <https://github.com/Xilinx/Vitis-Tutorials>`_ and 4 individual user examples to demonstrate how to use the test harness on VCK190 and `1 example <https::/github.com/Xilinx/AI-Engine-Test-Harness/tree/main/examples/vek280>` from the `Vitis Accelerated Libraries <https://github.com/Xilinx/Vitis_Libraries>` to use the test harness on VEK280 to test the AIE graph on a hardware board. 
+This repository includes `5 examples <https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/examples/vck190>`_ from the `Vitis Tutorials <https://github.com/Xilinx/Vitis-Tutorials>`_ and 4 individual user examples to demonstrate how to use the test harness on VCK190 and `1 example <https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/examples/vek280>`_ from the `Vitis Accelerated Libraries <https://github.com/Xilinx/Vitis_Libraries>`_ to use the test harness on VEK280 to test the AIE graph on a hardware board. 
 
 All these examples include a standard Makefile which supports the following actions:
 
-- Build the example for SW emulation (VCK190 only) and HW, respectively::
+- Building the example for SW emulation (VCK190 only) and HW, respectively::
 
     make package TARGET=sw_emu
     make package TARGET=hw
 
-- Simulate the example in x86sim, AIEsim, and SW emulation (VCK190 only), respectively::
+- Simulating the example in x86sim, AIEsim, and SW emulation (VCK190 only), respectively::
 
     make run TARGET=x86sim
     make run TARGET=aiesim
@@ -107,7 +107,7 @@ This example uses 1 input PLIO and 1 output PLIO. The width of each PLIO is set 
 Unused PLIOs
 ------------
 
-Because this example does not use all the available PLIOs implemented in the test harness, we need to put an additional dummy graph to occupy all unused PLIOs. For this purpose, the ``occupyUnusedPLIO`` helper class is instantiated in the :url_to_repo:`examples/vck190/super-sampling-rate-fir/SingleKernel/aie/graph.cpp` file. The template parameters indicate number of used input and output PLIOs, and the constructor parameters indicate the names of used input and output PLIOs.
+Because this example does not use up the available PLIOs implemented in the test harness, we need to put an additional dummy graph to occupy all unused PLIOs. For this purpose, the ``occupyUnusedPLIO`` helper class is instantiated in the :url_to_repo:`examples/vck190/super-sampling-rate-fir/SingleKernel/aie/graph.cpp` file. The template parameters indicate number of used input and output PLIOs, and the constructor parameters indicate the names of used input and output PLIOs.
 
 .. code-block:: c++
 
@@ -121,7 +121,7 @@ Because this example does not use all the available PLIOs implemented in the tes
 SW Application
 --------------
 
-A SW application running on the embedded ARM core of the Versal is necessary to run the test. The source code for this application is provided in the :url_to_repo:`examples/vck190/super-sampling-rate-fir/SingleKernel/ps/host.cpp` file. The application must be developed using the :ref:`test harness software APIs <sw_apis>`.
+A SW application running on the embedded ARM core of the Versal is necessary to run the test on HW with AIE test harness. The source code for this application is provided in the :url_to_repo:`examples/vck190/super-sampling-rate-fir/SingleKernel/ps/host.cpp` file. The application must be developed using the :ref:`test harness software APIs <sw_apis>`.
 
 .. code-block:: c++
 
@@ -134,14 +134,14 @@ A SW application running on the embedded ARM core of the Versal is necessary to 
     mgr.waitForRes(10000);
     bool is_valid = mgr.result_valid;
 
-The application needs one instance of the :cpp:class:`test_harness_mgr` class. The name of the PL kernel that is pre-compiled in the XSA, the testing mode, and the device type  will be automatically derived from the encoded ``xclbin_path``, the argument ``{"G"}`` is a string with the name of the graph instantiated in the ``graph.cpp`` file. If any incorrect argument is provided, the application will report an error during runtime.
+The application needs one instance of the :cpp:class:`test_harness_mgr` class. The name of the PL kernel that is pre-compiled in the XSA, the testing mode, and the device type  will be automatically derived from the encoded name of ``xclbin_path``, the argument ``{"G"}`` is a vector of string with the name of the graph instantiated in the ``graph.cpp`` file. If any incorrect argument is provided, the application will report an error during runtime.
 
-Then, a vector or :cpp:struct:`test_harness_args` is created to configure the DMA channels associated with each PLIO used by the AIE graph.
-As seen in step #1, the input of the graph is mapped to PLIO ``PLIO_01_TO_AIE``, and the output is mapped to ``PLIO_02_FROM_AIE``. The :cpp:enum:`channel_index` member of the :cpp:struct:`test_harness_args` descriptors must be set accordingly in the SW application.
-The replay count of the :cpp:struct:`test_harness_args` are set to 4. This programs the test harness to issue the input data 4 times and to expect 4x the output data.
+Then, a vector of :cpp:class:`test_harness_args` is created to configure the DMA channels associated with each PLIO used by the AIE graph.
+As seen in step #1, the input of the graph is mapped to PLIO ``PLIO_01_TO_AIE``, and the output is mapped to ``PLIO_02_FROM_AIE``. The :cpp:enum:`channel_index` member of the :cpp:class:`test_harness_args` descriptors must be set accordingly in the SW application.
+The replay count of the :cpp:class:`test_harness_args` are set to 4. This programs the test harness to issue the input data 4 times and to expect 4x the output data.
 
-After the test is configured, the graph is started with the :cpp:func:`test_harness_mgr::runAIEGraph` API. We know that each iteration of graph ``G`` consumes ``in_sz`` bytes of data and emits ``out_sz`` bytes of data. Since we programmed the test harness to replay the inputs and outputs 4 times, the graph is run for 4 iterations to ensure that the data sizes match between the test harness and the AIE graph.
+After the test is configured, the graph is started with the :cpp:func:`test_harness_mgr::runAIEGraph` API. We know that each iteration of graph ``G`` consumes ``in_sz`` bytes of data and emits ``out_sz`` bytes of data. Since we programmed the test harness to replay the data transfer 4 times, the graph will be run for 4 iterations to ensure that the data sizes match between the test harness and the AIE graph.
 
-The test harness is started with the :cpp:func:`test_harness_mgr::runTestHarness` API. Starting the harness after the graph is necessary to ensure accurate measurement of DMA channel latencies.
+The test harness is started with the :cpp:func:`test_harness_mgr::runTestHarness` API. Starting the harness **AFTER** the graph is necessary to ensure accurate measurement of DMA channel latencies.
 
 Then, use :cpp:func:`test_harness_mgr::waitForRes` API to wait for the finish of the data transfer, and get the validity of the result by getting the boolean value of the :cpp:func:`test_harness_mgr::result_valid`.

@@ -24,7 +24,7 @@ Installation
 Prerequisites
 -------------
 
-To use the test harness, up-to-date installations of the following softwares and libraries are needed:
+To use the test harness, up-to-date installations of the following softwares and libraries are required:
 
 - Vitis tools (https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html)
 
@@ -42,7 +42,7 @@ Installation Instructions
 
 2. Download the prebuilt test harness XSAs::
 
-    cd Test_Harness/bin
+    cd AI-Engine-Test-Harness/bin
     source download.sh
 
 .. CAUTION::
@@ -54,7 +54,7 @@ Rebuilding from Source
 
 The prebuilt test harness XSA can optionally be rebuilt from source as follows::
 
-    cd Test_Harness/test_harness
+    cd AI-Engine-Test-Harness/test_harness
     source <path to Vitis installation>/settings64.sh
     make clean
     # To build functional/performance testing mode XSA for VCK190

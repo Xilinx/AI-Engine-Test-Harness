@@ -39,7 +39,7 @@ Before building the design with the AIE test harness, you need to source the ``s
 Instrumenting the AI Engine Graph
 =================================
 
-The following modifications are needed to connect an AIE graph to the test harness:
+The following modifications are required to connect the user AIE graph to the test harness:
 
 Test Harness Header File
 ------------------------
@@ -55,9 +55,9 @@ Mapping PLIOs
 
 The names and width of the available PLIOs are predefined in the test harness. The original AIE graph must be mapped to these predefined PLIOs to make sure the PL data mover can be correctly connected to the user AIE graph.
 
-The graph must be modified to ensure that all PLIOs are 128 bits wide and use one of the PLIOs predefined in the test harness.
+The user AIE graph must be modified to ensure that all PLIOs are 128 bits wide and use the PLIOs predefined in the test harness.
 
-The predefined PLIO names are listed in :url_to_repo:`include/test_harness_port_name.hpp`. The ``test_harness::in_names`` is the list of PLIO names which can be used to send data to AI Engine and ``test_harness::out_names`` is the list of PLIO names that can be used to receive data from AI Engine. These are the only valid PLIO names to be built with test harness. 
+The predefined PLIO names are listed in :url_to_repo:`include/test_harness_port_name.hpp`. The ``test_harness::in_names`` is the list of PLIO names which can be used to send data to AI Engine and ``test_harness::out_names`` is the list of PLIO names that can be used to receive data from AI Engine. These are the **ONLY** valid PLIOs to be built with the test harness. 
 
 **Example**
 
@@ -70,7 +70,7 @@ The predefined PLIO names are listed in :url_to_repo:`include/test_harness_port_
 Occupying unused PLIOs
 -----------------------
 
-All the PLIO ports defined in the test harness must be connected. In case the AIE graph does not need all the PLIOs defined in the test harness, an instance of the ``test_harness::occupyUnusedPLIO`` helper class must be added to the ``graph.cpp`` file. This class will help to occupy all the PLIOs which are not used by the user AIE graph. 
+All the PLIO ports defined in the test harness must be connected. In case the AIE graph does not need all the PLIOs defined in the test harness, an instance of the ``test_harness::occupyUnusedPLIO`` helper class must be added to the ``graph.cpp`` file. This class will help user to occupy all the PLIOs which are not used by the user AIE graph. 
 
 .. code-block:: c++
 
@@ -96,10 +96,10 @@ All the PLIO ports defined in the test harness must be connected. In case the AI
 **Parameters**
 
 ``used_in_plio_names`` 
-  Vector of strings containing the names of the input PLIOs used by the AIE graph. The length of the vector should match the value of the ``used_in_plio`` template
+  Vector of strings containing the names of the input PLIOs used by the AIE graph. The length of the vector must match the value of the ``used_in_plio`` template argument
 
 ``used_out_plio_names`` 
-  Vector of strings containing the names of the output PLIOs used by the AIE graph. The length of the vector should match the value of the ``used_out_plio`` template.
+  Vector of strings containing the names of the output PLIOs used by the AIE graph. The length of the vector must match the value of the ``used_out_plio`` template argument
 
 
 **Example**
@@ -129,9 +129,9 @@ Once the AIE graph has been modified and the SW application has been created, th
 
 Building the test application is done in three simple steps:
 
-1. Build the AIE graph
-2. Build the SW application
-3. Package the libadf.a, host_elf and other files to create a bootable SD card image
+1. Building the AIE graph
+2. Building the SW application
+3. Packaging the libadf.a, host_elf and other files to create a bootable SD card image
 
 
 Building the AI Engine Graph
@@ -165,7 +165,7 @@ The SW application must be compiled with the ARM cross-compiler and using the Xi
 Packaging the Test
 ------------------
 
-The AIE test harness includes a utility script which can be used to package the test files and generate a bootable SD card image to run the test on the hardware board.
+The AIE test harness includes utility scripts which can be used to package the test files and generate a bootable SD card image to run the test on the hardware board on either VCK190 or VEK280.
 
 .. code-block:: shell
 
@@ -190,7 +190,7 @@ The AIE test harness includes a utility script which can be used to package the 
   The executable resulting from building the SW application.
 
 ``<other files needed by the test>``
-  A list of other files needed by the test and to be packaged in the SD card image. This can be for instance input data files read by the test application.
+  A list of other files needed by the test and to be packaged in the SD card image. This can be for instance input data files required by the test application and the running script for executing the application test.
 
 
 Software Emulation (VCK190 only)
@@ -257,7 +257,7 @@ AIE Compilation
 
 **Issue:** The following error message is seen when compiling the AIE graph with the test harness XSA: ``ERROR: [aiecompiler 77-4252] For application port with annotation 'PLIO_01_TO_AIE' the buswidth is 32-bits, which is different than the buswidth of 128-bits as specified in incoming logical architecture``
 
-- The width of the PLIOs in the prebuilt XSA is set to 128 bits. The PLIO widths in the AIE graph must align with the XSA. Set all PLIO width in the graph to ``adf::plio_128_bits``.
+- The width of the PLIOs in the prebuilt XSA is set to 128 bits. The PLIO widths in the AIE graph must match with the XSA. Set all PLIO width in the graph to ``adf::plio_128_bits``.
 
 
 **Issue:** The following error message is seen when compiling the AIE graph with the test harness XSA: ``ERROR: [aiecompiler 77-295] Cannot find port instance tf0_pi0 corresponding to Logical Arch Port M00_AXI``
@@ -276,7 +276,7 @@ AIE Simulation
 HW Testing
 ----------
 
-**Issue:** When running on HW, the performance numbers reported by the test harness change a lot from run to run.
+**Issue:** When running on HW, the performance numbers reported by the test harness vary a lot from run to run.
 
-- Making sure to start the AIE graph before starting the DMA engine. The performance counters start at the same time as the DMA engine. If the graph is not already started and ready to send / receive data, the performance counters will be incremented by an arbitrary number of cycles.
+- Making sure to start the AIE graph before starting the PL DMA engine. The performance counters start at the same time as the PL DMA engine starts. If the graph is not already started and ready to transfer data, the performance counters will be incremented by an arbitrary number of cycles before the application actually starts.
 

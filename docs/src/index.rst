@@ -18,8 +18,8 @@ This repository provides a test harness to help AIE developers easily build and 
 
 Either VCK190 test harness or VEK280 test harness consists of three main parts:
 
-1. A precompiled .xsa which has a PL DMA engine to transfer data between DDR and a set of predefined 128-bit AI Engine PLIOs. It is important to be noticed that we have enhanced the VCK190 test harness in this release, where the number of PLIOs are extended from 16x to 36x and the functional testing mode and performance testing mode are supported on this device as well (see system block diagram of VCK190 test harness below). The VEK280 test harness has the same feature as what we have implemented for VCK190 in 2023.1 release (16x PLIOs with limitied test scale performance testing mode only, corresponding system block diagram is shown below).
-2. A set of software APIs to facilitate the development of the application used to initialize the device and run the tests.
+1. A precompiled .xsa which has a PL DMA engine to transfer data between DDR and a set of predefined 128-bit AI Engine PLIOs. It is important to be noticed that we have enhanced the VCK190 test harness in this release, where the number of PLIOs are extended from 16x to 36x and the functional testing mode and performance testing mode are supported on this device as well (see system block diagram of VCK190 test harness below). The VEK280 test harness has the same feature as what we have implemented for VCK190 in 2023.1 release (16x PLIOs with limitied test scale performance testing mode only), corresponding system block diagram is shown below.
+2. A set of software APIs to facilitate the development of the application used to initialize the device, configure the PL DMA engine, and run the tests.
 3. A set of scripts to easily package the user's libadf.a and test application, and generate the boot image for harware board-run.
 
 
@@ -45,7 +45,7 @@ The software APIs enable pure AIE designers to easily build SW applications to t
 2. Configure how each DMA channel transfers data to or from the AIE graph
 3. Run the AIE graph as well as the PL data mover
 4. Wait for all the data to be sent/received
-5. Check correctness of results (correctness of result is not guaranteed when test scale is lager than URAM capacity in each channel on VCK190), and profile performance on performance testing modes for each channel
+5. Check correctness of results (correctness of result is not guaranteed when test scale is lager than URAM capacity in each channel on VCK190) and do profiling on performance testing modes for each channel
 
 
 .. toctree::
