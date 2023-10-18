@@ -65,6 +65,8 @@ struct empty {
 #define SHIFT_MAX 62
 #define SHIFT_MIN 0
 
+#define SAT_MODE_MAX __SATURATION_MODES__
+#define SAT_MODE_MIN 0
 #define ROUND_MAX __ROUNDING_MODES__
 #define ROUND_MIN 0
 
@@ -133,6 +135,167 @@ template <typename TT_DATA>
 INLINE_DECL constexpr unsigned int fnSamplesIn1024() {
     return kXYBuffSize / sizeof(TT_DATA);
 }
+
+// function to return base type of accumulator for FFT/Widget
+template <typename TT_DATA>
+struct tFFTAccBaseType {
+    using type = acc48;
+};
+
+template <>
+struct tFFTAccBaseType<cint16> {
+    using type = cacc32;
+};
+template <>
+struct tFFTAccBaseType<cint32> {
+    using type = cacc64;
+};
+
+template <typename TT_DATA, typename TT_COEFF>
+struct tAccBaseType {
+    using type = acc48;
+};
+#ifdef __SUPPORTS_ACC48__
+template <>
+struct tAccBaseType<int16, int16> {
+    using type = acc48;
+};
+template <>
+struct tAccBaseType<cint16, int16> {
+    using type = cacc48;
+};
+template <>
+struct tAccBaseType<int16, cint16> {
+    using type = cacc48;
+};
+template <>
+struct tAccBaseType<cint16, cint16> {
+    using type = cacc48;
+};
+template <>
+struct tAccBaseType<int32, int16> {
+    using type = acc80;
+};
+template <>
+struct tAccBaseType<int32, int32> {
+    using type = acc80;
+};
+template <>
+struct tAccBaseType<int32, cint16> {
+    using type = cacc80;
+};
+template <>
+struct tAccBaseType<int32, cint32> {
+    using type = cacc80;
+};
+template <>
+struct tAccBaseType<cint32, int16> {
+    using type = cacc80;
+};
+template <>
+struct tAccBaseType<cint32, cint16> {
+    using type = cacc80;
+};
+template <>
+struct tAccBaseType<cint32, int32> {
+    using type = cacc80;
+};
+template <>
+struct tAccBaseType<cint32, cint32> {
+    using type = cacc80;
+};
+template <>
+struct tAccBaseType<int16, int32> {
+    using type = acc80;
+};
+template <>
+struct tAccBaseType<int16, cint32> {
+    using type = cacc80;
+};
+template <>
+struct tAccBaseType<cint16, int32> {
+    using type = cacc80;
+};
+template <>
+struct tAccBaseType<cint16, cint32> {
+    using type = cacc80;
+};
+template <>
+struct tAccBaseType<float, float> {
+    using type = accfloat;
+};
+template <>
+struct tAccBaseType<float, cfloat> {
+    using type = caccfloat;
+};
+template <>
+struct tAccBaseType<cfloat, float> {
+    using type = caccfloat;
+};
+template <>
+struct tAccBaseType<cfloat, cfloat> {
+    using type = caccfloat;
+};
+#endif //__SUPPORTS_ACC48__
+
+#ifdef __SUPPORTS_ACC64__
+template <>
+struct tAccBaseType<int16, int16> {
+    using type = acc64;
+};
+template <>
+struct tAccBaseType<cint16, int16> {
+    using type = cacc64;
+};
+template <>
+struct tAccBaseType<cint16, cint16> {
+    using type = cacc64;
+};
+template <>
+struct tAccBaseType<int32, int16> {
+    using type = acc64;
+};
+template <>
+struct tAccBaseType<int32, int32> {
+    using type = acc64;
+};
+template <>
+struct tAccBaseType<cint32, int16> {
+    using type = cacc64;
+};
+template <>
+struct tAccBaseType<cint32, cint16> {
+    using type = cacc64;
+};
+template <>
+struct tAccBaseType<cint32, int32> {
+    using type = cacc64;
+};
+template <>
+struct tAccBaseType<cint32, cint32> {
+    using type = cacc64;
+};
+template <>
+struct tAccBaseType<int16, int32> {
+    using type = acc64;
+};
+template <>
+struct tAccBaseType<cint16, int32> {
+    using type = cacc64;
+};
+template <>
+struct tAccBaseType<cint16, cint32> {
+    using type = cacc64;
+};
+template <>
+struct tAccBaseType<float, float> {
+    using type = accfloat;
+};
+#endif //__SUPPORTS_ACC64__
+
+template <typename TT_DATA, typename TT_COEFF>
+using tAccBaseType_t = typename tAccBaseType<TT_DATA, TT_COEFF>::type;
+
 // function to return the size of the acc,
 template <typename TT_DATA, typename TT_COEFF>
 INLINE_DECL constexpr unsigned int fnAccSize() {
@@ -165,6 +328,14 @@ INLINE_DECL constexpr unsigned int fnAccSize<int32, int32>() {
     return 80;
 };
 template <>
+INLINE_DECL constexpr unsigned int fnAccSize<int32, cint16>() {
+    return 80;
+};
+template <>
+INLINE_DECL constexpr unsigned int fnAccSize<int32, cint32>() {
+    return 80;
+};
+template <>
 INLINE_DECL constexpr unsigned int fnAccSize<cint32, int16>() {
     return 80;
 };
@@ -185,6 +356,10 @@ INLINE_DECL constexpr unsigned int fnAccSize<int16, int32>() {
     return 80;
 };
 template <>
+INLINE_DECL constexpr unsigned int fnAccSize<int16, cint32>() {
+    return 80;
+};
+template <>
 INLINE_DECL constexpr unsigned int fnAccSize<cint16, int32>() {
     return 80;
 };
@@ -194,6 +369,10 @@ INLINE_DECL constexpr unsigned int fnAccSize<cint16, cint32>() {
 };
 template <>
 INLINE_DECL constexpr unsigned int fnAccSize<float, float>() {
+    return 32;
+};
+template <>
+INLINE_DECL constexpr unsigned int fnAccSize<float, cfloat>() {
     return 32;
 };
 template <>
@@ -395,14 +574,66 @@ INLINE_DECL constexpr unsigned int fnNumLanes384<cfloat, cfloat>() {
     return 4;
 };
 #else
+// for io buffer cases
 template <typename TT_DATA, typename TT_COEFF>
 INLINE_DECL constexpr unsigned int fnNumLanes() {
-    return 256 / 8 / sizeof(TT_DATA);
+    return 16;
 };
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes<int16, int16>() {
+    return 32;
+}; //
+// template<> INLINE_DECL constexpr unsigned int fnNumLanes<cint16, cint32>() { return  8;};//
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes<int16, int32>() {
+    return 32;
+}; //
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes<cint32, int16>() {
+    return 8;
+}; //
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes<cint32, int32>() {
+    return 8;
+}; //
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes<cint32, cint16>() {
+    return 8;
+}; //
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes<cint32, cint32>() {
+    return 8;
+}; //
+// template<> INLINE_DECL constexpr unsigned int fnNumLanes<float, float>() { return  8;};//
+// for streams
 template <typename TT_DATA, typename TT_COEFF>
 INLINE_DECL constexpr unsigned int fnNumLanes384() {
-    return 256 / 8 / sizeof(TT_DATA);
+    return 8;
 };
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes384<int16, int16>() {
+    return 16;
+}; //
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes384<int16, int32>() {
+    return 16;
+}; //
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes384<cint32, int16>() {
+    return 4;
+}; //
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes384<cint32, int32>() {
+    return 4;
+}; //
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes384<cint32, cint16>() {
+    return 4;
+}; //
+template <>
+INLINE_DECL constexpr unsigned int fnNumLanes384<cint32, cint32>() {
+    return 4;
+}; //
 #endif
 
 #if __MIN_REGSIZE__ == 128
@@ -554,6 +785,11 @@ INLINE_DECL constexpr unsigned int fnStreamReadWidth() {
     return 256;
 };
 #endif
+
+// check if device has permute capabilites
+constexpr unsigned int fnPermuteSupport() {
+    return __HAS_ACCUM_PERMUTES__;
+};
 
 namespace fir {
 
@@ -926,9 +1162,13 @@ INLINE_DECL cfloat nullElem() {
 #endif
 
 // function to return Margin length.
-template <size_t TP_FIR_LEN, typename TT_DATA>
+template <size_t TP_FIR_LEN, typename TT_DATA, int TP_MODIFY_MARGIN_OFFSET = 0>
 INLINE_DECL constexpr unsigned int fnFirMargin() {
-    return CEIL(TP_FIR_LEN, (32 / sizeof(TT_DATA)));
+    if
+        constexpr(TP_FIR_LEN == 1) { return CEIL(TP_FIR_LEN - TP_MODIFY_MARGIN_OFFSET, (32 / sizeof(TT_DATA))); }
+    else {
+        return CEIL(TP_FIR_LEN, (32 / sizeof(TT_DATA)));
+    }
 };
 
 // Truncation. This function rounds x down to the next multiple of y (which may be x)
