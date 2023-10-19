@@ -12,22 +12,23 @@
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
 
-if [ $# -lt 2 ]
+if [ $# -lt 3 ]
   then
     echo "Incorrect arguments supplied"
-    echo "Usage: $(basename $0) <path of sw_emu package> <libadf.a> <ps executable and other files to be packaged> "
+    echo "Usage: $(basename $0) <path of sw_emu package> <func_libadf.a> <perf_libadf.a> <ps executable and other files to be packaged> "
     exit 1
 fi
 
 arglist=($@)
 PACKAGE_PATH=$(realpath ${arglist[0]})
-AIE_EXE_PATH=$(realpath ${arglist[1]})
+FUNC_AIE_EXE_PATH=$(realpath ${arglist[1]})
+PERF_AIE_EXE_PATH=$(realpath ${arglist[2]})
 
 mkdir -p ${PACKAGE_PATH}
 
-make xsa -f ${TEST_HARNESS_REPO_PATH}/test_harness/sw_emu.mk BUILD_DIR=${PACKAGE_PATH} AIE_EXE=${AIE_EXE_PATH}
+make xsa -f ${TEST_HARNESS_REPO_PATH}/test_harness/sw_emu.mk BUILD_DIR=${PACKAGE_PATH} FUNC_AIE_EXE=${FUNC_AIE_EXE_PATH} PERF_AIE_EXE=${PERF_AIE_EXE_PATH}
 
-for (( c=2; c<$#; c++ ))
+for (( c=3; c<$#; c++ ))
 do  
     cp -rp $(realpath ${arglist[$c]}) ${PACKAGE_PATH}
 done

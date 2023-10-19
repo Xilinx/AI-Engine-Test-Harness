@@ -23,16 +23,26 @@ ifneq ($(findstring 2022.2, $(XILINX_VITIS)), )
 TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202220_1/xilinx_vck190_base_dfx_202220_1.xpfm
 endif
 
-${BUILD_DIR}/vck190_test_harness.xo: ${TEST_HARNESS_REPO_PATH}/src/pl/test_harness.cpp
-	v++ -c -t sw_emu --platform ${TEST_HARNESS_PLATFORM} -I ./ -I ${TEST_HARNESS_REPO_PATH}/include -k vck190_test_harness --hls.clock 250000000:vck190_test_harness $^ -o $@
+${BUILD_DIR}/vck190_test_harness_func.xo: ${TEST_HARNESS_REPO_PATH}/src/pl/test_harness.cpp
+	v++ -c -t sw_emu --platform ${TEST_HARNESS_PLATFORM} -I ./ -I ${TEST_HARNESS_REPO_PATH}/include -k vck190_test_harness_func --hls.clock 312500000:vck190_test_harness_func $^ -o $@
 
-${BUILD_DIR}/vck190_test_harness.xsa: ${BUILD_DIR}/vck190_test_harness.xo ${AIE_EXE}
-	v++ -l -t sw_emu --platform ${TEST_HARNESS_PLATFORM} --config ${TEST_HARNESS_REPO_PATH}/cfg/system.cfg $^ -o $@
+${BUILD_DIR}/vck190_test_harness_func.xsa: ${BUILD_DIR}/vck190_test_harness_func.xo ${FUNC_AIE_EXE}
+	v++ -l -t sw_emu --platform ${TEST_HARNESS_PLATFORM} --config ${TEST_HARNESS_REPO_PATH}/cfg/vck190_func_system.cfg $^ -o $@
 
-${BUILD_DIR}/emconfig.json: ${BUILD_DIR}/vck190_test_harness.xsa
-	emconfigutil --platform ${TEST_HARNESS_PLATFORM} --od ${BUILD_DIR}
-
-${BUILD_DIR}/vck190_test_harness.xclbin: ${BUILD_DIR}/vck190_test_harness.xsa ${AIE_EXE}
+${BUILD_DIR}/vck190_test_harness_func.xclbin: ${BUILD_DIR}/vck190_test_harness_func.xsa ${FUNC_AIE_EXE}
 	v++ -p -t sw_emu  --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} $^ -o $@
 
-xsa: ${BUILD_DIR}/vck190_test_harness.xclbin ${BUILD_DIR}/emconfig.json
+${BUILD_DIR}/vck190_test_harness_perf.xo: ${TEST_HARNESS_REPO_PATH}/src/pl/test_harness.cpp
+	v++ -c -t sw_emu --platform ${TEST_HARNESS_PLATFORM} -I ./ -I ${TEST_HARNESS_REPO_PATH}/include -k vck190_test_harness_perf --hls.clock 400000000:vck190_test_harness_perf $^ -o $@
+
+${BUILD_DIR}/vck190_test_harness_perf.xsa: ${BUILD_DIR}/vck190_test_harness_perf.xo ${PERF_AIE_EXE}
+	v++ -l -t sw_emu --platform ${TEST_HARNESS_PLATFORM} --config ${TEST_HARNESS_REPO_PATH}/cfg/vck190_perf_system.cfg $^ -o $@
+
+${BUILD_DIR}/vck190_test_harness_perf.xclbin: ${BUILD_DIR}/vck190_test_harness_perf.xsa ${PERF_AIE_EXE}
+	v++ -p -t sw_emu  --package.defer_aie_run --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} $^ -o $@
+
+${BUILD_DIR}/emconfig.json: ${BUILD_DIR}/vck190_test_harness_perf.xsa
+	emconfigutil --platform ${TEST_HARNESS_PLATFORM} --od ${BUILD_DIR}
+
+xsa: ${BUILD_DIR}/vck190_test_harness_func.xclbin ${BUILD_DIR}/vck190_test_harness_perf.xclbin ${BUILD_DIR}/emconfig.json
+

@@ -22,7 +22,7 @@ ifeq (,$(wildcard $(XILINX_XRT)/lib/libxilinxopencl.so))
 endif
 
 ##################### Project Variables ######################
-TARGET := sw_emu
+TARGET ?= sw_emu
 ifneq ($(filter x86sim sw_emu, $(TARGET)),)
 AIETARGET := x86sim
 CXX := g++
@@ -45,18 +45,3 @@ AIETARGET := hw
 CXX := $(XILINX_VITIS)/gnu/aarch64/lin/aarch64-linux/bin/aarch64-linux-gnu-g++
 endif
 
-ifneq ($(findstring 2023.2, $(XILINX_VITIS)), )
-TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202320_1/xilinx_vck190_base_dfx_202320_1.xpfm
-TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202320_1.xpfm
-PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202320_1.xpfm
-endif
-ifneq ($(findstring 2023.1, $(XILINX_VITIS)), )
-TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202310_1/xilinx_vck190_base_dfx_202310_1.xpfm
-TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202310_1.xpfm
-PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202310_1.xpfm
-endif
-ifneq ($(findstring 2022.2, $(XILINX_VITIS)), )
-TEST_HARNESS_PLATFORM := ${XILINX_VITIS}/base_platforms/xilinx_vck190_base_dfx_202220_1/xilinx_vck190_base_dfx_202220_1.xpfm
-TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202220_1.xpfm
-PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202220_1.xpfm
-endif
