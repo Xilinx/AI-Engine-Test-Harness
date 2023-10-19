@@ -17,6 +17,5 @@ echo "This is script that lead user to downloading url of pre-compiled .xsa"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 echo $SCRIPT_DIR
 cd $SCRIPT_DIR
-wget --no-check-certificate https://www.xilinx.com/bin/public/openDownload?filename=test_harness_xsa_2023.2.tar
-tar -xvf openDownload?filename=test_harness_xsa_2023.2.tar
-mv test_harness_xsa_2023.2/* ./
+wget --no-check-certificate https://www.xilinx.com/bin/public/openDownload?filename=test_harness_xsa_2023.2.tar.gz
+tar -xzvf openDownload?filename=test_harness_xsa_2023.2.tar.gz
