@@ -30,21 +30,47 @@ The test harness leverages a precompiled .xsa file which is used as an input pla
 PL DMA Engine
 =============
 
-On VCK190, the precompiled .xsa implements a PL DMA engine with 72 independent channels. 36 Tx channels send data from DDR to AIE and 36 Rx channels receive data from AIE to DDR. On VEK280, it has 32 independent AXI stream channels that 16 channels can send data from DDR to AIE and 16 channels can receive data from AIE to DDR. For both of the DMA engines, they are designed to allow a maximum throughput on the PLIO interfaces (128-bit @ 312.5MHz from PL view), ensuring that the data transfer between AIE and PL isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware (except for functional testing mode supported on VCK190).
+On VCK190, the precompiled .xsa implements a PL DMA engine with 72 independent channels. 36 Tx channels send data from DDR to AIE and 36 Rx channels receive data from AIE to DDR. 
 
-- Each channel is connected to an unique AIE PLIO port using 128-bit wide AXI-Stream clocked at 312.5MHz. This delivers an effective throughput of 5GB/sec (32-bits @ 1.25GHz from AIE view)
-- Each channel contains its own URAM memory (64kB for VCK190 / 128kB for VEK280) used to buffer data. This allows transferring data to or from the AIE without unwanted external performance side-effects and deliver maximum throughput.
-- The channels are parameterized, allowing the user to control at runtime how data is transferred to or from the AI Engine. The software APIs are used to configure these parameters (size, delay, replay if needed).
+On VEK280, the precompiled .xsa implements a PL DMA engine with 32 independent channels. 16 Tx channels send data from DDR to AIE and 16 Rx channels receive data from AIE to DDR. 
+
+Each channel is connected to an unique AIE PLIO port using 128-bit wide AXI-Stream clocked at 312.5MHz. This delivers an effective throughput of 5GB/sec (32-bits @ 1.25GHz from AIE view)
+
+The channels are parameterized, allowing the user to control at runtime how data is transferred to or from the AI Engine. The software APIs are used to configure these parameters (size, delay, replay if needed).
+
+Testing Modes
+-------------
+
+The AIE Test Harness supports two testing modes: Performance testing and Functional testing.
+
+**Performance Testing Mode**
+
+On both VCK190 and VEK280, the DMA engine for performance testing is designed to allow a maximum throughput on the PLIO interfaces (128-bit @ 312.5MHz from PL view), ensuring that the data transfer between AIE and PL isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing in hardware.
+
+Each channel contains its own URAM memory (64kB for VCK190 / 128kB for VEK280) used to buffer data. For datasets exceeding the size of the local URAM memory, the DMA engine automatically generates pseudo-random data and appends it to the data sequence sent to the AIE.
+
+This allows transferring data to or from the AIE without unwanted external performance side-effects and deliver maximum throughput.
+
+**Functional Testing Mode**
+
+On VCK190, the DMA engine for functional testing is designed to allow testing the graph with very large datasets of user-provided data. In this mode, the user-provided data is directly transferred between the DDR and the AIE without being buffered in the local URAM memory. 
+
+In functional testing mode, stalls will be introduced when accessing DDR. Performance will not be representative of the maximum potential throughput of the graph.
 
 
 Data Size
 ---------
 
-The data size parameter specifies the size in bytes of the dataset to be transferred (sent or received). To guarantee the correctness of the result as well as the performance, the data size cannot be larger than 64kB on VCK190 and 128kB on VEK280, and must be a multiple of 16 bytes. For VCK190, there are 2 exceptions that the data size capacity can be unlimited. When using functional testing mode, we don't guarantee the interface works at the highest throughput, so the performance is not taken into consideration. As for performance testing mode, the performance is guaranteed, but the result may be wrong if the data size of the dataset is larger than the capacity of the URAM in each channel.
+The data size parameter specifies the size in bytes of the dataset to be transferred (sent or received). The size must be a multiple of 16 bytes.
 
-.. CAUTION::
-    In functional testing mode, the performance is not taken into consideration. 
-    In performance testing mode, as we concatenate the pre-cached data in the URAM with a sequence of random numbers, the results correctness is not guaranteed.
+In performance testing mode, the amount of user-provided data is limited by the size of the local buffer (64kB on VCK190 and 128kB on VEK280). If the data size specified by the user exceeds the size of the local buffer, the DMA engine will insert pseudo-random data after transfering the user-provided data to ensure that specified data size gets transfered.
+
+Examples:
+- If the user specifies a data size of 32kB on VCK190, the DMA engine will transfer 32kB of user-provided data to the AIE
+- If the user specified a data size of 72kB on VCK190, the DMA engine will transfer 64kB of user-provided data, followed by 8kB of pseudo-random data.
+
+
+In functional testing mode, the amount of user-provided data is not limited, allowing the user to provide very large datasets. The entire set of user-provided data is transfered to the AIE. This mode doesn't insert pseudo-random data in the test sequence. 
 
 
 Start Delay
@@ -66,13 +92,13 @@ Each channel has its own built-in performance counter which starts counting cycl
 DMA Channel Operating Sequences
 -------------------------------
 
-* **Performance Testing Mode**
+**Performance Testing Mode**
 
 Tx Channels sending data to the AI Engine work as follows:
 
 1. Each channel loads a user-defined quantity of data from DDR and stores it in its own local URAM buffer. The functional testing mode is an exception, all data are not preloaded to URAM but stored in DDR.
 2. After all data has been stored in the URAM buffer, each channel starts a countdown based on its 'delay' parameter. This allows Tx channels to start sending data to the AIE at different starting time points.
-3. Once the countdown reaches 0, each channel loads data from the URAM buffer and sends it to AIE. Each channel can repeat this step based on an user-specified number of replays to ensure both result correctness and performance, or in another way which is only supported on VCK190, random sequence can be concatenated to the data that is preloaded to the URAM to supplement the data sequence to the length that is required by the user.
+3. Once the countdown reaches 0, each channel loads data from the URAM buffer and sends it to AIE. Each channel can repeat this step based on an user-defined number of replays to ensure both result correctness and performance, or in another way which is only supported on VCK190, random sequence can be concatenated to the data that is preloaded to the URAM to supplement the data sequence to the length that is required by the user.
 4. Each channel reports the latency (cycle count) between the time it starts to send the first data and it starts to send the last data to the AIE. In functional testing mode (only supported on VCK190), no latency will be reported as performance is not taken into consideration in this scenario.
 
 Rx Channels receiving data from the AI Engine work as follows:
@@ -82,11 +108,11 @@ Rx Channels receiving data from the AI Engine work as follows:
 3. After all output channels have finished receiving data from the AIE, they move the output data out from the URAM buffers to DDR.
 4. Each channel reports the latency (cycle count) between the time it receives the first data and the time it receives the last data from the AIE. Performance number is not reported on functional testing mode which is only supported on VCK190.
 
-* **Functional Testing Mode (VCK190 only)**
+**Functional Testing Mode (VCK190 only)**
 
-Tx channels sending data directly from the DDR to the AIE PLIOs and RX channels receiving data directly from AIE PLIOs to the DDR.
-As the memory controller on DDR cannot work on initiation interval (II) = 1 @ 312.5MHz, the performance in this mode cannot be taken into consideration.
-The software API warns out the invalidity of the performance numbers automatically.
+The Tx channels transfer data directly from the DDR to the AIE PLIOs, and RX channels transfer data directly from AIE PLIOs to the DDR.
+
+Since the bandwidth requirements on the AIE are likely to exceed the maxmimum bandwidth of the DDR controller, the DMA channels will not operate at maximum throughput. The performance numbers gathered when running in this mode should not be taken into consideration..
 
 .. _plio_placement:
 

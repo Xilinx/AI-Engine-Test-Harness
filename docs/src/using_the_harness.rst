@@ -137,7 +137,9 @@ Building the test application is done in three simple steps:
 Building the AI Engine Graph
 ----------------------------
 
-To build the libadf.a for use with the test harness, it must be compiled using the prebuilt XSA as the input platform, with the ``hw`` target, and setting the ``--event-trace`` and ``--event-trace-port`` options as shown below:
+To build the libadf.a for use with the test harness, it must be compiled using the desired prebuilt XSA as the input platform, with the ``hw`` target, and setting the ``--event-trace`` and ``--event-trace-port`` options as shown below:
+
+The prebuilt XSAs are ``vck190_test_harness_func.xsa`` for functional testing on VCK190, ``vck190_test_harness_perf.xsa`` for performance testing on VCK190 and ``vek280_test_harness.xsa`` for performance testing on VEK280.
 
 .. code-block:: shell
 
@@ -167,10 +169,23 @@ Packaging the Test
 
 The AIE test harness includes utility scripts which can be used to package the test files and generate a bootable SD card image to run the test on the hardware board on either VCK190 or VEK280.
 
+
+**VCK190**
+
 .. code-block:: shell
 
    test_harness/package_<vck190/vek280>_hw.sh <output dir>
-                                              <pre-built XSAs>
+                                              <func_libadf.a> 
+                                              <perf_libadf.a>
+                                              <host_elf> 
+                                              <other files needed by the test>
+
+**VEK280**
+
+.. code-block:: shell
+
+   test_harness/package_<vck190/vek280>_hw.sh <output dir>
+                                              <perf_libadf.a>
                                               <host_elf> 
                                               <other files needed by the test>
 
@@ -180,11 +195,11 @@ The AIE test harness includes utility scripts which can be used to package the t
 ``<output dir>``
   The folder in which the output of the packaging script and the bootable SD card image should be generated.
 
-``<pre-built XSA(s)>``
-  The pre-compiled XSA. vck190_test_harness_func.xsa & vck190_test_harness_perf.xsa for VCK190, or vek280_test_harness.xsa for VEK280.
+``<func_libadf.a>``
+  The libadf.a resulting from compiling the AIE graph with the pre-compiled .xsa for functional testing (vck190_test_harness_func.xsa).
 
-``<libadf.a>``
-  The libadf.a resulting from the compilation of the AIE graph.
+``<perf_libadf.a>``
+  The libadf.a resulting from compiling the AIE graph with the pre-compiled .xsa for performance testing (vck190_test_harness_perf.xsa or vek280_test_harness.xsa).
 
 ``<host_elf>``
   The executable resulting from building the SW application.
@@ -233,7 +248,8 @@ Packaging the test for software emulation is similar to packaging it for HW, exc
 .. code-block:: shell
 
    test_harness/package_sw_emu.sh <output dir> 
-                                  <pre-built XSAs>
+                                  <func_libadf.a> 
+                                  <perf_libadf.a>
                                   <host_elf> 
                                   <other files needed by the test>
 
