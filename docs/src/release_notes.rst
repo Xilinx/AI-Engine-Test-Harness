@@ -22,37 +22,35 @@ Release Notes
 2023.2
 ------
 
-*  **Summary**
+**Summary**
 
-In this release, we have enhanced the features of the test harness on VCK190 device and ported the test harness to VEK280, the features can be summarized as:
-
-- AIE graphs with up to 36 input PLIOs and 36 output PLIOs on VCK190 and 16 input PLIOs and 16 output PLIOs on VEK280
+- Support for testing graphs on VEK280 boards
+- On VCK190, support for graphs with up to 36 input PLIOs and 36 output PLIOs
+- On VEK280, support for graphs with up to 16 input PLIOs and 16 output PLIOs
+- Performance testing mode has been enhanced to allow testing the performance of the graph with a sequence of user-provided data followed by a user-specified number of randomly generated values
+- New functional testing mode allows testing the functionality of the graph without any limit on the size of the dataset. 
 - PLIO throughput for each channel is 5GB/sec (32 bits @ 1.25GHz)
-- Guaranteed correctness of the result & performance with limited size of datasets, up to 64kB for each channel on VCK190 and 128kB for each channel on VEK280
-- Unlimited size of datasets for both functional and performance testing modes on VCK190
 - User-defined number of replays for upscaling the size of datasets in performance testing mode on each input and output channel
 - User-defined start delay for each input and output PLIO
 - Built-in support for AIE event trace
 - SW APIs to develop a test application to run the AIE graph and transfer data to and from the AIE
-- Utility scripts to build the application for SW emulation and create a SD card image for board run on VCK190, and pure board run on VEK280 (SW_EMU is not supported on VEK280 device)
+- Utility scripts to build the application and create a SD card image for board run on VCK190 and VEK280
 
 
-* **Limitations**
+**Limitations**
 
-- The vck190_test_harness_func.xsa only supports functional testing mode on VCK190
-- The vck190_test_harness_perf.xsa only supports performance testing mode on VCK190
-- The vek280_test_harness.xsa only supports limited size of test with performance testing mode on VEK280
-- Correctness of the result is not guaranteed when size of datasets is larger than 64kB for performance testing mode on VCK190
+- On VCK190, the performance testing mode supports up to 64kB of user-provided data per channel 
+- On VEK280, the performance testing mode supports up to 128kB of user-provided data per channel 
+- The functional testing mode is not supported on VEK280
+- SW emulation flow is not supported on VEK280
 - AIE graphs with GMIOs are not supported
-- Datasets larger than 128kB are not supported on VEK280
-- For longer input / output sequences, considering using the "replay" functionality with performance testing mode on VEK280, or functional/performance testing modes on VCK190.
 - The size (in bytes) of input and output datasets must be a multiple of 16
 
 
 2023.1
 ------
 
-*  **Summary**
+**Summary**
 
 This is the first release of the AIE Test Harness. This release supports the following:
 
@@ -66,7 +64,7 @@ This is the first release of the AIE Test Harness. This release supports the fol
 - Utility scripts to build the test for SW emulation and create a SD card image for VCK190 board run
 
 
-* **Limitations**
+**Limitations**
 
 - The precompiled .xsa only supports the VCK190 board
 - AIE graphs with GMIOs are not supported
