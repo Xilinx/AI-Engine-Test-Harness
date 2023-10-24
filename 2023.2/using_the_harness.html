@@ -211,7 +211,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </ol>
 <div class="section" id="building-the-ai-engine-graph">
 <h3>Building the AI Engine Graph<a class="headerlink" href="#building-the-ai-engine-graph" title="Permalink to this headline">¶</a></h3>
-<p>To build the libadf.a for use with the test harness, it must be compiled using the prebuilt XSA as the input platform, with the <code class="docutils literal notranslate"><span class="pre">hw</span></code> target, and setting the <code class="docutils literal notranslate"><span class="pre">--event-trace</span></code> and <code class="docutils literal notranslate"><span class="pre">--event-trace-port</span></code> options as shown below:</p>
+<p>To build the libadf.a for use with the test harness, it must be compiled using the desired prebuilt XSA as the input platform, with the <code class="docutils literal notranslate"><span class="pre">hw</span></code> target, and setting the <code class="docutils literal notranslate"><span class="pre">--event-trace</span></code> and <code class="docutils literal notranslate"><span class="pre">--event-trace-port</span></code> options as shown below:</p>
+<p>The prebuilt XSAs are <code class="docutils literal notranslate"><span class="pre">vck190_test_harness_func.xsa</span></code> for functional testing on VCK190, <code class="docutils literal notranslate"><span class="pre">vck190_test_harness_perf.xsa</span></code> for performance testing on VCK190 and <code class="docutils literal notranslate"><span class="pre">vek280_test_harness.xsa</span></code> for performance testing on VEK280.</p>
 <pre class="highlight literal-block">
 <span></span>v++ -c --mode aie --platform<span class="o">=</span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/bin/&lt;vck190_test_harness_func.xsa/vck190_test_harness_perf.xsa/vek280_test_harness.xsa&gt;
                   --target<span class="o">=</span>hw
@@ -234,9 +235,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <div class="section" id="packaging-the-test">
 <h3>Packaging the Test<a class="headerlink" href="#packaging-the-test" title="Permalink to this headline">¶</a></h3>
 <p>The AIE test harness includes utility scripts which can be used to package the test files and generate a bootable SD card image to run the test on the hardware board on either VCK190 or VEK280.</p>
+<p><strong>VCK190</strong></p>
 <pre class="highlight literal-block">
 <span></span>test_harness/package_&lt;vck190/vek280&gt;_hw.sh &lt;output dir&gt;
-                                           &lt;pre-built XSAs&gt;
+                                           &lt;func_libadf.a&gt;
+                                           &lt;perf_libadf.a&gt;
+                                           &lt;host_elf&gt;
+                                           &lt;other files needed by the test&gt;
+</pre>
+<p><strong>VEK280</strong></p>
+<pre class="highlight literal-block">
+<span></span>test_harness/package_&lt;vck190/vek280&gt;_hw.sh &lt;output dir&gt;
+                                           &lt;perf_libadf.a&gt;
                                            &lt;host_elf&gt;
                                            &lt;other files needed by the test&gt;
 </pre>
@@ -244,10 +254,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <dl class="docutils">
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;output</span> <span class="pre">dir&gt;</span></code></dt>
 <dd>The folder in which the output of the packaging script and the bootable SD card image should be generated.</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">&lt;pre-built</span> <span class="pre">XSA(s)&gt;</span></code></dt>
-<dd>The pre-compiled XSA. vck190_test_harness_func.xsa &amp; vck190_test_harness_perf.xsa for VCK190, or vek280_test_harness.xsa for VEK280.</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">&lt;libadf.a&gt;</span></code></dt>
-<dd>The libadf.a resulting from the compilation of the AIE graph.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;func_libadf.a&gt;</span></code></dt>
+<dd>The libadf.a resulting from compiling the AIE graph with the pre-compiled .xsa for functional testing (vck190_test_harness_func.xsa).</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">&lt;perf_libadf.a&gt;</span></code></dt>
+<dd>The libadf.a resulting from compiling the AIE graph with the pre-compiled .xsa for performance testing (vck190_test_harness_perf.xsa or vek280_test_harness.xsa).</dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;host_elf&gt;</span></code></dt>
 <dd>The executable resulting from building the SW application.</dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;other</span> <span class="pre">files</span> <span class="pre">needed</span> <span class="pre">by</span> <span class="pre">the</span> <span class="pre">test&gt;</span></code></dt>
@@ -280,7 +290,8 @@ g++ test.o -lxrt_coreutil -L<span class="si">${</span><span class="nv">XILINX_XR
 <p>Packaging the test for software emulation is similar to packaging it for HW, except that the package_sw_emu.sh script should be used:</p>
 <pre class="highlight literal-block">
 <span></span>test_harness/package_sw_emu.sh &lt;output dir&gt;
-                               &lt;pre-built XSAs&gt;
+                               &lt;func_libadf.a&gt;
+                               &lt;perf_libadf.a&gt;
                                &lt;host_elf&gt;
                                &lt;other files needed by the test&gt;
 </pre>
@@ -336,7 +347,7 @@ g++ test.o -lxrt_coreutil -L<span class="si">${</span><span class="nv">XILINX_XR
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on October 19, 2023.
+      <span class="lastupdated">Last updated on October 23, 2023.
       </span></p>
   </div>
 
