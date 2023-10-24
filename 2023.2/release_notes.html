@@ -107,40 +107,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <h1>Release Notes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id2">
 <h2>2023.2<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p><strong>Summary</strong></p>
 <ul class="simple">
-<li><strong>Summary</strong></li>
-</ul>
-<p>In this release, we have enhanced the features of the test harness on VCK190 device and ported the test harness to VEK280, the features can be summarized as:</p>
-<ul class="simple">
-<li>AIE graphs with up to 36 input PLIOs and 36 output PLIOs on VCK190 and 16 input PLIOs and 16 output PLIOs on VEK280</li>
+<li>Support for testing graphs on VEK280 boards</li>
+<li>On VCK190, support for graphs with up to 36 input PLIOs and 36 output PLIOs</li>
+<li>On VEK280, support for graphs with up to 16 input PLIOs and 16 output PLIOs</li>
+<li>Performance testing mode has been enhanced to allow testing the performance of the graph with a sequence of user-provided data followed by a user-specified number of randomly generated values</li>
+<li>New functional testing mode allows testing the functionality of the graph without any limit on the size of the dataset.</li>
 <li>PLIO throughput for each channel is 5GB/sec (32 bits &#64; 1.25GHz)</li>
-<li>Guaranteed correctness of the result &amp; performance with limited size of datasets, up to 64kB for each channel on VCK190 and 128kB for each channel on VEK280</li>
-<li>Unlimited size of datasets for both functional and performance testing modes on VCK190</li>
 <li>User-defined number of replays for upscaling the size of datasets in performance testing mode on each input and output channel</li>
 <li>User-defined start delay for each input and output PLIO</li>
 <li>Built-in support for AIE event trace</li>
 <li>SW APIs to develop a test application to run the AIE graph and transfer data to and from the AIE</li>
-<li>Utility scripts to build the application for SW emulation and create a SD card image for board run on VCK190, and pure board run on VEK280 (SW_EMU is not supported on VEK280 device)</li>
+<li>Utility scripts to build the application and create a SD card image for board run on VCK190 and VEK280</li>
 </ul>
+<p><strong>Limitations</strong></p>
 <ul class="simple">
-<li><strong>Limitations</strong></li>
-</ul>
-<ul class="simple">
-<li>The vck190_test_harness_func.xsa only supports functional testing mode on VCK190</li>
-<li>The vck190_test_harness_perf.xsa only supports performance testing mode on VCK190</li>
-<li>The vek280_test_harness.xsa only supports limited size of test with performance testing mode on VEK280</li>
-<li>Correctness of the result is not guaranteed when size of datasets is larger than 64kB for performance testing mode on VCK190</li>
+<li>On VCK190, the performance testing mode supports up to 64kB of user-provided data per channel</li>
+<li>On VEK280, the performance testing mode supports up to 128kB of user-provided data per channel</li>
+<li>The functional testing mode is not supported on VEK280</li>
+<li>SW emulation flow is not supported on VEK280</li>
 <li>AIE graphs with GMIOs are not supported</li>
-<li>Datasets larger than 128kB are not supported on VEK280</li>
-<li>For longer input / output sequences, considering using the “replay” functionality with performance testing mode on VEK280, or functional/performance testing modes on VCK190.</li>
 <li>The size (in bytes) of input and output datasets must be a multiple of 16</li>
 </ul>
 </div>
 <div class="section" id="id3">
 <h2>2023.1<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><strong>Summary</strong></li>
-</ul>
+<p><strong>Summary</strong></p>
 <p>This is the first release of the AIE Test Harness. This release supports the following:</p>
 <ul class="simple">
 <li>AIE graphs with up to 16 input PLIOs and 16 output PLIOs</li>
@@ -152,9 +145,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <li>SW APIs to develop a test application to run the AIE graph and transfer data to and from the AIE graph</li>
 <li>Utility scripts to build the test for SW emulation and create a SD card image for VCK190 board run</li>
 </ul>
-<ul class="simple">
-<li><strong>Limitations</strong></li>
-</ul>
+<p><strong>Limitations</strong></p>
 <ul class="simple">
 <li>The precompiled .xsa only supports the VCK190 board</li>
 <li>AIE graphs with GMIOs are not supported</li>
@@ -178,7 +169,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <div role="contentinfo">
     <p>&#169; Copyright 2023, Advanced Micro Devices, Inc.
-      <span class="lastupdated">Last updated on October 19, 2023.
+      <span class="lastupdated">Last updated on October 23, 2023.
       </span></p>
   </div>
 
