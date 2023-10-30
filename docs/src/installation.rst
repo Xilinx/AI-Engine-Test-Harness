@@ -39,6 +39,8 @@ Installation Instructions
 1. Clone this repository::
 
     git clone https://github.com/Xilinx/AI-Engine-Test-Harness.git
+    cd AI-Engine-Test-Harness/
+    git checkout -b your-branch-name origin/2023.1
 
 2. Download the prebuilt test harness XSA::
 
