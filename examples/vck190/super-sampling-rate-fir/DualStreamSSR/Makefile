@@ -11,12 +11,31 @@
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
 
+
+help:
+	@echo "Makefile Usage:"
+	@echo "  make all"
+	@echo "      Command to generate everything for this design"
+	@echo ""
+	@echo "  make run_x86sim"
+	@echo "      Run x86simulator and build the design"
+	@echo ""
+	@echo "  make run_aiesim"
+	@echo "      Run aiesimulator and build the design"
+	@echo ""
+	@echo "  make run_sw_emu"
+	@echo "      Run sw_emu and build the design"
+	@echo ""
+	@echo "  make cleanall"
+	@echo "      Command to remove all the generated files."
+
 ifndef TEST_HARNESS_REPO_PATH
 MK_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 export TEST_HARNESS_REPO_PATH ?= $(shell bash -c 'export MK_PATH=$(MK_PATH); echo $${MK_PATH%/examples/*}')
 endif
 
 include ${TEST_HARNESS_REPO_PATH}/test_harness/common.mk
+set_version_vars:
 ifneq ($(findstring 2023.2, $(XILINX_VITIS)), )
 TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202320_1.xpfm
 PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202320_1.xpfm
@@ -31,6 +50,7 @@ PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202220_1.xpfm
 endif
 
 ################### Download XSA #############################
+download_xsa: ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa
 ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_perf.xsa:
 	cd ${TEST_HARNESS_REPO_PATH}/bin && ./download.sh
 
@@ -61,10 +81,12 @@ HOST_LD_FLAGS += -L $(XILINX_VITIS)/aietools/lib/aarch64.o -L $(SDKTARGETSYSROOT
 HOST_CXX_FLAGS += --sysroot=$(SDKTARGETSYSROOT)
 endif
 
+build_func_host_elf: $(TEMP_DIR)_func/host_elf
 $(TEMP_DIR)_func/host_elf: ps/host.cpp ./Work_func/ps/c_rts/aie_control_xrt.cpp
 	mkdir -p $(dir $@)
 	$(CXX) -g -o $@ $^ $(HOST_CXX_FLAGS) $(HOST_LD_FLAGS)
 
+build_perf_host_elf: $(TEMP_DIR)_perf/host_elf
 $(TEMP_DIR)_perf/host_elf: ps/host.cpp ./Work_perf/ps/c_rts/aie_control_xrt.cpp
 	mkdir -p $(dir $@)
 	$(CXX) -g -o $@ $^ $(HOST_CXX_FLAGS) $(HOST_LD_FLAGS)
@@ -85,21 +107,24 @@ ifeq ($(TARGET), hw)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_vck190_hw.sh ${PKG_DIR} func_libadf.a perf_libadf.a $(TEMP_DIR)_perf/host_elf run_script.sh
 endif
 
-##################### Build All + Run Emulation ##############
-# Example test for REP_MODE, please remember to align the path of host_elf and xclbin
-# with the testing mode sepcified in ps/host.cpp
-all: check_setup $(FUNC_RUN_DEPS) $(PERF_RUN_DEPS) package
-run: all
+##################### Run Emulation ##############################
+run_x86sim: set_version_vars $(FUNC_RUN_DEPS) $(PERF_RUN_DEPS) package
 ifeq ($(TARGET), x86sim)
 	x86simulator --pkg-dir=./Work_perf
 endif
+run_aiesim: set_version_vars $(FUNC_RUN_DEPS) $(PERF_RUN_DEPS) package
 ifeq ($(TARGET), aiesim)
 	aiesimulator --pkg-dir=./Work_perf
 endif
+run_sw_emu: set_version_vars $(FUNC_RUN_DEPS) $(PERF_RUN_DEPS) package
 ifeq ($(TARGET), sw_emu)
 	LD_LIBRARY_PATH=$(LIBRARY_PATH):$$LD_LIBRARY_PATH \
 	XCL_EMULATION_MODE=sw_emu $(PKG_DIR)/host_elf $(PKG_DIR)/vck190_test_harness.xclbin
 endif
+
+#################### Build All ################################
+all: set_version_vars download_xsa build_func_host_elf build_perf_host_elf package
+run: all run_x86sim run_aiesim run_sw_emu
 
 #################### Clean ###################################
 cleanall:
