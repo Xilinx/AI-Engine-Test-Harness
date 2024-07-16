@@ -73,7 +73,7 @@ HOST_LD_FLAGS += -L $(XILINX_VITIS)/aietools/lib/aarch64.o -L $(SDKTARGETSYSROOT
 HOST_CXX_FLAGS += --sysroot=$(SDKTARGETSYSROOT)
 endif
 
-build_host_elf: $(TEMP_DIR)/host_elf
+build_host_elf:
 $(TEMP_DIR)/host_elf: ps/host.cpp ./Work/ps/c_rts/aie_control_xrt.cpp
 	mkdir -p $(dir $@)
 	$(CXX) -g -o $@ $^ $(HOST_CXX_FLAGS) $(HOST_LD_FLAGS)
