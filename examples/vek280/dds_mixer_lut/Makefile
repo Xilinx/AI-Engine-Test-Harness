@@ -23,9 +23,6 @@ help:
 	@echo "  make run_aiesim"
 	@echo "      Run aiesimulator and build the design"
 	@echo ""
-	@echo "  make run_sw_emu"
-	@echo "      Run sw_emu and build the design"
-	@echo ""
 	@echo "  make cleanall"
 	@echo "      Command to remove all the generated files."
 
