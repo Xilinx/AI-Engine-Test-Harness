@@ -77,6 +77,7 @@ endif
 package: $(RUN_DEPS)
 ifeq ($(TARGET), hw)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_vek280_hw.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf run_script.sh
+	ln -s ${PKG_DIR} package_hw
 endif
 
 ##################### Build All + Run Emulation ##############

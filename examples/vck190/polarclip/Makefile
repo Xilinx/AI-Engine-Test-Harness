@@ -94,6 +94,7 @@ ifeq ($(TARGET), sw_emu)
 endif
 ifeq ($(TARGET), hw)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_vck190_hw.sh ${PKG_DIR} func_libadf.a perf_libadf.a $(TEMP_DIR)_perf/host_elf run_script.sh golden_32iters.txt golden_4iters.txt input.txt dummy.txt
+	ln -s ${PKG_DIR} package_hw
 endif
 
 ##################### Build All + Run Emulation ##############

@@ -96,6 +96,7 @@ ifeq ($(TARGET), sw_emu)
 endif
 ifeq ($(TARGET), hw)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_vck190_hw.sh ${PKG_DIR} func_libadf.a perf_libadf.a $(TEMP_DIR)_perf/host_elf run_script.sh ./data/dft7_i_0.txt ./data/dft7_i_1.txt ./data/dft9_i_0.txt ./data/dft9_i_1.txt ./data/dft16_i_0.txt ./data/dft16_i_1.txt ./data/dft7_o_0.txt ./data/dft7_o_1.txt ./data/dft9_o_0.txt ./data/dft9_o_1.txt ./data/dft16_o_0.txt ./data/dft16_o_1.txt
+	ln -s ${PKG_DIR} package_hw
 endif
 
 ##################### Build All + Run Emulation ##############
