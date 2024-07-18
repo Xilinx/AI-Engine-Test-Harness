@@ -11,17 +11,13 @@
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
 
-
 help:
 	@echo "Makefile Usage:"
-	@echo "  make all"
-	@echo "      Command to generate everything for this design"
+	@echo "  make all TARGET=<aiesim/x86sim>"
+	@echo "      Command to generate the design for specified TARGET."
 	@echo ""
-	@echo "  make run_x86sim"
-	@echo "      Run x86simulator and build the design"
-	@echo ""
-	@echo "  make run_aiesim"
-	@echo "      Run aiesimulator and build the design"
+	@echo "  make run TARGET=<aiesim/x86sim>"
+	@echo "      Command to run simulation."
 	@echo ""
 	@echo "  make cleanall"
 	@echo "      Command to remove all the generated files."
@@ -32,7 +28,6 @@ export TEST_HARNESS_REPO_PATH ?= $(shell bash -c 'export MK_PATH=$(MK_PATH); ech
 endif
 
 include ${TEST_HARNESS_REPO_PATH}/test_harness/common.mk
-set_version_vars:
 ifneq ($(findstring 2023.2, $(XILINX_VITIS)), )
 TEMP_DIR := _x_temp.$(TARGET).xilinx_vek280_es1_base_202320_1.xpfm
 PKG_DIR := pkg.$(TARGET).xilinx_vek280_es1_base_202320_1.xpfm
@@ -46,7 +41,6 @@ $(error ERROR: VEK280 is not supported by Vitis 2022.2 or older versions)
 endif
 
 ################### Download XSA #############################
-download_xsa:${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
 ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa:
 	cd ${TEST_HARNESS_REPO_PATH}/bin && ./download.sh
 
@@ -70,7 +64,6 @@ HOST_LD_FLAGS += -L $(XILINX_VITIS)/aietools/lib/aarch64.o -L $(SDKTARGETSYSROOT
 HOST_CXX_FLAGS += --sysroot=$(SDKTARGETSYSROOT)
 endif
 
-build_host_elf:
 $(TEMP_DIR)/host_elf: ps/host.cpp ./Work/ps/c_rts/aie_control_xrt.cpp
 	mkdir -p $(dir $@)
 	$(CXX) -g -o $@ $^ $(HOST_CXX_FLAGS) $(HOST_LD_FLAGS)
@@ -86,19 +79,15 @@ ifeq ($(TARGET), hw)
 	${TEST_HARNESS_REPO_PATH}/test_harness/package_vek280_hw.sh ${PKG_DIR} libadf.a $(TEMP_DIR)/host_elf run_script.sh
 endif
 
-##################### Run Emulation ##############################
-run_x86sim: set_version_vars $(RUN_DEPS) package
+##################### Build All + Run Emulation ##############
+all: check_setup $(RUN_DEPS) package
+run: all
 ifeq ($(TARGET), x86sim)
 	x86simulator --pkg-dir=./Work 
 endif
-run_aiesim: set_version_vars $(RUN_DEPS) package
 ifeq ($(TARGET), aiesim)
 	aiesimulator --pkg-dir=./Work
 endif
-
-#################### Build All ################################
-all: set_version_vars download_xsa build_host_elf package
-run: all run_x86sim run_aiesim
 
 #################### Clean ###################################
 cleanall:
