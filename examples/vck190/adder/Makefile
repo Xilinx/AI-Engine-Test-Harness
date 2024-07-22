@@ -14,10 +14,10 @@
 # ############################### Help Section ###################################
 help:
 	@echo "Makefile Usage:"
-	@echo "  make all TARGET=<aiesim/x86sim/sw_emu>"
+	@echo "  make all TARGET=<aiesim/x86sim/sw_emu/hw>"
 	@echo "      Command to generate the design for specified TARGET."
 	@echo ""
-	@echo "  make run TARGET=<aiesim/x86sim/sw_emu>"
+	@echo "  make run TARGET=<aiesim/x86sim/sw_emu/hw>"
 	@echo "      Command to run simulation."
 	@echo ""
 	@echo "  make cleanall"

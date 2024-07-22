@@ -14,10 +14,10 @@
 # ############################### Help Section ###################################
 help:
 	@echo "Makefile Usage:"
-	@echo "  make all TARGET=<aiesim/x86sim>"
+	@echo "  make all TARGET=<aiesim/x86sim/hw>"
 	@echo "      Command to generate the design for specified TARGET."
 	@echo ""
-	@echo "  make run TARGET=<aiesim/x86sim>"
+	@echo "  make run TARGET=<aiesim/x86sim/hw>"
 	@echo "      Command to run simulation."
 	@echo ""
 	@echo "  make cleanall"
@@ -96,7 +96,7 @@ libadf.a: ./aie/test.cpp ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
 # Step 3. Build Host 
 ./Work/ps/c_rts/aie_control_xrt.cpp: libadf.a
 
-build_host_elf:
+build_host_elf: $(HOST_ELF)
 
 # Step 4. Build Package
 package: $(RUN_DEPS)
