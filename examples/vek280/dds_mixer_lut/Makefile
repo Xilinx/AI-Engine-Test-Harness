@@ -37,8 +37,8 @@ AIE_CXX_FLAGS 	   := -I $(XILINX_VITIS)/aietools/include
 AIE_CXX_FLAGS      += -I ./aie -I ${TEST_HARNESS_REPO_PATH}/include
 AIE_CXX_FLAGS      += -I ${TEST_HARNESS_REPO_PATH}/src/aie
 AIE_CXX_FLAGS      += --target=$(AIETARGET) --aie.pl-freq=200.0 --aie.event-trace=runtime --aie.event-trace-port=gmio 
-AIE_CXX_FLAGS      += --platform=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness_func.xsa 
-AIE_CXX_FLAGS      += --aie.workdir=./Work_func --aie.output-archive=./func_libadf.a
+AIE_CXX_FLAGS      += --platform=${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
+AIE_CXX_FLAGS      += --aie.workdir=./Work --aie.output-archive=./libadf.a
 
 # host compilation flags
 HOST_CXX_FLAGS 		   := -I ./ -I ./aie -I ./ps -I ${TEST_HARNESS_REPO_PATH}/include 
