@@ -13,7 +13,7 @@
                 "env": "",
                 "cmd": "",
                 "max_memory_MB": 65536,
-                "max_time_min": 300
+                "max_time_min": 600
             }
         ],
         "targets": [
