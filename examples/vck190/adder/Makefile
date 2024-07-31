@@ -49,13 +49,34 @@ PERF_AIE_CXX_FLAGS     += --platform=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_h
 PERF_AIE_CXX_FLAGS     += --aie.workdir=./Work_perf --aie.output-archive=./perf_libadf.a
 
 # host compilation flags
+# Compilation settings according to TARGET selection
 HOST_CXX_FLAGS 		   := -I ./ -I ./aie -I ./ps -I ${TEST_HARNESS_REPO_PATH}/include 
 HOST_CXX_FLAGS 		   += -I $(XILINX_VITIS)/aietools/include -I $(XILINX_XRT)/include -std=c++14
 HOST_LD_FLAGS          := -pthread -lxrt_coreutil -ladf_api_xrt
+ifneq ($(filter x86sim sw_emu, $(TARGET)),)
+HOST_LD_FLAGS 		   += -L $(XILINX_VITIS)/aietools/lib/lnx64.o -L $(XILINX_XRT)/lib
+else
+HOST_LD_FLAGS          += -L $(XILINX_VITIS)/aietools/lib/aarch64.o -L $(SDKTARGETSYSROOT)/usr/lib 
+HOST_CXX_FLAGS         += --sysroot=$(SDKTARGETSYSROOT)
+endif
+
+# Host settings according to TARGET selection 
 FUNC_RUN_DEPS 		   := func_libadf.a
 PERF_RUN_DEPS 		   := perf_libadf.a
+ifneq ($(filter sw_emu hw, $(TARGET)),)
+FUNC_RUN_DEPS += $(TEMP_DIR)_func/host_elf
+PERF_RUN_DEPS += $(TEMP_DIR)_perf/host_elf
+endif
 
 # Compilation settings according to Release selection
+ifneq ($(findstring 2024.2, $(XILINX_VITIS)), )
+TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202420_1.xpfm
+PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202420_1.xpfm
+endif
+ifneq ($(findstring 2024.1, $(XILINX_VITIS)), )
+TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202410_1.xpfm
+PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202410_1.xpfm
+endif
 ifneq ($(findstring 2023.2, $(XILINX_VITIS)), )
 TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202320_1.xpfm
 PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202320_1.xpfm
@@ -67,20 +88,6 @@ endif
 ifneq ($(findstring 2022.2, $(XILINX_VITIS)), )
 TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202220_1.xpfm
 PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202220_1.xpfm
-endif
-
-# Compilation settings according to TARGET selection
-ifneq ($(filter x86sim sw_emu, $(TARGET)),)
-HOST_LD_FLAGS 		   += -L $(XILINX_VITIS)/aietools/lib/lnx64.o -L $(XILINX_XRT)/lib
-else
-HOST_LD_FLAGS          += -L $(XILINX_VITIS)/aietools/lib/aarch64.o -L $(SDKTARGETSYSROOT)/usr/lib 
-HOST_CXX_FLAGS         += --sysroot=$(SDKTARGETSYSROOT)
-endif
-
-# Host settings according to TARGET selection 
-ifneq ($(filter sw_emu hw, $(TARGET)),)
-FUNC_RUN_DEPS += $(TEMP_DIR)_func/host_elf
-PERF_RUN_DEPS += $(TEMP_DIR)_perf/host_elf
 endif
 
 # pre_build & compilations
