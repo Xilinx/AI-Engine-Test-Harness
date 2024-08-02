@@ -40,12 +40,6 @@ AIE_CXX_FLAGS      += --target=$(AIETARGET) --aie.pl-freq=200.0 --aie.event-trac
 AIE_CXX_FLAGS      += --platform=${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
 AIE_CXX_FLAGS      += --aie.workdir=./Work --aie.output-archive=./libadf.a
 
-# host compilation flags
-HOST_CXX_FLAGS 		   := -I ./ -I ./aie -I ./ps -I ${TEST_HARNESS_REPO_PATH}/include 
-HOST_CXX_FLAGS 		   += -I $(XILINX_VITIS)/aietools/include -I $(XILINX_XRT)/include -std=c++14
-HOST_LD_FLAGS 		   := -pthread -lxrt_coreutil -ladf_api_xrt
-RUN_DEPS 		       := libadf.a
-
 # Compilation settings according to Release selection
 ifneq ($(findstring 2023.2, $(XILINX_VITIS)), )
 TEMP_DIR := _x_temp.$(TARGET).xilinx_vek280_es1_base_202320_1.xpfm
@@ -59,7 +53,11 @@ ifneq ($(findstring 2022.2, $(XILINX_VITIS)), )
 $(error ERROR: VEK280 is not supported by Vitis 2022.2 or older versions)
 endif
 
+# host compilation flags
 # Compilation settings according to TARGET selection
+HOST_CXX_FLAGS 		   := -I ./ -I ./aie -I ./ps -I ${TEST_HARNESS_REPO_PATH}/include 
+HOST_CXX_FLAGS 		   += -I $(XILINX_VITIS)/aietools/include -I $(XILINX_XRT)/include -std=c++14
+HOST_LD_FLAGS 		   := -pthread -lxrt_coreutil -ladf_api_xrt
 ifneq ($(filter x86sim, $(TARGET)),)
 HOST_LD_FLAGS 		   += -L $(XILINX_VITIS)/aietools/lib/lnx64.o -L $(XILINX_XRT)/lib
 else
@@ -68,9 +66,11 @@ HOST_CXX_FLAGS         += --sysroot=$(SDKTARGETSYSROOT)
 endif
 
 # Host settings according to TARGET selection 
+RUN_DEPS 		       := libadf.a
 ifneq ($(filter hw, $(TARGET)),)
 RUN_DEPS               += $(TEMP_DIR)/host_elf
 endif
+
 # pre_build & compilations
 TEST_HARNESS_XSA 	   := ${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa
 HOST_ELF        	   := $(TEMP_DIR)/host_elf

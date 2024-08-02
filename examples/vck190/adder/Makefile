@@ -49,14 +49,6 @@ PERF_AIE_CXX_FLAGS     += --platform=${TEST_HARNESS_REPO_PATH}/bin/vck190_test_h
 PERF_AIE_CXX_FLAGS     += --aie.workdir=./Work_perf --aie.output-archive=./perf_libadf.a
 
 # Compilation settings according to Release selection
-ifneq ($(findstring 2024.2, $(XILINX_VITIS)), )
-TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202420_1.xpfm
-PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202420_1.xpfm
-endif
-ifneq ($(findstring 2024.1, $(XILINX_VITIS)), )
-TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202410_1.xpfm
-PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202410_1.xpfm
-endif
 ifneq ($(findstring 2023.2, $(XILINX_VITIS)), )
 TEMP_DIR := _x_temp.$(TARGET).xilinx_vck190_base_dfx_202320_1.xpfm
 PKG_DIR := pkg.$(TARGET).xilinx_vck190_base_dfx_202320_1.xpfm
