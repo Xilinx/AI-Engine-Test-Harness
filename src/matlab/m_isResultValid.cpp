@@ -61,12 +61,14 @@ class MexFunction : public mex::Function {
 
         int32_t idx = inputs[1][0];
 
-        auto mgr_client =
-            reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
-        auto valid = mgr_client->isResultValid(idx);
-
-        // assign mgr_client to the output
-        data::Array res = factory.createArray({1, 1}, {valid});
-        outputs[0] = res;
+        try {
+            auto mgr_client = reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
+            auto valid = mgr_client->isResultValid(idx);
+            // assign mgr_client to the output
+            data::Array res = factory.createArray({1, 1}, {valid});
+            outputs[0] = res;
+        } catch (std::exception& e) {
+            displayError(e.what());
+        }
     }
 };

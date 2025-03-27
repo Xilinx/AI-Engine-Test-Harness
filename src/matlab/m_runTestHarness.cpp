@@ -50,8 +50,6 @@ class MexFunction : public mex::Function {
         }
 
         uintptr_t handle = inputs[0][0];
-        auto mgr_client =
-            reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
         std::vector<test_harness::test_harness_args> args;
 
         // second argument is an integer
@@ -126,8 +124,13 @@ class MexFunction : public mex::Function {
             displayError("Fourth input must be an Integer.");
         }
         uint32_t const timeout = inputs[3][0];
-        
-        mgr_client->runTestHarness(test_mode, args, timeout);
+        try {
+            auto mgr_client =
+                reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
+            mgr_client->runTestHarness(test_mode, args, timeout);
+        } catch (const std::exception& e) {
+            displayError(e.what());
+        }
     }
 
     /* Make sure that the passed structure has valid data. */

@@ -76,12 +76,16 @@ class MexFunction : public mex::Function {
         }
         int32_t t_id = inputs[3][0];
 
-        auto mgr_client =
-            reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
-        auto delay = mgr_client->getDelayBetween(idx0, idx1, t_id);
+        try {
+            auto mgr_client =
+                reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
+            auto delay = mgr_client->getDelayBetween(idx0, idx1, t_id);
 
-        // assign mgr_client to the output
-        data::Array res = factory.createArray({1, 1}, {delay});
-        outputs[0] = res;
+            // assign mgr_client to the output
+            data::Array res = factory.createArray({1, 1}, {delay});
+            outputs[0] = res;
+        } catch (std::exception& e) {
+            displayError(e.what());
+        }
     }
 };

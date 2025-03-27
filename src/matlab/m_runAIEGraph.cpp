@@ -50,8 +50,6 @@ class MexFunction : public mex::Function {
         }
 
         uintptr_t handle = inputs[0][0];
-        auto mgr_client =
-            reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
 
         // second argument is a string
         if (inputs[1].getType() != data::ArrayType::UINT32) {
@@ -65,6 +63,12 @@ class MexFunction : public mex::Function {
         }
 
         uint32_t num_iterations = inputs[2][0];
-        mgr_client->runAIEGraph(g_idx, num_iterations);
+        try {
+            auto mgr_client =
+                reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
+            mgr_client->runAIEGraph(g_idx, num_iterations);
+        } catch (std::exception& e) {
+            displayError(e.what());
+        }
     }
 };

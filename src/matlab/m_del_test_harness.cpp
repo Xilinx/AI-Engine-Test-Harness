@@ -49,8 +49,12 @@ class MexFunction : public mex::Function {
         }
 
         uintptr_t handle = inputs[0][0];
-        auto mgr_client =
-            reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
-        delete mgr_client;
+        try {
+            auto mgr_client =
+                reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
+            delete mgr_client;
+        } catch (std::exception& e) {
+            displayError(e.what());
+        }
     }
 };

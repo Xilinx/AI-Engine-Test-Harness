@@ -22,7 +22,6 @@
  */
  
 #include "mex.hpp"
-#include "mexAdapter.hpp"
 #include "test_harness_mgr_client.hpp"
 
 using namespace matlab;
@@ -51,8 +50,6 @@ class MexFunction : public mex::Function {
         }
 
         uintptr_t handle = inputs[0][0];
-        auto mgr_client =
-            reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
 
         // second argument is an integer
         if (inputs[1].getType() != data::ArrayType::UINT32) {
@@ -65,7 +62,12 @@ class MexFunction : public mex::Function {
             displayError("Third input must be an integer of the number of transactions to wait.");
         }
         uint32_t all = inputs[2][0];
-
-        mgr_client->waitForRes(timeout, all);
+        try {
+            auto mgr_client =
+                reinterpret_cast<test_harness::test_harness_mgr_client*>(handle);
+            mgr_client->waitForRes(timeout, all);
+        } catch (std::exception& e) {
+            displayError(e.what());
+        }
     }
 };
