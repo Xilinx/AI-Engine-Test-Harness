@@ -49,9 +49,8 @@ AIE_CXX_FLAGS     += -I ./aie
 AIE_CXX_FLAGS     += -I ${TEST_HARNESS_REPO_PATH}/include/aie
 AIE_CXX_FLAGS     += -I ${TEST_HARNESS_REPO_PATH}/src/aie
 AIE_CXX_FLAGS     += --target=$(AIETARGET) --aie.pl-freq=312.5 --aie.event-trace=runtime --aie.event-trace-port=gmio 
-AIE_CXX_FLAGS     += --platform=${TEST_HARNESS_PLATFORM}
+AIE_CXX_FLAGS     += --platform=${TEST_HARNESS_XSA}
 AIE_CXX_FLAGS     += --aie.workdir=$(TEMP_DIR)/Work --aie.output-archive=$(TEMP_DIR)/libadf.a
-AIE_CXX_FLAGS     += --aie.constraints constraints.json
 
 # host compilation flags
 # Compilation settings according to TARGET selection
