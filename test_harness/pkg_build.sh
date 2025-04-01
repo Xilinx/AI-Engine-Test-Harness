@@ -17,7 +17,7 @@ vitis_ver=$1
 ver=$(echo "$vitis_ver" | awk -F'_' '{print $1}')
 time=`date "+%Y%m%d%H%M%S"`
 
-targets=("vek280_test_harness.xsa" "vek280_sd_card.img.zip" "vck190_test_harness.xsa" "vck190_sd_card.img.zip" "bin/server" "scripts/run_server.sh")
+targets=("vek280_test_harness.xsa" "vek280_sd_card.img.zip" "vck190_test_harness.xsa" "vck190_sd_card.img.zip" "server" "../test_harness/scripts/run_server.sh")
 
 prepare() {
     commit_id=$(git log -1 --format=%H)
@@ -49,12 +49,12 @@ build() {
     bin=""
     for target in "${targets[@]}"
     do
-        cp ../bin/$target ./
-        bin="$bin $target"
+        cp -r ../bin/$target ./
+        bin="$bin $(basename $target)"
     done
 
     tar -czvf test_harness_xsa_sd_card_${ver}_${time}.tar.gz $bin pkg_info
-    rm $bin
+    rm -rf $bin
 }
 
 prepare
