@@ -84,6 +84,7 @@ vek280_xsa: check_vitis ${BUILD_DIR}/vek280_test_harness.xsa
 ############################## SD CARD  ##############################
 
 SD_IMAGE_PATH := ${TEST_HARNESS_REPO_PATH}/bin/${DEVICE}_sd_card.img.zip
+SERVER_FILE_PATH := ${TEST_HARNESS_REPO_PATH}/bin/server/${DEVICE}
 
 ROOTFS ?= ${SDKTARGETSYSROOT}/../../rootfs.ext4
 IMAGE ?= ${SDKTARGETSYSROOT}/../../Image
@@ -105,6 +106,9 @@ SERVER_LINK_FLAGS := ${COMMON_LINK_FLAGS}
 test_harness_session := ${BUILD_DIR}/test_harness_session
 test_harness_server  := ${BUILD_DIR}/test_harness_server
 
+${SERVER_FILE_PATH}:
+	mkdir -p ${SERVER_FILE_PATH}
+
 ${test_harness_session}: ${TEST_HARNESS_REPO_PATH}/src/ps/test_harness_mgr_server.cpp ${TEST_HARNESS_REPO_PATH}/src/ps/test_harness_session.cpp ${TEST_HARNESS_REPO_PATH}/src/ps/test_harness_server.cpp
 	${CXX} -o $@ $^ ${SESSION_COMPILE_FLAGS} ${SERVER_MGR_COMPILE_FLAGS} ${SESSION_LINK_FLAGS}
 
@@ -115,7 +119,7 @@ ${BUILD_DIR}/vek280_test_harness.xclbin: ${BUILD_DIR}/vek280_test_harness.xsa
 	v++ -p -o $@ $^ ${TEST_HARNESS_PACKAGE_FLAGS}
 
 ####################### PAKCAGING  ###########################
-vck190_sd_card: check_vitis ${BUILD_DIR} ${test_harness_session} ${test_harness_server} \
+vck190_sd_card: check_vitis ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_session} ${test_harness_server} \
 								${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh
 	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} \
 		--package.rootfs ${ROOTFS} --package.kernel_image ${IMAGE} --package.boot_mode=sd --package.image_format=ext4 \
@@ -125,8 +129,10 @@ vck190_sd_card: check_vitis ${BUILD_DIR} ${test_harness_session} ${test_harness_
 		--temp_dir ${BUILD_DIR}
 	zip -j ${BUILD_DIR}/sd_card.img.zip ${BUILD_DIR}/sd_card.img
 	cp ${BUILD_DIR}/sd_card.img.zip ${SD_IMAGE_PATH}
+	cp ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh ${test_harness_server}  \
+		${test_harness_session} ${SERVER_FILE_PATH}
 
-vek280_sd_card: check_vitis ${BUILD_DIR} ${test_harness_server} ${test_harness_session} \
+vek280_sd_card: check_vitis ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
 									${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
 									${BUILD_DIR}/vek280_test_harness.xclbin ${BUILD_DIR}/vek280_libadf.a \
 									${BUILD_DIR}/vek280_test_harness.xsa
@@ -140,7 +146,8 @@ vek280_sd_card: check_vitis ${BUILD_DIR} ${test_harness_server} ${test_harness_s
 		${BUILD_DIR}/vek280_test_harness.xsa ${BUILD_DIR}/vek280_libadf.a
 	zip -j ${BUILD_DIR}/sd_card.img.zip ${BUILD_DIR}/sd_card.img
 	cp ${BUILD_DIR}/sd_card.img.zip ${SD_IMAGE_PATH}
-
+	cp ${BUILD_DIR}/vek280_test_harness.xclbin ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
+		${test_harness_server} ${test_harness_session} ${SERVER_FILE_PATH}
 
 clean:
 	rm -rf build_* *.log *.csv *.xcl *.xclbin *.xsa *.xo *.a *.img.zip
