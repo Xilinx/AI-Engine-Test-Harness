@@ -13,3 +13,4 @@
 
 [vivado]
 impl.jobs=1
+impl.strategies=All

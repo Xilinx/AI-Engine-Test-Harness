@@ -32,7 +32,7 @@ vck190_sd_card: package ${scripts}
 		--package.sd_file ${scripts} \
 		--temp_dir ${SD_CARD_PATH}
 
-sd_card: ${SD_CARD_PATH}
+sd_card: check_vitis ${SD_CARD_PATH}
 ifeq (${DEVICE}, vek280)
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/regr.mk vek280_sd_card
 else
