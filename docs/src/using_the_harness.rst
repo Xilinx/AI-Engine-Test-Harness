@@ -59,7 +59,7 @@ The original AIE graph must be mapped to these predefined PLIOs to make sure the
 
 The user AIE graph must be modified to ensure that all PLIOs are 128 bits wide and use the PLIOs predefined in the test harness.
 
-The predefined PLIO names are listed in :url_to_repo:`include/test_harness_port_name.hpp`. 
+The predefined PLIO names are listed in :url_to_repo:`include/aie/test_harness_port_name.hpp`. 
 The ``test_harness::in_names`` is the list of PLIO names which can be used to send data to AI Engine 
 and ``test_harness::out_names`` is the list of PLIO names that can be used to receive data from AI Engine. 
 These are the **ONLY** valid PLIOs to be built with the test harness. 

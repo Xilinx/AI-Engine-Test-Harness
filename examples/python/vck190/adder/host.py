@@ -38,6 +38,7 @@ def default(args):
     num_values = 65536 * args.iterations
     a = np.random.randint(-65536, 65536, num_values, dtype=np.int32)
     b = np.random.randint(-65536, 65536, num_values, dtype=np.int32)
+    ref = np.add(a, b)
 
     xclbin_path = args.xclbin
     if os.path.exists(xclbin_path) == False:
@@ -73,10 +74,9 @@ def default(args):
         print(f"The delay between PLIO_01_TO_AIE and PLIO_02_FROM_AIE is {delay} clock cycles.")
 
         if mgr.isResultValid():
-            for i in range(num_values):
-                if b[i] + a[i] != res[i]:
-                    print("ERROR: a[%d] + b[%d] = %d != res[%d] = %d" % (i, i, a[i] + b[i], i, res[i]))
-                    sys.exit(1)
+            if res != ref:
+                print("ERROR: a + b != res")
+                sys.exit(1)
         elif mode is test_mode.FUNC_MODE:
             print("ERROR: Results should be always valid in the functional mode, a bug happened in the test harness manager")
             sys.exit(1)
@@ -94,6 +94,7 @@ def pipelined(args):
     a = np.random.randint(-65536, 65536, num_values, dtype=np.int32)
     b = np.random.randint(-65536, 65536, num_values, dtype=np.int32)
     res = np.zeros(num_values, dtype=np.int32)
+    ref = np.add(a, b)
 
     xclbin_path = args.xclbin
     if os.path.exists(xclbin_path) == False:
@@ -116,10 +117,9 @@ def pipelined(args):
         mgr.runTestHarness(test_mode.FUNC_MODE, fargs)
 
     mgr.waitForRes()
-    for i in range(num_values):
-        if b[i] + a[i] != res[i]:
-            print("ERROR: a[%d] + b[%d] = %d != res[%d] = %d" % (i, i, a[i] + b[i], i, res[i]))
-            sys.exit(1)
+    if res != ref:
+        print("ERROR: a + b != res")
+        sys.exit(1)
     print("INFO: Function mode test passed")
 
 def main(args):

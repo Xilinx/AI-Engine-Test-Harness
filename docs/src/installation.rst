@@ -45,9 +45,9 @@ Installation Instructions
     cd AI-Engine-Test-Harness/
     source setup.sh
 
-3. Flash the SD card image to an SD card::
+3. Flash the SD card image to an SD card
 
-4. Boot the VCK190 or VEK280 board with the SD card::
+4. Boot the VCK190 or VEK280 board with the SD card
 
 5. Run the test harness server on the board by following the instructions::
 
