@@ -13,5 +13,6 @@
 #
 
 export TEST_HARNESS_REPO_PATH=$(dirname $(realpath ${BASH_SOURCE[0]}))
+cd ${TEST_HARNESS_REPO_PATH}/bin && ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/download.sh && cd -
 echo "Please setup environment variable 'SDKTARGETSYSROOT' to where the edge common SW is installed"
 echo "Please do remember include the GCC library path to 'LD_LIBRARY_PATH' before running the design"

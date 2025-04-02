@@ -1,6 +1,6 @@
 {
-    "name": "M=16 SSR=8 Channelizer Prototype", 
-    "flow": "versal",
+    "name": "Channelizer Kernel", 
+    "flow": "system",
     "platform_allowlist": [
         "vck190"
     ],
@@ -17,9 +17,6 @@
             }
         ],
         "targets": [
-            "vitis_aie_x86sim",
-            "vitis_aie_sim",
-            "vitis_sw_emu",
             "vitis_hw_build",
             "vitis_hw_run"
         ],

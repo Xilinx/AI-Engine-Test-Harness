@@ -38,13 +38,13 @@ sys.path.insert(1, os.path.join(tools_dir, 'share/doxyrest_b/sphinx'))
 # -- Project information -----------------------------------------------------
 
 project = 'AIE Test Harness'
-copyright = '2023, Advanced Micro Devices, Inc'
+copyright = '2023-2025, Advanced Micro Devices, Inc'
 author = 'Advanced Micro Devices, Inc'
 
 # The short X.Y version
-version = '2023.2'
+version = '2024.1'
 # The full version, including alpha/beta/rc tags
-release = 'v2023.2'
+release = 'v2024.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -113,7 +113,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'rst/*.rst']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
