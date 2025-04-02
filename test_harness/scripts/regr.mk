@@ -21,7 +21,7 @@ vek280_sd_card: package ${scripts}
 		--package.sd_file ${SERVER_PATH} \
 		--package.sd_file ${scripts} \
 		--temp_dir ${SD_CARD_PATH} \
-		${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa ${SERVER_PATH}/vek280_libadf.a
+		${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa ${TEMP_DIR}/libadf.a
 
 
 vck190_sd_card: package ${scripts}
@@ -30,7 +30,8 @@ vck190_sd_card: package ${scripts}
 		--package.sd_file ${PKG_DIR} \
 		--package.sd_file ${SERVER_PATH} \
 		--package.sd_file ${scripts} \
-		--temp_dir ${SD_CARD_PATH}
+		--temp_dir ${SD_CARD_PATH} \
+		${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa ${TEMP_DIR}/libadf.a
 
 sd_card: check_vitis ${SD_CARD_PATH}
 ifeq (${DEVICE}, vek280)
@@ -38,6 +39,9 @@ ifeq (${DEVICE}, vek280)
 else
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/regr.mk vck190_sd_card
 endif
+
+all: sd_card
+	echo "make all from regr.mk"
 
 ${scripts}:
 	echo "#!/bin/bash" > ${scripts}
