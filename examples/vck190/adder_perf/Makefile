@@ -98,7 +98,7 @@ ifeq ($(TARGET), hw)
 endif
 
 package: $(RUN_DEPS) ${PKG_DIR}
-	cp $^
+	cp -r $^
 
 # with the testing mode sepcified in ps/host.cpp
 all: check_vitis download_xsa package

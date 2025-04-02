@@ -13,6 +13,7 @@
 
 # Get the directory of the currently running script
 script_dir=$(dirname "$(readlink -f "$0")")
+export SERVER_ROOT=$script_dir
 
 # check if the environment variable XCL_EMULATION_MODE is defined
 if [ -z "$XCL_EMULATION_MODE" ]; then

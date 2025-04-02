@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
+# Copyright (C) 2024-2025 Advanced Micro Devices, Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 #
@@ -129,8 +129,7 @@ vck190_sd_card: check_vitis ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_sess
 		--temp_dir ${BUILD_DIR}
 	zip -j ${BUILD_DIR}/sd_card.img.zip ${BUILD_DIR}/sd_card.img
 	cp ${BUILD_DIR}/sd_card.img.zip ${SD_IMAGE_PATH}
-	cp ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh ${test_harness_server}  \
-		${test_harness_session} ${SERVER_FILE_PATH}
+	cp ${test_harness_server} ${test_harness_session} ${SERVER_FILE_PATH}
 
 vek280_sd_card: check_vitis ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
 									${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
@@ -146,8 +145,7 @@ vek280_sd_card: check_vitis ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_serv
 		${BUILD_DIR}/vek280_test_harness.xsa ${BUILD_DIR}/vek280_libadf.a
 	zip -j ${BUILD_DIR}/sd_card.img.zip ${BUILD_DIR}/sd_card.img
 	cp ${BUILD_DIR}/sd_card.img.zip ${SD_IMAGE_PATH}
-	cp ${BUILD_DIR}/vek280_test_harness.xclbin ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
-		${test_harness_server} ${test_harness_session} ${SERVER_FILE_PATH}
+	cp ${BUILD_DIR}/vek280_test_harness.xclbin ${test_harness_server} ${test_harness_session} ${BUILD_DIR}/vek280_libadf.a ${SERVER_FILE_PATH}
 
 clean:
 	rm -rf build_* *.log *.csv *.xcl *.xclbin *.xsa *.xo *.a *.img.zip

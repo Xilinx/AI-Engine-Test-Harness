@@ -1,5 +1,5 @@
 {
-    "name": "Adder Kernel", 
+    "name": "Channelizer Kernel", 
     "flow": "system",
     "platform_allowlist": [
         "vck190"

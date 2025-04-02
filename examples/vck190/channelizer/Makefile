@@ -63,7 +63,7 @@ endif
 HOST_EFL         	:= $(TEMP_DIR)/host_elf
 XCLBIN				:= $(TEMP_DIR)/vck190_test_harness.xclbin
 AIE_ADF				:= $(TEMP_DIR)/libadf.a
-RUN_DEPS 		   	:= $(HOST_EFL) ${XCLBIN} run_script.sh
+RUN_DEPS 		   	:= $(HOST_EFL) ${XCLBIN} run_script.sh ./data
 
 # pre_build & compilations
 ${PKG_DIR}:
@@ -95,7 +95,7 @@ ifeq ($(TARGET), hw)
 endif
 
 package: $(RUN_DEPS) ${PKG_DIR}
-	cp $^
+	cp -r $^
 
 all: check_vitis download_xsa package
 

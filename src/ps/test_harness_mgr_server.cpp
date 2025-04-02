@@ -95,7 +95,14 @@ void test_harness_mgr_server::init() {
         received_files.push_back(user_xclbin_path);
 
         if(this->device.compare("vek280") == 0) {
-            fs::path pl_xclbin_path = "/run/media/mmcblk0p1/vek280_test_harness.xclbin";
+            fs::path pl_xclbin_path;
+            // check if envrionment variable SERVER_ROOT is set
+            char* server_root = std::getenv("SERVER_ROOT");
+            if(server_root == nullptr) {
+                pl_xclbin_path = "/run/media/mmcblk0p1/vek280_test_harness.xclbin";
+            } else {
+                pl_xclbin_path = fs::path(server_root) / fs::path("vek280_test_harness.xclbin");
+            }
             fastObj = std::make_unique<fastXM>(device_index, pl_xclbin_path, user_xclbin_path, pl_kernel_names, graph_names);
         } else if (this->device.compare("vck190") == 0) {
             fastObj = std::make_unique<fastXM>(device_index, user_xclbin_path, pl_kernel_names, graph_names);

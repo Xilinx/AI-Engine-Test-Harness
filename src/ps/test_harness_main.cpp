@@ -21,6 +21,7 @@
  * Advanced Micro Devices, Inc.
  */
 
+#include <sys/types.h>
 #include <unistd.h>
 #include <cstdint>
 #include <iostream>
@@ -37,10 +38,11 @@ namespace fs = std::filesystem;
 using namespace test_harness;
 
 int main(int argc, char* argv[]) {    
-    assert(argc == 4 && "Usage: test_harness_server port timeout_in_seconds reset_flag");
+    assert(argc == 5 && "Usage: test_harness_server port timeout_in_seconds reset_flag max_num_sessions");
     uint16_t port = std::atoi(argv[1]);
     uint64_t timeout = std::atoi(argv[2]);
     bool reset = std::atoi(argv[3]);
+    uint64_t max_num_sessions = std::atoi(argv[4]);
 
     fs::path curExec = fs::path(argv[0]);
     fs::path newExec = fs::absolute(curExec.parent_path()) / fs::path("test_harness_session");
@@ -54,7 +56,7 @@ int main(int argc, char* argv[]) {
         testServer.setSessionExecPath(newExec);
         testServer.setResetFlag(reset);
         testServer.setTimeOut(timeout);
-        testServer.run();
+        testServer.run(max_num_sessions);
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         return -1;
@@ -148,8 +150,8 @@ void test_harness_main::runSession() {
     }
 }
 
-void test_harness_main::run() {
-    while(true) {
+void test_harness_main::run(uint64_t max_num_sessions) {
+    while(max_num_sessions == 0 || mSessionId < max_num_sessions) {
         auto pid = fork();
         if(pid == 0) {
             if(mResetFlag) system("xbutil reset --force");

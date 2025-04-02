@@ -1,3 +1,16 @@
+# MIT License
+#
+# Copyright (C) 2025 Advanced Micro Devices, Inc.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+# Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
+#
+
 CPU := arm
 include Makefile
 
@@ -45,8 +58,10 @@ all: sd_card
 
 ${scripts}:
 	echo "#!/bin/bash" > ${scripts}
-	echo "/mnt/media/mmcblk0p1/${DEVICE} && ./run_server.sh&" >> ${scripts}
-	echo "/mnt/media/mmcblk0p1/pkg.$(TARGET).${PLATFORM_NAME}.xpfm && ./run_script.sh" >> ${scripts}
+	echo "export SERVER_ROOT=/run/media/mmcblk0p1/${DEVICE}" >> ${scripts}
+	echo "/run/media/mmcblk0p1/${DEVICE}/test_harness_server 8080 60 1 1 &" >> ${scripts}
+	echo "sleep 5" >> ${scripts}
+	echo "cd /run/media/mmcblk0p1/${PKG_DIR} && ./run_script.sh" >> ${scripts}
 	chmod +x ${scripts}
 
 clean:

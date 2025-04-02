@@ -24,6 +24,7 @@
 #ifndef __TEST_HARNESS_MAIN_HPP__
 #define __TEST_HARNESS_MAIN_HPP__
 
+#include <sys/types.h>
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -40,7 +41,7 @@ class test_harness_main {
 public:
     test_harness_main(test_harness_server* server);
     ~test_harness_main() = default;
-    void run();
+    void run(uint64_t max_num_sessions);
 
     void setSessionExecPath(const fs::path& path);
     fs::path createSessionPath();

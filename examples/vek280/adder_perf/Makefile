@@ -101,7 +101,7 @@ ifeq ($(TARGET), hw)
 endif
 
 package: $(RUN_DEPS) ${PKG_DIR}
-	cp $^
+	cp -r $^
 
 all: check_vitis download_xsa package
 
