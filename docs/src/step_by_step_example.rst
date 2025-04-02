@@ -51,7 +51,7 @@ This section describes how to run the `examples/vck190/super-sampling-rate-fir/S
 
     git clone https://github.com/Xilinx/AI-Engine-Test-Harness.git
 
-#. Set up your environment to use the 2023.2 versions Vitis, XRT and the prebuilt Embedded SW Image for Versal. The :envvar:`XILINX_VITIS`, :envvar:`XILINX_XRT` and :envvar:`SDKTARGETSYSROOT` environment variables must be properly defined.
+#. Set up your environment to use the 2024.2 versions Vitis, XRT and the prebuilt Embedded SW Image for Versal. The :envvar:`XILINX_VITIS`, :envvar:`XILINX_XRT` and :envvar:`SDKTARGETSYSROOT` environment variables must be properly defined.
 
 #. Set up your environment to use the test harness, and navigate to the desired example folder::
 
