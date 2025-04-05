@@ -25,7 +25,7 @@ SD_CARD_PATH := ./package_hw
 ${SD_CARD_PATH}:
 	mkdir -p ${SD_CARD_PATH}
 
-scripts := ${SD_CARD_PATH}/run_all.sh
+scripts := ${SD_CARD_PATH}/run_script.sh
 
 vek280_sd_card: package ${scripts}
 	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${SD_CARD_PATH} \
