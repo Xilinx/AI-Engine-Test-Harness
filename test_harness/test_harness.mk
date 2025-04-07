@@ -148,6 +148,6 @@ vek280_sd_card: check_vitis ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_serv
 	cp ${BUILD_DIR}/vek280_test_harness.xclbin ${test_harness_server} ${test_harness_session} ${BUILD_DIR}/vek280_libadf.a ${SERVER_FILE_PATH}
 
 clean:
-	rm -rf build_* *.log *.csv *.xcl *.xclbin *.xsa *.xo *.a *.img.zip
-	rm -rf AIECompiler.log Map_Report.csv ./Work* _x sol.db v++*log xcd.log _x .Xil temp .crashReporter/ .ipcache/
-	rm -rf ${TEST_HARNESS_REPO_PATH}/bin/*
+	rm -rf build_* *.log *.csv *.xcl *.xclbin *.xsa *.xo *.a *.img.zip \
+		AIECompiler.log Map_Report.csv ./Work* _x sol.db v++*log xcd.log _x .Xil temp .crashReporter/ .ipcache/ \
+		${TEST_HARNESS_REPO_PATH}/bin/*.{xsa,tar.gz,img.zip} ${TEST_HARNESS_REPO_PATH}/bin/server/

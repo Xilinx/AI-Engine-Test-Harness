@@ -25,7 +25,7 @@ SD_CARD_PATH := ./package_hw
 ${SD_CARD_PATH}:
 	mkdir -p ${SD_CARD_PATH}
 
-scripts := ${SD_CARD_PATH}/run_all.sh
+scripts := ${SD_CARD_PATH}/run_script.sh
 
 vek280_sd_card: package ${scripts}
 	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${SD_CARD_PATH} \
@@ -34,7 +34,7 @@ vek280_sd_card: package ${scripts}
 		--package.sd_file ${SERVER_PATH} \
 		--package.sd_file ${scripts} \
 		--temp_dir ${SD_CARD_PATH} \
-		${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa ${TEMP_DIR}/libadf.a
+		${TEST_HARNESS_REPO_PATH}/bin/vek280_test_harness.xsa ${SERVER_PATH}/vek280_libadf.a
 
 
 vck190_sd_card: package ${scripts}
@@ -43,8 +43,7 @@ vck190_sd_card: package ${scripts}
 		--package.sd_file ${PKG_DIR} \
 		--package.sd_file ${SERVER_PATH} \
 		--package.sd_file ${scripts} \
-		--temp_dir ${SD_CARD_PATH} \
-		${TEST_HARNESS_REPO_PATH}/bin/vck190_test_harness.xsa ${TEMP_DIR}/libadf.a
+		--temp_dir ${SD_CARD_PATH}
 
 sd_card: check_vitis ${SD_CARD_PATH}
 ifeq (${DEVICE}, vek280)
