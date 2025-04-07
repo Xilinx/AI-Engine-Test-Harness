@@ -22,6 +22,29 @@
 Using the Test Harness
 **********************
 
+Delopying Pre-built SD Card on the Board
+=================
+
+The test harness server has been built already for deploying on the VCK190 or VEK280 board. You can download the pre-built image by :
+
+.. code-block:: shell
+
+    cd bin
+    source download.sh
+    tar xzvf vck190_sd_card.img.zip
+    <or>
+    tar xzvf vek280_sd_card.img.zip
+
+Burn and boot with the ``sd_card.img``. In the board, get the IP address and launch the server by:
+
+.. code-block:: shell
+
+    ifconfig
+    cd /run/media/mmcblk0p1
+    ./run_server.sh
+
+Note that by default, if there's no data transaction between the server and client for 60 seconds, the server will kill the current connection and wait for new connections. If longer waiting time for the transaction is needed, you can edit ``run_server.sh`` and then launch it.
+
 Environment Setup
 =================
 
@@ -36,7 +59,9 @@ You should also ensure that Vitis, XRT, Versal ``SDKTARGETSYSROOT``, and ``LD_LI
 
     source <test harness repo root folder>/setup.sh
     export LD_LIBRARY_PATH=<your gcc installation>/lib64:$LD_LIBRARY_PATH
-
+    Set up your ROOTFS and IMAGE to point to the rootfs.ext4 and Image files located in the /Common Images Dir/xilinx-versal-common-v2024.2 directory
+    Set up your PLATFORM_REPO_PATHS environment variable to $XILINX_VITIS/base_platforms
+	
 Instrumenting the AI Engine Graph
 =================================
 
@@ -72,112 +97,55 @@ These are the **ONLY** valid PLIOs to be built with the test harness.
     pl_in1 = input_plio::create("PLIO_02_TO_AIE"   , adf::plio_128_bits, "DataIn1.txt");
     pl_out = output_plio::create("PLIO_01_FROM_AIE", adf::plio_128_bits, "DataOut0.txt");
 
-Occupying unused PLIOs
------------------------
-
-All the PLIO ports defined in the test harness must be connected. 
-In case the AIE graph does not need all the PLIOs defined in the test harness, 
-an instance of the ``test_harness::occupyUnusedPLIO`` helper class must be added to the ``graph.cpp`` file. 
-This class will help user to occupy all the PLIOs which are not used by the user AIE graph. 
-
-.. code-block:: c++
-
-   template <int used_in_plio, int used_out_plio, int max_num_plio>
-   class occupyUnusedPLIO;
-
-   template <int used_in_plio, int used_out_plio, int max_num_plio>
-   occupyUnusedPLIO::occupyUnusedPLIO(std::vector<std::string> used_in_plio_names,  std::vector<std::string> used_out_plio_names);
-
-
-**Templates**
-
-``used_in_plio``
-  The number of input PLIOs used in the AIE graph 
-
-``used_out_plio`` 
-  The number of output PLIOs used in the AIE graph
-
-``max_num_plio``
-  Maximum number of PLIOs pre-defined in XSA (36 for VCK190, 16 for VEK280)
-
-
-**Parameters**
-
-``used_in_plio_names`` 
-  Vector of strings containing the names of the input PLIOs used by the AIE graph. 
-  The length of the vector must match the value of the ``used_in_plio`` template argument
-
-``used_out_plio_names`` 
-  Vector of strings containing the names of the output PLIOs used by the AIE graph. 
-  The length of the vector must match the value of the ``used_out_plio`` template argument
-
-
-**Example**
-
-.. code-block:: c++
-
-    #include "test_harness_graph.hpp"
-
-    static std::vector<std::string> cust_in = {"PLIO_01_TO_AIE", "PLIO_02_TO_AIE"};
-    static std::vector<std::string> cust_out = {"PLIO_01_FROM_AIE"};
-    test_harness::occupyUnusedPLIO<2, 1, 36> unusedPLIOs(cust_in, cust_out);
-
-
 Creating the SW Application
 ===========================
 
-A SW application running on the embedded ARM core (PS) of the Versal is necessary to run the test. 
+A SW application running on the client server (x86) or embedded ARM core (PS) of the Versal is necessary to run the test. 
 This SW application must be developped using the :ref:`test harness software APIs <sw_apis>`.
 
-The application usually ressembles the structure and contents of ``graph.cpp`` file used in x86sim and AIEsim. 
-The main difference is that a different set of APIs is used to transfer data and interact with the AIE graph.
-
 For additional details, refer to the :ref:`step by step example <ps_app>` section in this documentation, 
-or the example provided in this repo, such as :url_to_repo:`examples/vck190/adder/ps/host.cpp`.
+or the example provided in this repo, such as :url_to_repo:`examples/vck190/adder_perf/ps/host.cpp`.
 
 Testing on Hardware
 ===================
 
-Once the AIE graph has been modified and the SW application has been created, the test can be built and run on the hardware board.
+Once the AIE graph has been modified and the SW application has been created, the test can be built and run with connection to the server on the board.
 
 Building the test application is done in three simple steps:
 
 1. Building the AIE graph
 2. Building the SW application
-3. Packaging the libadf.a, host_elf and other files to create a bootable SD card image
+3. Packaging the libadf.a, host_elf and other files to create a run directory.
 
 
 Building the AI Engine Graph
 ----------------------------
 
 To build the libadf.a for use with the test harness, 
-it must be compiled using the desired prebuilt XSA as the input platform, 
-with the ``hw`` target, and setting the ``--event-trace`` and ``--event-trace-port`` options as shown below:
+it must be compiled using the desired prebuilt XSA as the input platform, with the ``hw`` target.
 
-The prebuilt XSAs are ``vck190_test_harness_func.xsa`` for functional testing on VCK190, 
-``vck190_test_harness_perf.xsa`` for performance testing on VCK190 and ``vek280_test_harness.xsa`` for performance testing on VEK280.
+The prebuilt XSAs are ``vck190_test_harness.xsa`` for VCK190 and ``vek280_test_harness.xsa`` for VEK280.
 
 .. code-block:: shell
 
-    v++ -c --mode aie --platform=${TEST_HARNESS_REPO_PATH}/bin/<vck190_test_harness_func.xsa/vck190_test_harness_perf.xsa/vek280_test_harness.xsa>
+    v++ -c --mode aie --platform=${TEST_HARNESS_REPO_PATH}/bin/<vck190_test_harness.xsa/vek280_test_harness.xsa>
                       --target=hw 
                       --aie.event-trace runtime 
                       --aie.event-trace-port gmio 
-                      --I ${TEST_HARNESS_REPO_PATH}/include/
-                      [other user options]
+                      --I ${TEST_HARNESS_REPO_PATH}/include/aie
+                      [other options]
 
 
 Building the SW Application
 ---------------------------
 
-The SW application must be compiled with the ARM cross-compiler and using the Xilinx Runtime (XRT) libraries.
+The SW application by default is compiled for x86 server. Here, ``CXX`` points to ``g++``:
 
 .. code-block:: shell
 
-    source <path to Versal common image>/environment-setup-cortexa72-cortexa53-xilinx-linux
+    ${CXX} -o $(TEMP_DIR)/host_elf ps/host.cpp ${HOST_CONFIG_FLAGS} -I${TEST_HARNESS_REPO_PATH}/include/ps
 
-    ${CXX} test.cpp -c -I${XILINX_XRT}/include -I${TEST_HARNESS_REPO_PATH}/include -o test.o
-    ${CXX} test.o -lxrt_coreutil -L${XILINX_XRT}/lib -o host_elf
+It can also be compiled with the ARM cross-compiler and using the similar command as above. Here, ``CXX`` points to the arm cross compiler ``aarch64-linux-gnu-g++``.
 
 
 Packaging the Test
@@ -190,96 +158,92 @@ The AIE test harness includes utility scripts which can be used to package the t
 
 .. code-block:: shell
 
-   test_harness/package_<vck190/vek280>_hw.sh <output dir>
-                                              <func_libadf.a> 
-                                              <perf_libadf.a>
-                                              <host_elf> 
-                                              <other files needed by the test>
+   v++ -p -t ${TARGET} -f ${TEST_HARNESS_PLATFORM} -o ${XCLBIN} $(TEST_HARNESS_XSA) ${AIE_ADF} \
+        --package.defer_aie_run \
+        --advanced.param package.enableAiePartitionDrc=0 \
+        --package.out_dir ${TEMP_DIR}
 
 **VEK280**
 
 .. code-block:: shell
 
-   test_harness/package_<vck190/vek280>_hw.sh <output dir>
-                                              <perf_libadf.a>
-                                              <host_elf> 
-                                              <other files needed by the test>
+   v++ -p -t ${TARGET} -f ${TEST_HARNESS_PLATFORM} -o ${XCLBIN} $(TEST_HARNESS_XSA) ${AIE_ADF} \
+        --config ${TEST_HARNESS_REPO_PATH}/cfg/package_aie_only.cfg \
+        --package.defer_aie_run \
+        --advanced.param package.enableAiePartitionDrc=0 \
+        --package.out_dir ${TEMP_DIR}
 
 
-**Parameters**
+Launching Client Application and Getting Performance Result
+===============
 
-``<output dir>``
-  The folder in which the output of the packaging script and the bootable SD card image should be generated.
-
-``<func_libadf.a>``
-  The libadf.a resulting from compiling the AIE graph with the pre-compiled .xsa for functional testing (vck190_test_harness_func.xsa).
-
-``<perf_libadf.a>``
-  The libadf.a resulting from compiling the AIE graph with the pre-compiled .xsa for performance testing (vck190_test_harness_perf.xsa or vek280_test_harness.xsa).
-
-``<host_elf>``
-  The executable resulting from building the SW application.
-
-``<other files needed by the test>``
-  A list of other files needed by the test and to be packaged in the SD card image. This can be for instance input data files required by the test application and the running script for executing the application test.
-
-
-Software Emulation (VCK190 only)
-================================
-
-The AIE test harness also provides support for packaging and running the test in the software emulation mode for VCK190.
-
-In the software emulation mode, the AIE graph is compiled for x86sim and the SW application is compiled using the native compiler of the host system. 
-
-This mode allows testing the SW application and making sure that it works correctly before running the test on hardware.
-
-.. rubric:: Building the AI Engine Graph
-
-Building the AIE graph for software emulation is similar to building it for HW, except that the ``x86sim`` target should be used:
+After completing the client packaging, it's ready to connect to the server on the board and get the functional and performance results. First it needs to set the server IP port and then launch the application. Then the execution result will be transferred back to the client server and the throughputs of the ports are reported. The commands to be used:
 
 .. code-block:: shell
 
-    v++ -c --mode aie --platform=${TEST_HARNESS_REPO_PATH}/bin/<vck190_test_harness_func.xsa/vck190_test_harness_perf.xsa>
-                      --target=x86sim 
-                      --aie.event-trace runtime 
-                      --aie.event-trace-port gmio 
-                      --I ${TEST_HARNESS_REPO_PATH}/include/                
-                      [other user options]
+   export SERVER_IP_PORT=<IP Address of the board>:8080
+   ./host_elf <XCLBIN Name> <Other Options>
 
+Building the Matlab APIs
+===============
 
-.. rubric:: Building the SW Application
-
-Building the SW application for software emulation is similar to building it for HW, except that the native g++ compiler should be used:
+The Matlab APIs can be built as needed by:
 
 .. code-block:: shell
 
-    g++ test.cpp -c -I${XILINX_XRT}/include -I${TEST_HARNESS_REPO_PATH}/include -o test.o
-    g++ test.o -lxrt_coreutil -L${XILINX_XRT}/lib -o host_elf
+   cd test_harness
+   make matlab
 
+Building the Python APIs
+===============
 
-.. rubric:: Packaging the Test
-
-Packaging the test for software emulation is similar to packaging it for HW, except that the package_sw_emu.sh script should be used:
-
-.. code-block:: shell
-
-   test_harness/package_sw_emu.sh <output dir> 
-                                  <func_libadf.a> 
-                                  <perf_libadf.a>
-                                  <host_elf> 
-                                  <other files needed by the test>
-
-
-.. rubric:: Running SW emulation
-
-To run the test in software emulation mode, first set the ``XCL_EMULATION_MODE`` variable to ``sw_emu`` before running the natively compiled test application:
+The python APIs can built as needed by:
 
 .. code-block:: shell
 
-   cd <sw emu output dir>
-   export XCL_EMULATION_MODE=sw_emu 
-   ./host_elf <optional args>
+   cd test_harness
+   pip install -r requirements.txt
+   make python
 
+Debuggability
+===============
+
+Event Trace
+---------------
+
+Event trace can help analyze the performance bottleneck in HW. It can be enabled by adding the ``xrt.ini`` file in the client server, and then launch the application. The event trace results will be transferred back to the client after it's running on the board. An example ``xrt.ini`` file:
+
+.. code-block:: c++
+
+   [Debug]
+   aie_trace=true
+   [AIE_trace_settings]
+   buffer_size=100M
+   graph_based_aie_tile_metrics=all:all:all_stalls
+
+AIE Status Report
+---------------
+
+When design hangs, the AIE status report can be used to get an visual overview of the AIE status in Vitis Analysis View. This helps analyze where is the cause of the hang. To enable the status report, it needs to set a timeout value in host code (for example: ``ps/host.cpp``) to ensure the application exits normally:
+
+.. code-block:: c++
+
+    mgr.waitForRes(1000); //Here, set the timeout to 1000us
+   
+And then add ``xrt.ini`` in the application directory before lauching. The example ``xrt.ini``:
+
+.. code-block:: c++
+
+   [Debug]
+   aie_status=true
+   aie_status_interval_us=1000 
+	
+Launch the application. After it finishes, open the summary in Vitis:
+
+.. code-block:: shell
+
+   vitis -a xrt.run_summary
+   
 
 Troubleshooting
 ===============
@@ -290,20 +254,6 @@ AIE Compilation
 **Issue:** The following error message is seen when compiling the AIE graph with the test harness XSA: ``ERROR: [aiecompiler 77-4252] For application port with annotation 'PLIO_01_TO_AIE' the buswidth is 32-bits, which is different than the buswidth of 128-bits as specified in incoming logical architecture``
 
 - The width of the PLIOs in the prebuilt XSA is set to 128 bits. The PLIO widths in the AIE graph must match with the XSA. Set all PLIO width in the graph to ``adf::plio_128_bits``.
-
-
-**Issue:** The following error message is seen when compiling the AIE graph with the test harness XSA: ``ERROR: [aiecompiler 77-295] Cannot find port instance tf0_pi0 corresponding to Logical Arch Port M00_AXI``
-
-- The ``--aie.event-trace runtime --aie.event-trace-port gmio`` options are missing for the ``v++ -c --mode aie`` command
-
-
-AIE Simulation
---------------
-
-**Issue:** The following error message is seen when running x86sim or AIEsim after modifying the graph to work with the test harness: ``Error: Could not open input file : ./data/dummy.txt``
-
-- The unused PLIOs are expecting an input data file called ``./data/dummy.txt``. Create an empty file with this name and in this folder, then rerun x86sim or AIEsim.
-
 
 HW Testing
 ----------
