@@ -22,70 +22,65 @@
 Step by Step Example
 ********************
 
-This repository includes `5 examples <https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/examples/vck190>`_ from the `Vitis Tutorials <https://github.com/Xilinx/Vitis-Tutorials>`_ and 4 individual user examples to demonstrate how to use the test harness on VCK190 and `1 example <https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/examples/vek280>`_ from the `Vitis Accelerated Libraries <https://github.com/Xilinx/Vitis_Libraries>`_ to use the test harness on VEK280 to test the AIE graph on a hardware board. 
+This step by step example takes a reference design ``examples/vck190/adder_perf`` and shows the commands to build and launch. And the example output is also shown. 
+The code specific to test harness features is explained. The commands and code can be easily extended to other examples and user own designs.
 
-All these examples include a standard Makefile which supports the following actions:
-
-- Building the example for SW emulation (VCK190 only) and HW, respectively::
-
-    make package TARGET=sw_emu
-    make package TARGET=hw
-
-- Simulating the example in x86sim, AIEsim, and SW emulation (VCK190 only), respectively::
-
-    make run TARGET=x86sim
-    make run TARGET=aiesim
-    make run TARGET=sw_emu
-
-- Clean all files::
-
-    make cleanall
-
-
-Running an Example
+Launching the Server Session
 ==================
 
-This section describes how to run the `examples/vck190/super-sampling-rate-fir/SingleKernel <https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/examples/vck190/super-sampling-rate-fir/SingleKernel>`_ example. The same steps apply to all other examples included in the repository.
+Burn and boot with the ``bin/sd_card.img``. In the board, get the IP address and launch the server by::
 
-#. If not already done, install the AIE Test Harness::
-
-    git clone https://github.com/Xilinx/AI-Engine-Test-Harness.git
-
-#. Set up your environment to use the 2024.2 versions Vitis, XRT and the prebuilt Embedded SW Image for Versal. The :envvar:`XILINX_VITIS`, :envvar:`XILINX_XRT` and :envvar:`SDKTARGETSYSROOT` environment variables must be properly defined.
-
-#. Set up your environment to use the test harness, and navigate to the desired example folder::
-
-    cd AI-Engine-Test-Harness
-    source setup.sh
-    cd examples/vck190/super-sampling-rate-fir/SingleKernel
-
-#. Run the example in SW emulation mode::
-
-    make cleanall run TARGET=sw_emu
-
-#. Package the example to run on the VCK190 board::
-
-    make cleanall package TARGET=hw
-
-#. Flash the :file:`sd_card.img` file located in the :file:`package.hw.<shell name>` folder on a SD card. On Windows, use the `Balena Etcher <https://etcher.balena.io/#download-etcher>`_ tool to flash the card. On Linux, use the ``dd`` command.
-
-#. Using a client such as `PuTTY <https://www.putty.org/>`_, connect to the VCK190 board using the correct USB Serial Port. Use speed 115200.
-
-#. Insert the SD card in card reader on the VCK190 board, and turn on the power switch. NOTE: Make sure that the SW1 DIP switch on the VCK190 board is set to [1110] to boot from the SD card.
-
-#. After the boot sequence is completed, login using username: petalinux and password: petalinux
-
-#. Run the application as shown below, using petalinux as the root password. The test application transfers data to the AIE graph and reports the number of clock cycles needed to send or receive data for each PLIO. Upon successfull completion of the test, the run script will finish with a “TEST PASSED” message::
-
+    <log in Linux with username / passwd: petalinux / petalinux>
     sudo su
-    cd /run/media/mmcblk0p1/
-    source ./run_script.sh
+    cd /run/media/mmcblk0p1
+	ifconfig
+    ./run_server.sh
 
+Note that the IP address of the board will be used by client server.
+
+Running an Example in Client Server
+==================
+
+Note: Setup the environment first before launching the commands. It can be referred to :ref:`Using the Test Harness <using_the_harness>`
+The examples have Makefile ready for building and launching::
+
+    cd examples/vck190/adder_perf
+    make all
+    make run
+
+Example Output
+==================
+
+Here's the example output::
+
+    Using XCLBIN file: vck190_test_harness.xclbin
+    Running example ADDER
+     - Number of graph iterations         :     1000
+     - Number of values                   :  1024000 (4000KB)
+     - Number of repetitions              :        1
+     - Number of graph iterations (total) :     1000
+     - Channel delay                      :        0 cycles
+    [2025-**-** 15:16:21] [INFO] Initializing the test harness manager.
+    [2025-**-** 15:16:21] [INFO] Connecting to the test harness manager server at 172.16.75.168:8080
+    Testing mode: PERF_MODE
+    [2025-**-** 15:16:30] [INFO] Running the AIE graph.
+    [2025-**-** 15:16:31] [INFO] Running the test harness.
+    [2025-**-** 15:16:31] [INFO] Waiting for the result.
+    [2025-**-** 15:16:36] [INFO] PLIO_1_TO_AIE send the first data at cycle[0], ends at cycle[303949], and the throughputs is 4016.14 MBps.
+    
+    [2025-**-** 15:16:36] [INFO] PLIO_1_FROM_AIE received the first data at cycle[631], ends at cycle[304630], and the throughputs is 4015.48 MBps.
+    
+    [INFO]: Result checking is not valid if test size is beyond the capacity of URAM in each channel.
+    TEST PASSED
+    [2025-**-** 15:16:36] [INFO] Destroying the test harness manager.
+    INFO: TEST PASSED, RC=0
+
+Here, the throughput of every port is reported.
 
 Understanding the Example
 =========================
 
-This section describes the source code changes made to run the :url_to_repo:`examples/vck190/super-sampling-rate-fir/SingleKernel` example with the AIE Test Harness.
+This section describes the source code specific to AIE test harness requirements.
 
 For additional details on the steps described below, refer to the documentation about :ref:`Using the Test Harness <using_the_harness>` and about the :ref:`Software APIs <sw_apis>`.
 
@@ -93,55 +88,53 @@ For additional details on the steps described below, refer to the documentation 
 Test Harness PLIOs
 ------------------
 
-This example uses 1 input PLIO and 1 output PLIO. The width of each PLIO is set 128 bits, as required by the test harness. We chose PLIO ``PLIO_01_TO_AIE`` to send data to the AI-Engine and PLIO ``PLIO_02_FROM_AIE`` to receive data from the AI-Engine. As explained in the section about :ref:`Placement of PLIOs <plio_placement>`, the PLIO names indicate the generic name and direction of each PLIO. All valid PLIO names can be found in :url_to_repo:`include/test_harness_port_name.hpp`.
+This example uses 2 input PLIO and 1 output PLIO. The width of each PLIO is set 128 bits, as required by the test harness. We chose PLIO ``PLIO_01_TO_AIE`` and ``PLIO_03_TO_AIE`` to send data to the AI-Engine and PLIO ``PLIO_02_FROM_AIE`` to receive data from the AI-Engine. As explained in the section about :ref:`Placement of PLIOs <plio_placement>`, the PLIO names indicate the generic name and direction of each PLIO. All valid PLIO names can be found in :url_to_repo:`include/test_harness_port_name.hpp`.
 
 .. code-block:: c++
 
-    TopGraph() {
-        input_plio plin = input_plio::create("PLIO_01_TO_AIE", plio_128_bits, "data/PhaseIn_0.txt", 250);
-        output_plio plout = output_plio::create("PLIO_02_FROM_AIE", plio_128_bits, "data/Output_0.txt", 250);
-        connect<>(plin.out[0], G1.in);
-        connect<>(G1.out, plout.in[0]);
+    test_graph() {
+        pl_in0 = input_plio::create("PLIO_01_TO_AIE", adf::plio_128_bits, "data/DataIn0.txt");
+        pl_in1 = input_plio::create("PLIO_03_TO_AIE", adf::plio_128_bits, "data/DataIn1.txt");
+        pl_out = output_plio::create("PLIO_02_FROM_AIE", adf::plio_128_bits, "data/DataOut0.txt");
     }
-
-Unused PLIOs
-------------
-
-Because this example does not use up the available PLIOs implemented in the test harness, we need to put an additional dummy graph to occupy all unused PLIOs. For this purpose, the ``occupyUnusedPLIO`` helper class is instantiated in the :url_to_repo:`examples/vck190/super-sampling-rate-fir/SingleKernel/aie/graph.cpp` file. The template parameters indicate number of used input and output PLIOs, and the constructor parameters indicate the names of used input and output PLIOs.
-
-.. code-block:: c++
-
-    static std::vector<std::string> cust_in = {"PLIO_01_TO_AIE"};
-    static std::vector<std::string> cust_out = {"PLIO_02_FROM_AIE"};
-    TopGraph G;
-    vck190_test_harness::occupyUnusedPLIO<1, 1, 36> dummyGraph(cust_in, cust_out);
 
 .. _ps_app:
 
 SW Application
 --------------
 
-A SW application running on the embedded ARM core of the Versal is necessary to run the test on HW with AIE test harness. The source code for this application is provided in the :url_to_repo:`examples/vck190/super-sampling-rate-fir/SingleKernel/ps/host.cpp` file. The application must be developed using the :ref:`test harness software APIs <sw_apis>`.
+A SW application running on the client server is necessary to run the test with AIE test harness. The source code for this application is provided in the :url_to_repo:`examples/vck190/adder_perf/ps/host.cpp` file. The application must be developed using the :ref:`test harness software APIs <sw_apis>`.
 
 .. code-block:: c++
 
-    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"G"});
+    test_harness_mgr_client mgr(xclbin_path, {"gr"}, "vck190");
+    // configuration: channel index, size_in_bytes, repetition, delay, pointer to data
     std::vector<test_harness_args> args;
-    args.push_back({channel_index(PLIO_01_TO_AIE), in_sz, 4, 0, (char*)in_data[0]});
-    args.push_back({channel_index(PLIO_02_FROM_AIE), out_sz, 4, 0, (char*)out_data[0]});
-    mgr.runAIEGraph(0, 4);
-    mgr.runTestHarness(args);
-    mgr.waitForRes(10000);
-    bool is_valid = mgr.result_valid;
+    args.push_back({channel_index(PLIO_01_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)a.data()});
+    args.push_back({channel_index(PLIO_03_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)b.data()});
+    args.push_back({channel_index(PLIO_02_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)s.data()});
+    std::vector<test_harness::TestMode> modes = {FUNC_MODE, PERF_MODE};
+    for(auto mode : modes) {
+        mgr.runAIEGraph(0, num_iterations * num_repetitions); //0=graph index in the xclbin, 
+        // Start the DMA engine
+        mgr.runTestHarness(mode, args);
+       // Wait for all DMA transactions and for the AIE graph to finish.
+       // The argument is an optional timeout (in millisecond) for the AIE graph.
+        mgr.waitForRes(0); //0=Wait for completion
+        mgr.printPerf();
+        auto is_valid = mgr.isResultValid();
+        ......
+    }
 
-The application needs one instance of the :cpp:class:`test_harness_mgr` class. The name of the PL kernel that is pre-compiled in the XSA, the testing mode, and the device type  will be automatically derived from the encoded name of ``xclbin_path``, the argument ``{"G"}`` is a vector of string with the name of the graph instantiated in the ``graph.cpp`` file. If any incorrect argument is provided, the application will report an error during runtime.
+The application needs one instance of the :cpp:class:`test_harness_mgr_client` class. The name of the PL kernel that is pre-compiled in the XSA. The ``xclbin_path`` specifies the XCLBIN file. The argument ``{"gr"}`` is a vector of string with the name of the graph instantiated in the ``graph.cpp`` file.  The argument ``"vck190"`` specifies the board to be used.
 
 Then, a vector of :cpp:class:`test_harness_args` is created to configure the DMA channels associated with each PLIO used by the AIE graph.
-As seen in step #1, the input of the graph is mapped to PLIO ``PLIO_01_TO_AIE``, and the output is mapped to ``PLIO_02_FROM_AIE``. The :cpp:enum:`channel_index` member of the :cpp:class:`test_harness_args` descriptors must be set accordingly in the SW application.
-The replay count of the :cpp:class:`test_harness_args` are set to 4. This programs the test harness to issue the input data 4 times and to expect 4x the output data.
+As seen in step #1, the inputs of the graph are mapped to PLIO ``PLIO_01_TO_AIE`` and ``PLIO_03_TO_AIE``, and the output is mapped to ``PLIO_02_FROM_AIE``. We know how many bytes or samples that each iteration of graph ``gr`` consumes or produces. The :cpp:enum:`channel_index` member of the :cpp:class:`test_harness_args` descriptors must be set accordingly in the SW application.
 
-After the test is configured, the graph is started with the :cpp:func:`test_harness_mgr::runAIEGraph` API. We know that each iteration of graph ``G`` consumes ``in_sz`` bytes of data and emits ``out_sz`` bytes of data. Since we programmed the test harness to replay the data transfer 4 times, the graph will be run for 4 iterations to ensure that the data sizes match between the test harness and the AIE graph.
+The replay count of the :cpp:class:`test_harness_args` are set to ``num_repetitions``. This programs the test harness to issue the input data ``num_repetitions`` times and to expect ``num_repetitions`` times the output data. Note that only one repetition count is supported in functional mode.
 
-The test harness is started with the :cpp:func:`test_harness_mgr::runTestHarness` API. Starting the harness **AFTER** the graph is necessary to ensure accurate measurement of DMA channel latencies.
+After the test is configured, the graph is started with the :cpp:func:`test_harness_mgr_client::runAIEGraph` API. 
 
-Then, use :cpp:func:`test_harness_mgr::waitForRes` API to wait for the finish of the data transfer, and get the validity of the result by getting the boolean value of the :cpp:func:`test_harness_mgr::result_valid`.
+The test harness is started with the :cpp:func:`test_harness_mgr_client::runTestHarness` API. Starting the harness **AFTER** the graph is necessary to ensure accurate measurement of DMA channel latencies.
+
+Then, use :cpp:func:`test_harness_mgr_client::waitForRes` API to wait for the finish of the data transfer, and get the validity of the result by getting the boolean value of the :cpp:func:`test_harness_mgr_client::result_valid`.

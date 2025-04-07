@@ -40,7 +40,7 @@ do
         rm -rf $exec_path
         mkdir -p $exec_path
         cd $exec_path
-        $pwd/test_harness_server $port 60 1 2>&1 | tee -a $pwd/server_log.txt
+        $pwd/test_harness_server $port 60 1 0 2>&1 | tee -a $pwd/server_log.txt
         echo "Server crashed, restarting in 30 seconds"
         sleep 30
 done
