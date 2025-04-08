@@ -77,17 +77,6 @@ The designers only need to prepare the following three items for each test:
 #### AIE Graph Example
 ``` C++
 
-// adder.cc
-void aie_adder(input_stream_int32* in0, input_stream_int32* in1, output_stream_int32* out) {
-    for (int i = 0; i < KERNEL_LOOP_ITERS; i++)
-        chess_prepare_for_pipelining chess_loop_range(KERNEL_LOOP_ITERS, KERNEL_LOOP_ITERS) {
-            v4int32 a = readincr_v4(in0);
-            v4int32 b = readincr_v4(in1);
-            v4int32 c = operator+(a, b);
-            writeincr_v4(out, c);
-        }
-}
-
 // graph.h
 class test_graph : public graph {
    private:
@@ -160,6 +149,21 @@ def main(args):
         # result verification
         ...
 ```
+
+## Examples
+Following are examples that provided for your references:
+
+| Example                                                 | Language | Board  | External Reference                                                                                                 |
+|---------------------------------------------------------|----------|--------|----------------------------------------------------------------------------------------------------------------------|
+| [adder_perf](examples/vck190/adder_perf/)               | C++      | vck190 |                                                                                                                      |
+| [channelizer](examples/vck190/channelizer/)             | C++      | vck190 | [Channelizer Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE/Design_Tutorials/04-Polyphase-Channelizer) |
+| [testcase_dmafifo_opt](examples/vck190/testcase_dmafifo_opt/) | C++      | vck190 | [AIE Performance Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE/Feature_Tutorials/13-aie-performance-analysis) |
+| [adder_perf](examples/vek280/adder_perf/)               | C++      | vek280 |                                                                                                                      |
+| [normalization_v2](examples/vek280/normalization_v2/)   | C++      | vek280 | [AIE-ML Performance Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE-ML/Feature_Tutorials/13-aie-ml-performance-analysis) |
+| [adder](examples/matlab/vck190/adder/)                  | MATLAB   | vck190 |                                                                                                                      |
+| [adder](examples/python/vck190/adder/)                  | Python   | vck190 |                                                                                                                      |
+
+Note: The examples may not be updated to the newest as the external reference.
 
 ## License
 
