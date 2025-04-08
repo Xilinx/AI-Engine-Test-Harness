@@ -119,7 +119,7 @@ ${BUILD_DIR}/vek280_test_harness.xclbin: ${BUILD_DIR}/vek280_test_harness.xsa
 	v++ -p -o $@ $^ ${TEST_HARNESS_PACKAGE_FLAGS}
 
 ####################### PAKCAGING  ###########################
-vck190_sd_card: check_vitis ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_session} ${test_harness_server} \
+vck190_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_session} ${test_harness_server} \
 								${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh
 	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} \
 		--package.rootfs ${ROOTFS} --package.kernel_image ${IMAGE} --package.boot_mode=sd --package.image_format=ext4 \
@@ -131,7 +131,7 @@ vck190_sd_card: check_vitis ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_sess
 	cp ${BUILD_DIR}/sd_card.img.zip ${SD_IMAGE_PATH}
 	cp ${test_harness_server} ${test_harness_session} ${SERVER_FILE_PATH}
 
-vek280_sd_card: check_vitis ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
+vek280_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
 									${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
 									${BUILD_DIR}/vek280_test_harness.xclbin ${BUILD_DIR}/vek280_libadf.a \
 									${BUILD_DIR}/vek280_test_harness.xsa

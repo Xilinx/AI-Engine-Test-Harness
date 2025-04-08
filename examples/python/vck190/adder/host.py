@@ -74,7 +74,7 @@ def default(args):
         print(f"The delay between PLIO_01_TO_AIE and PLIO_02_FROM_AIE is {delay} clock cycles.")
 
         if mgr.isResultValid():
-            if res != ref:
+            if (res != ref).any():
                 print("ERROR: a + b != res")
                 sys.exit(1)
         elif mode is test_mode.FUNC_MODE:
@@ -117,7 +117,7 @@ def pipelined(args):
         mgr.runTestHarness(test_mode.FUNC_MODE, fargs)
 
     mgr.waitForRes()
-    if res != ref:
+    if (res != ref).any():
         print("ERROR: a + b != res")
         sys.exit(1)
     print("INFO: Function mode test passed")

@@ -12,5 +12,5 @@
 #
 
 [vivado]
-impl.jobs=2
-impl.strategies=All
+impl.jobs=1
+# impl.strategies=All
