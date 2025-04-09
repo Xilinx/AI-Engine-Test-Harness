@@ -1,7 +1,7 @@
 .. 
    MIT License
 
-   Copyright (C) 2023 Advanced Micro Devices, Inc.
+   Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -23,7 +23,7 @@ Using the Test Harness
 **********************
 
 Delopying Pre-built SD Card on the Board
-=================
+========================================
 
 The test harness server has been built already for deploying on the VCK190 or VEK280 board. You can download the pre-built image by :
 
@@ -175,7 +175,7 @@ The AIE test harness includes utility scripts which can be used to package the t
 
 
 Launching Client Application and Getting Performance Result
-===============
+===========================================================
 
 After completing the client packaging, it's ready to connect to the server on the board and get the functional and performance results. First it needs to set the server IP port and then launch the application. Then the execution result will be transferred back to the client server and the throughputs of the ports are reported. The commands to be used:
 
@@ -185,7 +185,7 @@ After completing the client packaging, it's ready to connect to the server on th
    ./host_elf <XCLBIN Name> <Other Options>
 
 Building the Matlab APIs
-===============
+========================
 
 The Matlab APIs can be built as needed by:
 
@@ -195,7 +195,7 @@ The Matlab APIs can be built as needed by:
    make matlab
 
 Building the Python APIs
-===============
+========================
 
 The python APIs can built as needed by:
 
@@ -222,7 +222,7 @@ Event trace can help analyze the performance bottleneck in HW. It can be enabled
    graph_based_aie_tile_metrics=all:all:all_stalls
 
 AIE Status Report
----------------
+------------------
 
 When design hangs, the AIE status report can be used to get an visual overview of the AIE status in Vitis Analysis View. This helps analyze where is the cause of the hang. To enable the status report, it needs to set a timeout value in host code (for example: ``ps/host.cpp``) to ensure the application exits normally:
 

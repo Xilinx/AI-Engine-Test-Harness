@@ -13,4 +13,4 @@
 
 [vivado]
 impl.jobs=2
-impl.strategies=Performance_ExtraTimingOpt
+impl.strategies=Performance_Auto_3

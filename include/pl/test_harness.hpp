@@ -473,14 +473,14 @@ class test_harness {
                     for (int j = 0; j < BURST_LEN; j++) {
 #pragma HLS pipeline II = 1
                         ap_int<MEM_WIDTH> tmp = mem[to_aie_ch[ch_id].offsets + frame_idx[ch_id] + j];
-                        to_aie_strm[ch_id].write(tmp);
+                        to_aie_strm[ch_id].write_nb(tmp);
                     }
                     frame_idx[ch_id] += BURST_LEN;
                 } else if (to_aie_strm[ch_id].size() + numData <= to_aie_strm[ch_id].capacity()) {
                     for (ap_uint<8> j = 0; j < numData; j++) {
 #pragma HLS pipeline II = 1
                         ap_int<MEM_WIDTH> tmp = mem[to_aie_ch[ch_id].offsets + frame_idx[ch_id] + j];
-                        to_aie_strm[ch_id].write(tmp);
+                        to_aie_strm[ch_id].write_nb(tmp);
                     }
                     frame_idx[ch_id] += numData;
                 }
@@ -515,13 +515,17 @@ class test_harness {
                 if (numData >= BURST_LEN && from_aie_strm[ch_id].size() >= BURST_LEN) {
                     for (int j = 0; j < BURST_LEN; j++) {
 #pragma HLS pipeline II = 1
-                        mem[from_aie_ch[ch_id].offsets + frame_idx[ch_id] + j] = from_aie_strm[ch_id].read();;
+                        ap_uint<MEM_WIDTH> tmp;
+                        from_aie_strm[ch_id].read_nb(tmp);
+                        mem[from_aie_ch[ch_id].offsets + frame_idx[ch_id] + j] = tmp;
                     }
                     frame_idx[ch_id] += BURST_LEN;
                 } else if (from_aie_strm[ch_id].size() == numData) {
                     for (ap_uint<8> j = 0; j < numData; j++) {
 #pragma HLS pipeline II = 1
-                        mem[from_aie_ch[ch_id].offsets + frame_idx[ch_id] + j] = from_aie_strm[ch_id].read();;
+                        ap_uint<MEM_WIDTH> tmp;
+                        from_aie_strm[ch_id].read_nb(tmp);
+                        mem[from_aie_ch[ch_id].offsets + frame_idx[ch_id] + j] = tmp;
                     }
                     frame_idx[ch_id] += numData;
                 }
