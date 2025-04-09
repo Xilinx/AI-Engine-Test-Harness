@@ -1,7 +1,7 @@
 .. 
    MIT License
 
-   Copyright (C) 2023 Advanced Micro Devices, Inc.
+   Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -26,7 +26,7 @@ This step by step example takes a reference design ``examples/vck190/adder_perf`
 The code specific to test harness features is explained. The commands and code can be easily extended to other examples and user own designs.
 
 Launching the Server Session
-==================
+============================
 
 Burn and boot with the ``bin/sd_card.img``. In the board, get the IP address and launch the server by::
 
@@ -39,7 +39,7 @@ Burn and boot with the ``bin/sd_card.img``. In the board, get the IP address and
 Note that the IP address of the board will be used by client server.
 
 Running an Example in Client Server
-==================
+===================================
 
 Note: Setup the environment first before launching the commands. It can be referred to :ref:`Using the Test Harness <using_the_harness>`
 The examples have Makefile ready for building and launching::

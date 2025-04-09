@@ -31,7 +31,6 @@ help:
 MK_PATH 			   := $(abspath $(lastword $(MAKEFILE_LIST)))
 export TEST_HARNESS_REPO_PATH ?= $(shell bash -c 'export MK_PATH=$(MK_PATH); echo $${MK_PATH%/examples/*}')
 
-
 # Setting common configurations
 DEVICE ?= vck190
 TARGET ?= hw
