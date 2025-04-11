@@ -260,11 +260,18 @@ function OptanonWrapper() { }
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="hw_features.html">Hardware Features</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Software APIs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#initialization">Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#running-the-aie-graph">Running the AIE Graph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#running-the-test-harness">Running the Test Harness</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#waiting-for-completion">Waiting for Completion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#reporting-performance">Reporting Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#client-apis">Client APIs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#initialization">Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-aie-graph">Running the AIE Graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-test-harness">Running the Test Harness</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#waiting-for-completion">Waiting for Completion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reporting-performance">Reporting Performance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#server-application">Server Application</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage-of-server-application">Usage of server application</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="using_the_harness.html">Using the Test Harness</a></li>
@@ -342,6 +349,8 @@ function OptanonWrapper() { }
 </div>
 <div class="section" id="software-apis">
 <h1>Software APIs<a class="headerlink" href="#software-apis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="client-apis">
+<h2>Client APIs<a class="headerlink" href="#client-apis" title="Permalink to this headline">¶</a></h2>
 <p>The AIE test harness includes software APIs for user to easily build SW applications to test an AIE graph on hardware board.
 The SW application can be executed on the both the x86 and the embedded ARM processor of the Versal device.
 The APIs are designed to structure the test applications following these simple steps:</p>
@@ -354,9 +363,9 @@ The APIs are designed to structure the test applications following these simple 
 <li>Report throughputs of each channel, delays between two given channels and and optionally check correctness of results on functional testing mode or performance testing mode with limited data size</li>
 <li>Automatically synchronize the AIE event traces from the server to the local working directory when required.</li>
 </ul>
-<p>The test harness APIs are included in <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/include/ps/test_harness_mgr_client.hpp">include/ps/test_harness_mgr_client.hpp</a>.</p>
+<p>The test harness client APIs are included in <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/include/ps/test_harness_mgr_client.hpp">include/ps/test_harness_mgr_client.hpp</a>.</p>
 <div class="section" id="initialization">
-<h2>Initialization<a class="headerlink" href="#initialization" title="Permalink to this headline">¶</a></h2>
+<h3>Initialization<a class="headerlink" href="#initialization" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="_CPPv323test_harness_mgr_client">
 <span id="_CPPv223test_harness_mgr_client"></span><span id="test_harness_mgr_client"></span><em class="property">class </em><code class="descname">test_harness_mgr_client</code><a class="headerlink" href="#_CPPv323test_harness_mgr_client" title="Permalink to this definition">¶</a><br /></dt>
@@ -384,7 +393,7 @@ The APIs are designed to structure the test applications following these simple 
 </dl>
 </div>
 <div class="section" id="running-the-aie-graph">
-<h2>Running the AIE Graph<a class="headerlink" href="#running-the-aie-graph" title="Permalink to this headline">¶</a></h2>
+<h3>Running the AIE Graph<a class="headerlink" href="#running-the-aie-graph" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="_CPPv3N23test_harness_mgr_client11runAIEGraphEjj">
 <span id="_CPPv2N23test_harness_mgr_client11runAIEGraphEjj"></span><span id="test_harness_mgr_client::runAIEGraph__unsigned-i.unsigned-i"></span>void <code class="descclassname"><a class="reference internal" href="#_CPPv323test_harness_mgr_client" title="test_harness_mgr_client">test_harness_mgr_client</a><code class="descclassname">::</code></code><code class="descname">runAIEGraph</code><span class="sig-paren">(</span>unsigned int <em>g_idx</em>, unsigned int <em>iters</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv3N23test_harness_mgr_client11runAIEGraphEjj" title="Permalink to this definition">¶</a><br /></dt>
@@ -400,7 +409,7 @@ The APIs are designed to structure the test applications following these simple 
 </dl>
 </div>
 <div class="section" id="running-the-test-harness">
-<h2>Running the Test Harness<a class="headerlink" href="#running-the-test-harness" title="Permalink to this headline">¶</a></h2>
+<h3>Running the Test Harness<a class="headerlink" href="#running-the-test-harness" title="Permalink to this headline">¶</a></h3>
 <dl class="enum">
 <dt id="_CPPv38TestMode">
 <span id="_CPPv28TestMode"></span><em class="property">enum </em><code class="descname">TestMode</code><a class="headerlink" href="#_CPPv38TestMode" title="Permalink to this definition">¶</a><br /></dt>
@@ -449,7 +458,7 @@ The APIs are designed to structure the test applications following these simple 
 </dl>
 </div>
 <div class="section" id="waiting-for-completion">
-<h2>Waiting for Completion<a class="headerlink" href="#waiting-for-completion" title="Permalink to this headline">¶</a></h2>
+<h3>Waiting for Completion<a class="headerlink" href="#waiting-for-completion" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="_CPPv3N23test_harness_mgr_client10waitForResE8uint32_t8uint32_t">
 <span id="_CPPv2N23test_harness_mgr_client10waitForResE8uint32_t8uint32_t"></span><span id="test_harness_mgr_client::waitForRes__uint32_t.uint32_t"></span>void <code class="descclassname"><a class="reference internal" href="#_CPPv323test_harness_mgr_client" title="test_harness_mgr_client">test_harness_mgr_client</a><code class="descclassname">::</code></code><code class="descname">waitForRes</code><span class="sig-paren">(</span>uint32_t <em>timeout_millisec</em>, uint32_t <em>num_trans</em> = 0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv3N23test_harness_mgr_client10waitForResE8uint32_t8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
@@ -465,7 +474,7 @@ The APIs are designed to structure the test applications following these simple 
 </dl>
 </div>
 <div class="section" id="reporting-performance">
-<h2>Reporting Performance<a class="headerlink" href="#reporting-performance" title="Permalink to this headline">¶</a></h2>
+<h3>Reporting Performance<a class="headerlink" href="#reporting-performance" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="_CPPv3N23test_harness_mgr_client9printPerfE7int32_t">
 <span id="_CPPv2N23test_harness_mgr_client9printPerfE7int32_t"></span><span id="test_harness_mgr_client::printPerf__int32_t"></span>void <code class="descclassname"><a class="reference internal" href="#_CPPv323test_harness_mgr_client" title="test_harness_mgr_client">test_harness_mgr_client</a><code class="descclassname">::</code></code><code class="descname">printPerf</code><span class="sig-paren">(</span>int32_t <em>t_idx</em> = -1<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv3N23test_harness_mgr_client9printPerfE7int32_t" title="Permalink to this definition">¶</a><br /></dt>
@@ -503,6 +512,38 @@ The index of the second channel
 The index of the transaction to be checked. If the value is -1, the results of the last finished transaction are checked.</div></blockquote>
 </div>
 </div>
+<div class="section" id="server-application">
+<h2>Server Application<a class="headerlink" href="#server-application" title="Permalink to this headline">¶</a></h2>
+<p>The AIE test harness server application is fixed and keeps running on the Arm processor of target Versal board.
+The server application is responsible for the following tasks:</p>
+<ul class="simple">
+<li>Create socket and wait for the client connection.</li>
+<li>Create a test harness session and handshake with the client to synchronize the test harness settings with the client e.g., the number of available PLIOs</li>
+<li>Initialize the device and load the xclbin from the client when requested.</li>
+<li>Run the AIE graph with the given iterations when requested.</li>
+<li>Run the test harness DMA with the data from the client when requested.</li>
+<li>Wait for the DMA transactions to finish and send the results back to the client.</li>
+<li>Wait for the graph iterations to finish.</li>
+<li>Synchronize the AIE event traces to the client when required.</li>
+<li>Clean up the resources and user data when the client disconnects.</li>
+</ul>
+<div class="section" id="usage-of-server-application">
+<h3>Usage of server application<a class="headerlink" href="#usage-of-server-application" title="Permalink to this headline">¶</a></h3>
+<p>A script named <code class="docutils literal notranslate"><span class="pre">run_server.sh</span></code> is provided to run the server application on the target board, refer to the <a class="reference internal" href="step_by_step_example.html#step-by-step"><span class="std std-ref">step by step example</span></a>.
+The script is located in the repo <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/test_harness/scripts/run_server.sh">test_harness/scripts/run_server.sh</a>.
+The pre-built application named <code class="docutils literal notranslate"><span class="pre">test_harness_server</span></code> is included in the SD card image.
+The source code is located in the repo <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/src/ps/test_harness_main.cpp">src/ps/test_harness_main.cpp</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_harness_server</span> <span class="o">&lt;</span><span class="n">port</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">timeout_in_seconds</span> <span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">reset_flag</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">max_num_sessions</span><span class="o">&gt;</span>
+
+<span class="o">-</span> <span class="o">&lt;</span><span class="n">port</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">port</span> <span class="n">number</span> <span class="n">to</span> <span class="n">be</span> <span class="n">used</span> <span class="k">for</span> <span class="n">the</span> <span class="n">socket</span> <span class="n">connection</span><span class="o">.</span>
+<span class="o">-</span> <span class="o">&lt;</span><span class="n">timeout_in_seconds</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">timeout</span> <span class="n">limit</span> <span class="ow">in</span> <span class="n">seconds</span> <span class="k">for</span> <span class="n">the</span> <span class="n">server</span> <span class="n">watchdog</span> <span class="n">to</span> <span class="n">terminate</span> <span class="n">a</span> <span class="n">session</span> <span class="k">if</span> <span class="n">no</span> <span class="n">valid</span> <span class="n">activity</span> <span class="n">detected</span><span class="o">.</span>
+<span class="o">-</span> <span class="o">&lt;</span><span class="n">reset_flag</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">flag</span> <span class="n">to</span> <span class="n">reset</span> <span class="n">the</span> <span class="n">whole</span> <span class="n">device</span> <span class="k">for</span> <span class="n">each</span> <span class="n">session</span><span class="o">.</span>
+<span class="o">-</span> <span class="o">&lt;</span><span class="n">max_num_sessions</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">maximum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">sessions</span> <span class="n">to</span> <span class="n">be</span> <span class="n">supported</span> <span class="n">by</span> <span class="n">the</span> <span class="n">server</span><span class="o">.</span> <span class="mi">0</span> <span class="n">means</span> <span class="n">no</span> <span class="n">limit</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 
 
            </div>
@@ -533,7 +574,7 @@ The index of the transaction to be checked. If the value is -1, the results of t
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on April 08, 2025.
+        Last updated on April 11, 2025.
       </span>
 
     </p>

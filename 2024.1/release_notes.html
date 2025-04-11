@@ -254,8 +254,9 @@ function OptanonWrapper() { }
               <p class="caption"><span class="caption-text">Introduction</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id2">2023.2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">2023.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2024.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">2023.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">2023.1</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
@@ -340,7 +341,34 @@ function OptanonWrapper() { }
 <div class="section" id="id1">
 <h1>Release Notes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id2">
-<h2>2023.2<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>2024.1<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p><strong>Summary</strong></p>
+<ul class="simple">
+<li>Support the client-server mode to use the AIE Test Harness</li>
+<li>Client APIS are available in C++, Python and Matlab to drive the test harness</li>
+<li>Pre-built SD card images are available for VCK190 and VEK280 boards for a simple one-time setup</li>
+<li>Server applications are released within the SD card image</li>
+<li>Watchdog timer is implemented in the server application to ensure that the server is running correctly</li>
+<li>Pre-built XSAs are provided for VCK190 and VEK280 boards</li>
+<li>On VCK190, support for graphs with up to 36 input PLIOs and 36 output PLIOs</li>
+<li>On VEK280, support for graphs with up to 16 input PLIOs and 16 output PLIOs</li>
+<li>Functional testing mode is supported on both VCK190 and VEK280 boards</li>
+<li>In the functional testing mode, users could manage the test vectors into multiple transactions, the data size for each transaction is limited to maximum 512MB</li>
+<li>PLIO throughput for each channel is 5GB/sec (32 bits &#64; 1.25GHz)</li>
+<li>User-defined number of replays for upscaling the size of datasets in performance testing mode on each input and output channel</li>
+<li>User-defined start delay for each input and output PLIO</li>
+<li>Built-in support for AIE event trace</li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul class="simple">
+<li>On VCK190, the performance testing mode supports up to 64kB of user-provided data per channel</li>
+<li>On VEK280, the performance testing mode supports up to 128kB of user-provided data per channel</li>
+<li>The size (in bytes) of input and output datasets must be a multiple of 16</li>
+<li>AIE graphs with GMIOs are not supported</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>2023.2<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p><strong>Summary</strong></p>
 <ul class="simple">
 <li>Support for testing graphs on VEK280 boards</li>
@@ -365,8 +393,8 @@ function OptanonWrapper() { }
 <li>The size (in bytes) of input and output datasets must be a multiple of 16</li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2>2023.1<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h2>2023.1<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><strong>Summary</strong></p>
 <p>This is the first release of the AIE Test Harness. This release supports the following:</p>
 <ul class="simple">
@@ -418,7 +446,7 @@ function OptanonWrapper() { }
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on April 08, 2025.
+        Last updated on April 11, 2025.
       </span>
 
     </p>
