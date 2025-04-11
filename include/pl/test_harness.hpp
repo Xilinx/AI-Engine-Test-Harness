@@ -60,9 +60,9 @@ class buff_channel {
    public:
     TestMode mode;
 
-    uint32_t numFrames;
-    uint32_t numRep;
-    uint32_t offsets;
+    uint64_t numFrames;
+    uint64_t numRep;
+    uint64_t offsets;
 
     uint64_t delays;
     uint64_t firstcc;
