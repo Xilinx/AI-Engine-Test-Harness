@@ -19,6 +19,9 @@
 Software APIs
 =============
 
+Client APIs
++++++++++++
+
 The AIE test harness includes software APIs for user to easily build SW applications to test an AIE graph on hardware board. 
 The SW application can be executed on the both the x86 and the embedded ARM processor of the Versal device. 
 The APIs are designed to structure the test applications following these simple steps:
@@ -31,7 +34,7 @@ The APIs are designed to structure the test applications following these simple 
 - Report throughputs of each channel, delays between two given channels and and optionally check correctness of results on functional testing mode or performance testing mode with limited data size
 - Automatically synchronize the AIE event traces from the server to the local working directory when required.
 
-The test harness APIs are included in :url_to_repo:`include/ps/test_harness_mgr_client.hpp`. 
+The test harness client APIs are included in :url_to_repo:`include/ps/test_harness_mgr_client.hpp`. 
 
 
 Initialization
@@ -164,3 +167,35 @@ Reporting Performance
    The index of the second channel
    ``int32_t t_idx``
    The index of the transaction to be checked. If the value is -1, the results of the last finished transaction are checked.
+
+
+Server Application
+++++++++++++++++++
+
+The AIE test harness server application is fixed and keeps running on the Arm processor of target Versal board.  
+The server application is responsible for the following tasks:
+
+- Create socket and wait for the client connection.
+- Create a test harness session and handshake with the client to synchronize the test harness settings with the client e.g., the number of available PLIOs
+- Initialize the device and load the xclbin from the client when requested.
+- Run the AIE graph with the given iterations when requested.
+- Run the test harness DMA with the data from the client when requested.
+- Wait for the DMA transactions to finish and send the results back to the client.
+- Wait for the graph iterations to finish.
+- Synchronize the AIE event traces to the client when required.
+- Clean up the resources and user data when the client disconnects.
+
+Usage of server application
+---------------------------
+A script named ``run_server.sh`` is provided to run the server application on the target board, refer to the :ref:`step by step example <step_by_step>`.
+The script is located in the repo :url_to_repo:`test_harness/scripts/run_server.sh`.
+The pre-built application named ``test_harness_server`` is included in the SD card image. 
+The source code is located in the repo :url_to_repo:`src/ps/test_harness_main.cpp`::
+
+   test_harness_server <port> <timeout_in_seconds > <reset_flag> <max_num_sessions>
+
+   - <port> is the port number to be used for the socket connection.
+   - <timeout_in_seconds> is the timeout limit in seconds for the server watchdog to terminate a session if no valid activity detected.
+   - <reset_flag> is the flag to reset the whole device for each session.
+   - <max_num_sessions> is the maximum number of sessions to be supported by the server. 0 means no limit.
+

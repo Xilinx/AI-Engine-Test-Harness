@@ -15,7 +15,7 @@
 TARGET ?= hw
 CPU ?= x86
 
-ifneq ($(filter x86sim, $(TARGET)),)
+ifneq ($(filter sw_emu x86sim, $(TARGET)),)
 AIETARGET := x86sim
 else
 AIETARGET := hw
@@ -27,14 +27,14 @@ else
 ifeq ($(shell expr $(shell echo "__GNUG__" | g++ -E -x c++ - | tail -1) \>= 9), 1)
 CXX := g++
 else
-ifndef XILINX_VIVADO
+ifndef XILINX_VITIS
 $(error [ERROR]: the g++ version is too old. Please use g++-9 or above)
 else
-CXX := $(XILINX_VIVADO)/tps/lnx64/gcc-9.3.0/bin/g++
+CXX := $(XILINX_VITIS)/tps/lnx64/gcc-9.3.0/bin/g++
 ifeq ($(LD_LIBRARY_PATH),)
-	export LD_LIBRARY_PATH := $(XILINX_VIVADO)/tps/lnx64/gcc-9.3.0/lib64
+	export LD_LIBRARY_PATH := $(XILINX_VITIS)/tps/lnx64/gcc-9.3.0/lib64
 else
-	export LD_LIBRARY_PATH := $(XILINX_VIVADO)/tps/lnx64/gcc-9.3.0/lib64:$(LD_LIBRARY_PATH)
+	export LD_LIBRARY_PATH := $(XILINX_VITIS)/tps/lnx64/gcc-9.3.0/lib64:$(LD_LIBRARY_PATH)
 endif
 endif
 endif

@@ -19,6 +19,36 @@
 Release Notes
 =============
 
+
+
+2024.2 and 2024.1
+-------------------------
+
+**Summary**
+
+- Support the client-server mode to use the AIE Test Harness
+- Client APIS are available in C++, Python and Matlab to drive the test harness
+- Pre-built SD card images are available for VCK190 and VEK280 boards for a simple one-time setup
+- Server applications are released within the SD card image
+- Watchdog timer is implemented in the server application to ensure that the server is running correctly
+
+- Pre-built XSAs are provided for VCK190 and VEK280 boards
+- On VCK190, support for graphs with up to 36 input PLIOs and 36 output PLIOs
+- On VEK280, support for graphs with up to 16 input PLIOs and 16 output PLIOs
+- Functional testing mode is supported on both VCK190 and VEK280 boards
+- In the functional testing mode, users could manage the test vectors into multiple transactions, the data size for each transaction is limited to maximum 512MB
+- PLIO throughput for each channel is 5GB/sec (32 bits @ 1.25GHz)
+- User-defined number of replays for upscaling the size of datasets in performance testing mode on each input and output channel
+- User-defined start delay for each input and output PLIO
+- Built-in support for AIE event trace
+
+**Limitations**
+
+- On VCK190, the performance testing mode supports up to 64kB of user-provided data per channel 
+- On VEK280, the performance testing mode supports up to 128kB of user-provided data per channel 
+- The size (in bytes) of input and output datasets must be a multiple of 16
+- AIE graphs with GMIOs are not supported
+
 2023.2
 ------
 
