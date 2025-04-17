@@ -90,26 +90,6 @@ For both of the DMA engines, they are designed to allow a maximum throughput on 
 ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing on the hardware.
 
 
-.. image:: /images/vck190_sys_diagram.png
-   :alt: VCK190 System Structure
-   :width: 80%
-   :align: center
-
-.. image:: /images/vek280_sys_diagram.png
-   :alt: VEK280 System Structure
-   :width: 80%
-   :align: center
-
-
-The software APIs enable pure AIE designers to easily build SW applications to test an AIE graph using the test harness. The APIs are designed to structure test applications following these 5 simple steps:
-
-1. Initialize the device, load the xclbin, and inferring the testing mode
-2. Configure how each DMA channel transfers data to or from the AIE graph
-3. Run the AIE graph as well as the PL data mover
-4. Wait for all the data to be sent/received
-5. Check correctness of results (correctness of result is not guaranteed when test scale is lager than URAM capacity in each channel on VCK190) and do profiling on performance testing modes for each channel
-
-
 .. toctree::
    :caption: Introduction
    :maxdepth: 1

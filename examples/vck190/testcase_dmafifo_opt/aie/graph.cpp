@@ -6,9 +6,7 @@ SPDX-License-Identifier: MIT
 using namespace adf;
 
 adaptive_graph gr;
-static std::vector<std::string> cust_in={"PLIO_01_TO_AIE"};
-static std::vector<std::string> cust_out={"PLIO_01_FROM_AIE"};
-test_harness::occupyUnusedPLIO<1,1,36> unusedPLIOs(cust_in, cust_out); 
+
 #if defined(__AIESIM__) || defined(__X86SIM__)
 int main(int argc, char **argv)
 {

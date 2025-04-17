@@ -21,7 +21,7 @@ Release Notes
 
 
 
-2025.1, 2024.2 and 2024.1
+2025.1
 -------------------------
 
 **Summary**
@@ -33,6 +33,7 @@ Release Notes
 - Watchdog timer is implemented in the server application to ensure that the server is running correctly
 
 - Pre-built XSAs are provided for VCK190 and VEK280 boards
+- Unified XSA for both functional and performance testing modes
 - On VCK190, support for graphs with up to 36 input PLIOs and 36 output PLIOs
 - On VEK280, support for graphs with up to 16 input PLIOs and 16 output PLIOs
 - Functional testing mode is supported on both VCK190 and VEK280 boards
