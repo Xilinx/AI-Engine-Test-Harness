@@ -395,16 +395,6 @@ generate the final .xclbin file for on-board tests.</p>
 On VEK280, it has 32 independent AXI stream channels that 16 channels can send data from DDR to AIE and 16 channels can receive data from AIE to DDR.
 For both of the DMA engines, they are designed to allow a maximum throughput on the PLIO interfaces (128-bit &#64; 312.5MHz),
 ensuring that the AIE graph isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing on the hardware.</p>
-<a class="reference internal image-reference" href="_images/vck190_sys_diagram.png"><img alt="VCK190 System Structure" class="align-center" src="_images/vck190_sys_diagram.png" style="width: 80%;" /></a>
-<a class="reference internal image-reference" href="_images/vek280_sys_diagram.png"><img alt="VEK280 System Structure" class="align-center" src="_images/vek280_sys_diagram.png" style="width: 80%;" /></a>
-<p>The software APIs enable pure AIE designers to easily build SW applications to test an AIE graph using the test harness. The APIs are designed to structure test applications following these 5 simple steps:</p>
-<ol class="arabic simple">
-<li>Initialize the device, load the xclbin, and inferring the testing mode</li>
-<li>Configure how each DMA channel transfers data to or from the AIE graph</li>
-<li>Run the AIE graph as well as the PL data mover</li>
-<li>Wait for all the data to be sent/received</li>
-<li>Check correctness of results (correctness of result is not guaranteed when test scale is lager than URAM capacity in each channel on VCK190) and do profiling on performance testing modes for each channel</li>
-</ol>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
@@ -441,7 +431,7 @@ ensuring that the AIE graph isn’t artificially stalled by the DMA channels and
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on April 11, 2025.
+        Last updated on April 17, 2025.
       </span>
 
     </p>
