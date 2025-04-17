@@ -370,14 +370,14 @@ ensuring a streamlined and user-friendly testing experience.</p>
 </div>
 <div class="section" id="testing-mode">
 <h2>Testing Mode<a class="headerlink" href="#testing-mode" title="Permalink to this headline">¶</a></h2>
-<p>There are two useful testing modes named function mode and performance mode.</p>
-<div class="section" id="function-mode">
-<h3>Function mode<a class="headerlink" href="#function-mode" title="Permalink to this headline">¶</a></h3>
-<p>In the function mode, it aims to verify the functionalities of the AIE design on the hardware with a large datasets provided by the users. In this mode, all user-provided data are transferred between the DDR and the AIE with a proper buffering. In the this mode, stalls may be introduced due to the bandwidth limitation when accessing DDR. Hence, the measured performance is not representative of the maximum potential throughput of the graph.</p>
+<p>There are two useful testing modes named functional testing mode and performance testing mode.</p>
+<div class="section" id="functional-testing-mode">
+<h3>Functional Testing Mode<a class="headerlink" href="#functional-testing-mode" title="Permalink to this headline">¶</a></h3>
+<p>In the functional testing mode, it aims to verify functional correctness of the implementation on hardware with a large datasets provided by the users. In this mode, all user-provided data are transferred between the DDR and the AIE with a proper buffering. In the this mode, stalls may be introduced due to the bandwidth limitation when accessing DDR. Hence, the measured performance is not representative of the maximum potential throughput of the graph.</p>
 </div>
-<div class="section" id="performance-mode">
-<h3>Performance Mode<a class="headerlink" href="#performance-mode" title="Permalink to this headline">¶</a></h3>
-<p>In the performance mode, the DMA engine for performance testing is designed to allow a maximum throughput on the PLIO interfaces, ensuring that the data transfer between AIE and PL isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing on the hardware.</p>
+<div class="section" id="performance-testing-mode">
+<h3>Performance Testing Mode<a class="headerlink" href="#performance-testing-mode" title="Permalink to this headline">¶</a></h3>
+<p>In the performance testing mode, the DMA engine for performance testing is designed to allow a maximum throughput on the PLIO interfaces, ensuring that the data transfer between AIE and PL isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing on the hardware.</p>
 </div>
 </div>
 <div class="section" id="test-harness-pre-built-xsa">
