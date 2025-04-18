@@ -37,15 +37,15 @@ Designers can also wait for transactions to complete or set a timeout, measure p
 Additionally, the APIs provide the capability to disconnect from and reset the board, ensuring a streamlined and user-friendly testing experience.
 
 ### Testing Mode
-There are two useful testing modes named function mode and performance mode. 
-#### Function mode
-In the function mode, it aims to verify the functionalities of the AIE design on the hardware with a large datasets provided by the users. 
+There are two useful testing modes named functional testing mode and performance testing mode. 
+#### Functional Testing Mode
+In the functional testing mode, it aims to verify functional correctness of the implementation on hardware with a large datasets provided by the users. 
 In this mode, all user-provided data are transferred between the DDR and the AIE with a proper buffering.
 In the this mode, stalls may be introduced due to the bandwidth limitation when accessing DDR. 
 Hence, the measured performance is not representative of the maximum potential throughput of the graph.
 
-#### Performance Mode
-In the performance mode, the DMA engine for performance testing is designed to allow a maximum throughput on the PLIO interfaces, ensuring that the data transfer between AIE and PL isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing on the hardware.
+#### Performance Testing Mode
+In the performance testing mode, the DMA engine for performance testing is designed to allow a maximum throughput on the PLIO interfaces, ensuring that the data transfer between AIE and PL isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing on the hardware.
 
 ### Precompiled XSA
 The precompiled XSA is provided along with the release of this repository, and is used as a platform on which the designers compile the AIE graph.
