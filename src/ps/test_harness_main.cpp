@@ -154,7 +154,7 @@ void test_harness_main::run(uint64_t max_num_sessions) {
     while(max_num_sessions == 0 || mSessionId < max_num_sessions) {
         auto pid = fork();
         if(pid == 0) {
-            if(mResetFlag) system("xbutil reset --force");
+            if(mResetFlag) system("xrt-smi reset --force");
             return;
         } else if (pid < 0) {
             throw std::runtime_error("Failed to fork a new process");
