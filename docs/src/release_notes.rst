@@ -26,7 +26,7 @@ Release Notes
 **Summary**
 
 - Support the client-server mode to use the AIE Test Harness
-- Client APIS are available in C++, Python and Matlab to drive the test harness
+- Client APIs are available in C++, Python and Matlab to drive the test harness
 - Pre-built SD card images are available for VCK190 and VEK280 boards for a simple one-time setup
 - Server applications are released within the SD card image
 - Watchdog timer is implemented in the server application to ensure that the server is running correctly
