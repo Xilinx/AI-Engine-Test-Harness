@@ -11,13 +11,12 @@
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
 
-export LD_LIBRARY_PATH=/mnt:/tmp:
-export XILINX_VITIS=/mnt
-export XILINX_XRT=/usr
-if [ -f platform_desc.txt  ]; then
-        cp platform_desc.txt /etc/xocl.txt
+# check if SERVER_IP_PORT is set   
+if [ -z "$SERVER_IP_PORT" ]; then
+    #set default value 127.0.0.1:8080
+    export SERVER_IP_PORT=127.0.0.1:8080
 fi
-./host_elf vck190_test_harness.xclbin "."
+./host_elf vck190_test_harness.xclbin "../data"
 return_code=$?
 if [ $return_code -ne 0 ]; then
         echo "ERROR: TEST FAILED, RC=$return_code"

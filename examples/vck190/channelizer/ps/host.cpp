@@ -39,7 +39,10 @@
 #include <string>
 #include <vector>
 
-#include "test_harness_mgr.hpp"
+// The test harness APIs
+#include "test_harness_mgr_base.hpp"
+#include "test_harness_mgr_client.hpp"
+#include "test_harness_sockets.hpp"
 
 #include "utils.hpp" // Utilities (read_data_from_file, check_size...)
 
@@ -57,20 +60,13 @@ int main(int argc, char** argv) {
     int in_sz = 4096 * 16;
     int out_sz = 4096 * 16;
     // PERF_MODE by default, please take adder case as example for how to use FUNC_MODE
-    uint64_t test_mode = PERF_MODE;
+    test_harness::TestMode test_mode = PERF_MODE;
     if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE)) {
         std::cout << "Only FUNC_MODE & PERF_MODE are supported by AIE test harness on VCK190.\n";
         exit(1);
     }
 
     std::string xclbin_path(argv[1]);
-    if (test_mode == FUNC_MODE) {
-        xclbin_path.insert(xclbin_path.find(".xclbin"), "_func");
-        std::cout << "Testing mode: FUNC_MODE\n";
-    } else {
-        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: PERF_MODE\n";
-    }
     std::cout << "Using XCLBIN file: " << xclbin_path << std::endl;
 
     std::vector<cint16_t> in_dft_0;
@@ -206,7 +202,7 @@ int main(int argc, char** argv) {
     out_fir_7.resize(golden_fir_7.size());
 
     // run test with test harness
-    test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"aie_dut"});
+	test_harness_mgr_client mgr(xclbin_path, {"aie_dut"}, "vck190");
     std::vector<test_harness_args> args;
     args.push_back({channel_index(PLIO_01_TO_AIE), in_sz, 1, 0, (char*)in_dft_0.data()});
     args.push_back({channel_index(PLIO_03_TO_AIE), in_sz, 1, 0, (char*)in_dft_1.data()});
@@ -241,9 +237,9 @@ int main(int argc, char** argv) {
     args.push_back({channel_index(PLIO_30_FROM_AIE), out_sz, 1, 0, (char*)out_fir_6.data()});
     args.push_back({channel_index(PLIO_32_FROM_AIE), out_sz, 1, 0, (char*)out_fir_7.data()});
     mgr.runAIEGraph(0, 2);
-    mgr.runTestHarness(args);
-    mgr.waitForRes(10000);
-    bool is_valid = mgr.result_valid;
+    mgr.runTestHarness(test_mode, args);
+    mgr.waitForRes(0);
+    bool is_valid = mgr.isResultValid();
 
     int NUM_SAMPLES = out_sz / (sizeof(int16_t) * 2); // complex type
     int errorCount = 0;
@@ -301,5 +297,5 @@ int main(int argc, char** argv) {
     else
         printf("TEST PASSED\n");
 
-    return errorCount;
+    return errorCount != 0? EXIT_FAILURE: EXIT_SUCCESS;
 }

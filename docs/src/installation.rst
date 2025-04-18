@@ -22,7 +22,7 @@ Installation
 ============
 
 Prerequisites
--------------
++++++++++++++
 
 To use the test harness, up-to-date installations of the following softwares and libraries are required:
 
@@ -40,13 +40,22 @@ Installation Instructions
 
     git clone https://github.com/Xilinx/AI-Engine-Test-Harness.git
 
-2. Download the prebuilt test harness XSAs::
+2. Download the prebuilt test harness XSAs and prebuilt SD card images::
 
-    cd AI-Engine-Test-Harness/bin
-    source download.sh
+    cd AI-Engine-Test-Harness/
+    source setup.sh
+
+3. Flash the SD card image to an SD card::
+
+4. Boot the VCK190 or VEK280 board with the SD card::
+
+5. Run the test harness server on the board by following the instructions::
+
+    cd /run/media/mmcblk0p1
+    ./run_server.sh
 
 .. CAUTION::
-   The prebuilt XSAs can only be used with the 2023.2 version of the Vitis tool. 
+   The prebuilt XSAs can only be used with the 2025.1 version of the Vitis tool. 
    To build and test your AI Engine graph using other versions of Vitis, you must first rebuild the XSA with the corresponding version of the Vitis tool, as described in the section below.
 
 Rebuilding from Source
@@ -54,10 +63,15 @@ Rebuilding from Source
 
 The prebuilt test harness XSA can optionally be rebuilt from source as follows::
 
-    cd AI-Engine-Test-Harness/test_harness
-    source <path to Vitis installation>/settings64.sh
-    make clean
-    # To build functional/performance testing mode XSA for VCK190
-    make <vck190_func_xsa/vck190_perf_xsa> TARGET=hw DEVICE=vck190
-    # Or to build performance testing mode only XSA for VEK280
-    make vek280_xsa TARGET=hw DEVICE=vek280
+   cd AI-Engine-Test-Harness/test_harness
+   source <path to Vitis installation>/settings64.sh
+   make clean
+   # To build functional/performance testing mode XSA for VCK190
+   make xsa TARGET=hw DEVICE=vck190
+   # Or to build functional/performance testing mode XSA for VEK280
+   make xsa TARGET=hw DEVICE=vek280
+   # To build the sd card image for VCK190
+   make sd_card TARGET=hw DEVICE=vck190
+    # Or to build the sd card image for VEK280
+   make sd_card TARGET=hw DEVICE=vek280
+

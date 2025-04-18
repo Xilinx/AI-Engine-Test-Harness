@@ -21,45 +21,27 @@
  * Advanced Micro Devices, Inc.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
+#include <iostream>
+#include <cstdlib>
+#include <cstdint>
 #include <fstream>
 #include <cstring>
 
-#include "common.h"
-
 // The test harness APIs
-#include "test_harness_mgr.hpp"
+#include "test_harness_mgr_client.hpp"
 using namespace test_harness;
-
-// Utilities (read_data_from_file, check_size...)
-#include "utils.hpp"
 
 //#define KERNEL_LOOP_ITERS 512 // XXX: this should be changed along with the same macro in aie/common.h
 #define KERNEL_LOOP_ITERS (16 * 1024)
 #define KERNEL_WORDS_PER_ITER 4
 
 int main(int argc, char** argv) {
+    std::string xclbin_path(argv[1]);
     auto num_iterations = (argc >= 3) ? atoi(argv[2]) : 1;
     auto num_repetitions = (argc >= 4) ? atoi(argv[3]) : 1;
     auto num_delay = (argc >= 5) ? atoi(argv[4]) : 0;
     auto num_values = num_iterations * KERNEL_LOOP_ITERS * KERNEL_WORDS_PER_ITER;
-    // FUNC_MODE by default
-    uint64_t test_mode = (argc >= 6) ? atoi(argv[5]) : 0;
-    if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE)) {
-        std::cout << "Only FUNC_MODE & PERF_MODE are supported by AIE test harness on VCK190.\n";
-        exit(1);
-    }
-
-    std::string xclbin_path(argv[1]);
-    if (test_mode == FUNC_MODE) {
-        xclbin_path.insert(xclbin_path.find(".xclbin"), "_func");
-        std::cout << "Testing mode: FUNC_MODE\n";
-    } else {
-        xclbin_path.insert(xclbin_path.find(".xclbin"), "_perf");
-        std::cout << "Testing mode: PERF_MODE\n";
-    }
+    
     std::cout << "Using XCLBIN file: " << xclbin_path << std::endl;
 
     std::vector<int> a(num_values);
@@ -72,6 +54,7 @@ int main(int argc, char** argv) {
         s[i] = 0;
     }
 
+    int errorCount = 0;
     printf("Running example ADDER\n");
     printf(" - Number of graph iterations         : %8d\n", num_iterations);
     printf(" - Number of values                   : %8d (%dKB)\n", num_values, num_values * sizeof(int) / 1024);
@@ -79,16 +62,27 @@ int main(int argc, char** argv) {
     printf(" - Number of graph iterations (total) : %8d\n", num_iterations * num_repetitions);
     printf(" - Channel delay                      : %8d cycles\n", num_delay);
 
-    bool is_valid;
     // Instantiate the test harness.
     // This loads the xclbin on device 0 and creates the necessary XRT kernel handles
-    if (test_mode == FUNC_MODE) {
-        test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"gr"});
-        // configuration: channel index, size_in_bytes, repetition, delay, pointer to data
-        std::vector<test_harness_args> args;
-        args.push_back({channel_index(PLIO_01_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)a.data()});
-        args.push_back({channel_index(PLIO_03_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)b.data()});
-        args.push_back({channel_index(PLIO_02_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)s.data()});
+    test_harness_mgr_client mgr(xclbin_path, {"gr"}, "vck190");
+    // configuration: channel index, size_in_bytes, repetition, delay, pointer to data
+    std::vector<test_harness_args> args;
+    args.push_back({channel_index(PLIO_01_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)a.data()});
+    args.push_back({channel_index(PLIO_03_TO_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)b.data()});
+    args.push_back({channel_index(PLIO_02_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)s.data()});
+
+    std::vector<test_harness::TestMode> modes = {FUNC_MODE, PERF_MODE};
+    for(auto mode : modes) {
+        if(mode == FUNC_MODE) {
+            if(num_repetitions != 1) {
+                printf("Skipping example ADDER in function mode with num_repetitions != 1\n");
+                continue;
+            }
+            std::cout << "Testing Function mode." << std::endl;
+        } else {
+            std::cout << "Testing Performance mode." << std::endl;
+        }
+
         // Run the AIE graph(s).
         // The first parameter is the index of the desired graph in the vector of graph names set during initialization.
         // If there is a single user graph, the index is 0. The second parameter is the desired number of graph
@@ -96,41 +90,15 @@ int main(int argc, char** argv) {
         mgr.runAIEGraph(0, num_iterations * num_repetitions);
 
         // Start the DMA engine
-        mgr.runTestHarness(args);
+        mgr.runTestHarness(mode, args);
 
         // Wait for all DMA transactions and for the AIE graph to finish.
         // The argument is an optional timeout (in millisecond) for the AIE graph.
         mgr.waitForRes(0);
+        mgr.printPerf();
+        auto is_valid = mgr.isResultValid();
 
-        // Get the validity of the result
-        is_valid = mgr.result_valid;
-    } else {
-        test_harness_mgr<36, 16, 4096> mgr(0, xclbin_path, {"gr"});
-        // configuration: channel index, size_in_bytes, repetition, delay, pointer to data
-        std::vector<test_harness_args> args;
-        args.push_back({channel_index(PLIO_01_TO_AIE),  num_values * sizeof(int), num_repetitions, num_delay, (char*)a.data()});
-        args.push_back({channel_index(PLIO_03_TO_AIE),  num_values * sizeof(int), num_repetitions, num_delay, (char*)b.data()});
-        args.push_back({channel_index(PLIO_02_FROM_AIE), num_values * sizeof(int), num_repetitions, num_delay, (char*)s.data()});
-        // Run the AIE graph(s).
-        // The first parameter is the index of the desired graph in the vector of graph names set during initialization.
-        // If there is a single user graph, the index is 0. The second parameter is the desired number of graph
-        // iterations.
-        mgr.runAIEGraph(0, num_iterations * num_repetitions);
-
-        // Start the DMA engine
-        mgr.runTestHarness(args);
-
-        // Wait for all DMA transactions and for the AIE graph to finish.
-        // The argument is an optional timeout (in millisecond) for the AIE graph.
-        mgr.waitForRes(0);
-
-        // Get the validity of the result
-        is_valid = mgr.result_valid;
-    }
-
-    // Comparing the execution data to the golden data
-    int errorCount = 0;
-    {
+        // Comparing the execution data to the golden data
         if (!is_valid) {
             printf("[INFO]: Result checking is not valid if test size is beyond the capacity of URAM in each channel.\n");
         } else {
@@ -139,6 +107,7 @@ int main(int argc, char** argv) {
                 // Access values in the output buffer
                 if ((signed)s[i] != golden) {
                     errorCount++;
+                    std::cout << "ERROR: s[" << i << "] = " << s[i] << " != " << golden << " = a[" << i << "] + b[" << i << "]" << std::endl;
                 }
             }
         }
@@ -146,8 +115,9 @@ int main(int argc, char** argv) {
         if (errorCount)
             printf("Test failed with %d errors\n", errorCount);
         else
-            printf("TEST PASSED\n");
+            printf("TEST PASSED\n");  
     }
-
-    return errorCount;
+    
+    return errorCount != 0? EXIT_FAILURE: EXIT_SUCCESS;
 }
+

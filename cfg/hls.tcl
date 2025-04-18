@@ -1,0 +1,1 @@
+config_interface -s_axilite_sw_reset

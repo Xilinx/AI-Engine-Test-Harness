@@ -23,6 +23,5 @@
 
 #pragma once
 
-//#define KERNEL_LOOP_ITERS 512
-#define KERNEL_LOOP_ITERS (16 * 1024)
+#define KERNEL_LOOP_ITERS 512
 #define KERNEL_WORDS_PER_ITER 4

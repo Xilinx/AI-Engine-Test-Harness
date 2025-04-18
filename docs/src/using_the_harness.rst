@@ -25,7 +25,8 @@ Using the Test Harness
 Environment Setup
 =================
 
-Before building the design with the AIE test harness, you need to source the ``setup.sh`` script included in this repository. You should also ensure that Vitis, XRT, Versal ``SDKTARGETSYSROOT``, and ``LD_LIBRARY_PATH`` are properly set.
+Before building the design with the AIE test harness, you need to source the ``setup.sh`` script included in this repository. 
+You should also ensure that Vitis, XRT, Versal ``SDKTARGETSYSROOT``, and ``LD_LIBRARY_PATH`` are properly set.
 
 .. code-block:: shell
 
@@ -53,11 +54,15 @@ The test harness graph header must be included in the AIE graph sources:
 Mapping PLIOs
 -------------
 
-The names and width of the available PLIOs are predefined in the test harness. The original AIE graph must be mapped to these predefined PLIOs to make sure the PL data mover can be correctly connected to the user AIE graph.
+The names and width of the available PLIOs are predefined in the test harness. 
+The original AIE graph must be mapped to these predefined PLIOs to make sure the PL data mover can be correctly connected to the user AIE graph.
 
 The user AIE graph must be modified to ensure that all PLIOs are 128 bits wide and use the PLIOs predefined in the test harness.
 
-The predefined PLIO names are listed in :url_to_repo:`include/test_harness_port_name.hpp`. The ``test_harness::in_names`` is the list of PLIO names which can be used to send data to AI Engine and ``test_harness::out_names`` is the list of PLIO names that can be used to receive data from AI Engine. These are the **ONLY** valid PLIOs to be built with the test harness. 
+The predefined PLIO names are listed in :url_to_repo:`include/test_harness_port_name.hpp`. 
+The ``test_harness::in_names`` is the list of PLIO names which can be used to send data to AI Engine 
+and ``test_harness::out_names`` is the list of PLIO names that can be used to receive data from AI Engine. 
+These are the **ONLY** valid PLIOs to be built with the test harness. 
 
 **Example**
 
@@ -70,7 +75,10 @@ The predefined PLIO names are listed in :url_to_repo:`include/test_harness_port_
 Occupying unused PLIOs
 -----------------------
 
-All the PLIO ports defined in the test harness must be connected. In case the AIE graph does not need all the PLIOs defined in the test harness, an instance of the ``test_harness::occupyUnusedPLIO`` helper class must be added to the ``graph.cpp`` file. This class will help user to occupy all the PLIOs which are not used by the user AIE graph. 
+All the PLIO ports defined in the test harness must be connected. 
+In case the AIE graph does not need all the PLIOs defined in the test harness, 
+an instance of the ``test_harness::occupyUnusedPLIO`` helper class must be added to the ``graph.cpp`` file. 
+This class will help user to occupy all the PLIOs which are not used by the user AIE graph. 
 
 .. code-block:: c++
 
@@ -96,10 +104,12 @@ All the PLIO ports defined in the test harness must be connected. In case the AI
 **Parameters**
 
 ``used_in_plio_names`` 
-  Vector of strings containing the names of the input PLIOs used by the AIE graph. The length of the vector must match the value of the ``used_in_plio`` template argument
+  Vector of strings containing the names of the input PLIOs used by the AIE graph. 
+  The length of the vector must match the value of the ``used_in_plio`` template argument
 
 ``used_out_plio_names`` 
-  Vector of strings containing the names of the output PLIOs used by the AIE graph. The length of the vector must match the value of the ``used_out_plio`` template argument
+  Vector of strings containing the names of the output PLIOs used by the AIE graph. 
+  The length of the vector must match the value of the ``used_out_plio`` template argument
 
 
 **Example**
@@ -116,11 +126,14 @@ All the PLIO ports defined in the test harness must be connected. In case the AI
 Creating the SW Application
 ===========================
 
-A SW application running on the embedded ARM core (PS) of the Versal is necessary to run the test. This SW application must be developped using the :ref:`test harness software APIs <sw_apis>`.
+A SW application running on the embedded ARM core (PS) of the Versal is necessary to run the test. 
+This SW application must be developped using the :ref:`test harness software APIs <sw_apis>`.
 
-The application usually ressembles the structure and contents of ``graph.cpp`` file used in x86sim and AIEsim. The main difference is that a different set of APIs is used to transfer data and interact with the AIE graph.
+The application usually ressembles the structure and contents of ``graph.cpp`` file used in x86sim and AIEsim. 
+The main difference is that a different set of APIs is used to transfer data and interact with the AIE graph.
 
-For additional details, refer to the :ref:`step by step example <ps_app>` section in this documentation, or the example provided in this repo, such as :url_to_repo:`examples/vck190/adder/ps/host.cpp`.
+For additional details, refer to the :ref:`step by step example <ps_app>` section in this documentation, 
+or the example provided in this repo, such as :url_to_repo:`examples/vck190/adder/ps/host.cpp`.
 
 Testing on Hardware
 ===================
@@ -137,9 +150,12 @@ Building the test application is done in three simple steps:
 Building the AI Engine Graph
 ----------------------------
 
-To build the libadf.a for use with the test harness, it must be compiled using the desired prebuilt XSA as the input platform, with the ``hw`` target, and setting the ``--event-trace`` and ``--event-trace-port`` options as shown below:
+To build the libadf.a for use with the test harness, 
+it must be compiled using the desired prebuilt XSA as the input platform, 
+with the ``hw`` target, and setting the ``--event-trace`` and ``--event-trace-port`` options as shown below:
 
-The prebuilt XSAs are ``vck190_test_harness_func.xsa`` for functional testing on VCK190, ``vck190_test_harness_perf.xsa`` for performance testing on VCK190 and ``vek280_test_harness.xsa`` for performance testing on VEK280.
+The prebuilt XSAs are ``vck190_test_harness_func.xsa`` for functional testing on VCK190, 
+``vck190_test_harness_perf.xsa`` for performance testing on VCK190 and ``vek280_test_harness.xsa`` for performance testing on VEK280.
 
 .. code-block:: shell
 

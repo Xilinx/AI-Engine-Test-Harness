@@ -11,9 +11,37 @@
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
 
+##################### Project Variables ######################
+TARGET ?= hw
+CPU ?= x86
+
+ifneq ($(filter x86sim, $(TARGET)),)
+AIETARGET := x86sim
+else
+AIETARGET := hw
+endif
+
+ifneq ($(filter arm, $(CPU)),)
+CXX := $(XILINX_VITIS)/gnu/aarch64/lin/aarch64-linux/bin/aarch64-linux-gnu-g++
+else
+ifeq ($(shell expr $(shell echo "__GNUG__" | g++ -E -x c++ - | tail -1) \>= 9), 1)
+CXX := g++
+else
+ifndef XILINX_VIVADO
+$(error [ERROR]: the g++ version is too old. Please use g++-9 or above)
+else
+CXX := $(XILINX_VIVADO)/tps/lnx64/gcc-9.3.0/bin/g++
+ifeq ($(LD_LIBRARY_PATH),)
+	export LD_LIBRARY_PATH := $(XILINX_VIVADO)/tps/lnx64/gcc-9.3.0/lib64
+else
+	export LD_LIBRARY_PATH := $(XILINX_VIVADO)/tps/lnx64/gcc-9.3.0/lib64:$(LD_LIBRARY_PATH)
+endif
+endif
+endif
+endif
+
 ##################### Check Vitis Setup ######################
-.PHONY: check_setup
-check_setup:
+check_vitis:
 ifeq (,$(wildcard $(XILINX_VITIS)/bin/v++))
 	@echo "Cannot locate Vitis installation. Please set XILINX_VITIS variable." && false
 endif
@@ -21,27 +49,41 @@ ifeq (,$(wildcard $(XILINX_XRT)/lib/libxilinxopencl.so))
 	@echo "Cannot locate XRT installation. Please set XILINX_XRT variable." && false
 endif
 
-##################### Project Variables ######################
-TARGET ?= sw_emu
-ifneq ($(filter x86sim sw_emu, $(TARGET)),)
-AIETARGET := x86sim
-CXX := g++
+##################### Platform Setup ######################
+TEST_HARNESS_PLATFORM_PATH := ${XILINX_VITIS}/base_platforms/
 
-ifneq ($(shell expr $(shell echo "__GNUG__" | g++ -E -x c++ - | tail -1) \>= 6), 1)
-ifndef XILINX_VIVADO
-$(error [ERROR]: g++ version too old. Please use $(CXX_VER) or above)
+ifeq ($(DEVICE), vck190)
+COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=36 -DPARAM_DEPTH=4096
+else ifeq ($(DEVICE), vek280)
+COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=16 -DPARAM_DEPTH=8192
 else
-CXX := $(XILINX_VIVADO)/tps/lnx64/gcc-8.3.0/bin/g++
-ifeq ($(LD_LIBRARY_PATH),)
-export LD_LIBRARY_PATH := $(XILINX_VIVADO)/tps/lnx64/gcc-8.3.0/lib64
-else
-export LD_LIBRARY_PATH := $(XILINX_VIVADO)/tps/lnx64/gcc-8.3.0/lib64:$(LD_LIBRARY_PATH)
+$(error ERROR: DEVICE should be set to either vck190 or vek280)
 endif
-endif
-endif
+COMMON_CONFIG_FLAGS += -DPARAM_DEVICE=${DEVICE} -DPARAM_MEM_WIDTH=16 -DPARAM_WIDTH=16 
+HOST_CONFIG_FLAGS += ${COMMON_CONFIG_FLAGS} -std=c++17
 
+ifneq ($(findstring 2025.1, $(XILINX_VITIS)), )
+ifneq ($(findstring vck190, $(DEVICE)), )
+PLATFORM_NAME := xilinx_vck190_base_dfx_202510_1
 else
-AIETARGET := hw
-CXX := $(XILINX_VITIS)/gnu/aarch64/lin/aarch64-linux/bin/aarch64-linux-gnu-g++
+PLATFORM_NAME := xilinx_vek280_base_202510_1
+endif
 endif
 
+ifneq ($(findstring 2024.2, $(XILINX_VITIS)), )
+ifneq ($(findstring vck190, $(DEVICE)), )
+PLATFORM_NAME := xilinx_vck190_base_dfx_202420_1
+else
+PLATFORM_NAME := xilinx_vek280_base_202420_1
+endif
+endif
+
+ifneq ($(findstring 2024.1, $(XILINX_VITIS)), )
+ifneq ($(findstring vck190, $(DEVICE)), )
+PLATFORM_NAME := xilinx_vck190_base_dfx_202410_1
+else
+PLATFORM_NAME := xilinx_vek280_base_202410_1
+endif
+endif
+
+TEST_HARNESS_PLATFORM := ${TEST_HARNESS_PLATFORM_PATH}/${PLATFORM_NAME}/${PLATFORM_NAME}.xpfm
