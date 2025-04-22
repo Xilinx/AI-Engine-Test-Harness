@@ -2,7 +2,7 @@
     "name": "DMA_FIFO Kernel", 
     "flow": "system",
     "platform_allowlist": [
-        "vck190"
+        "xilinx_vck190_base_dfx_202420_1"
     ],
     "testinfo": {
         "disable": false,
