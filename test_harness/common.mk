@@ -64,22 +64,6 @@ endif
 COMMON_CONFIG_FLAGS += -DPARAM_DEVICE=${DEVICE} -DPARAM_MEM_WIDTH=16 -DPARAM_WIDTH=16 
 HOST_CONFIG_FLAGS += ${COMMON_CONFIG_FLAGS} -std=c++17
 
-ifneq ($(findstring 2025.1, $(XILINX_VITIS)), )
-ifneq ($(findstring vck190, $(DEVICE)), )
-PLATFORM_NAME := xilinx_vck190_base_dfx_202510_1
-else
-PLATFORM_NAME := xilinx_vek280_base_202510_1
-endif
-endif
-
-ifneq ($(findstring 2024.2, $(XILINX_VITIS)), )
-ifneq ($(findstring vck190, $(DEVICE)), )
-PLATFORM_NAME := xilinx_vck190_base_dfx_202420_1
-else
-PLATFORM_NAME := xilinx_vek280_base_202420_1
-endif
-endif
-
 ifneq ($(findstring 2024.1, $(XILINX_VITIS)), )
 ifneq ($(findstring vck190, $(DEVICE)), )
 PLATFORM_NAME := xilinx_vck190_base_dfx_202410_1

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 #!/usr/bin/env bash
-=======
-#!/bin/sh
->>>>>>> faas/2024.1
 # MIT License
 #
 # Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
@@ -17,10 +13,5 @@
 #
 
 echo "This is script that lead user to downloading url of pre-compiled .xsa"
-<<<<<<< HEAD
-wget --no-clobber --no-check-certificate https://xcoartifactory.xilinx.com/artifactory/vitis-lib-local/test_harness/2025.1/test_harness_xsa_sd_card_2025.1_latest.tar.gz
-tar -xzvf test_harness_xsa_sd_card_2025.1_latest.tar.gz
-=======
 wget --no-clobber --no-check-certificate https://xcoartifactory.xilinx.com/artifactory/vitis-lib-local/test_harness/2024.1/test_harness_xsa_sd_card_2024.1_latest.tar.gz
 tar -xzvf test_harness_xsa_sd_card_2024.1_latest.tar.gz
->>>>>>> faas/2024.1

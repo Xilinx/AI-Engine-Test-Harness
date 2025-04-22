@@ -70,12 +70,12 @@ namespace test_harness {
             d_hdl = xrt::device(device_index);
             test_harness_logger::getLogger().log(test_harness_logger::level::DEBUGGING, 
                                     "Loading PL xclbin: " + pl_xclbin_file_path.string());
-            test_harness_logger::getLogger().log(test_harness_logger::level::DEBUGGING,
-                                    "Loading AIE xclbin: " + aie_xclbin_file_path.string());
-
             xrt::uuid pl_id = d_hdl.load_xclbin(pl_xclbin_file_path.string());
             test_harness_logger::getLogger().log(test_harness_logger::level::DEBUGGING,
                                     "PL xclbin loaded with uuid " + std::to_string(pl_id));
+
+            test_harness_logger::getLogger().log(test_harness_logger::level::DEBUGGING,
+                                    "Loading AIE xclbin: " + aie_xclbin_file_path.string());
             xrt::uuid aie_id = d_hdl.load_xclbin(aie_xclbin_file_path.string());
             test_harness_logger::getLogger().log(test_harness_logger::level::DEBUGGING,
                                     "AIE xclbin loaded with uuid " + std::to_string(aie_id));
