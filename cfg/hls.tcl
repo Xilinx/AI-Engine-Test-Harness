@@ -12,5 +12,6 @@
 #
 
 config_interface -s_axilite_sw_reset
-set_param hls.enable_m_axi_io_regslice true
+# set_param hls.enable_m_axi_io_regslice true
 # set_param hls.enable_fifo_io_regslice true
+
