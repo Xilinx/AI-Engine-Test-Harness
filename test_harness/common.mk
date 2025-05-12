@@ -72,20 +72,4 @@ PLATFORM_NAME := xilinx_vek280_base_202510_1
 endif
 endif
 
-ifneq ($(findstring 2024.2, $(XILINX_VITIS)), )
-ifneq ($(findstring vck190, $(DEVICE)), )
-PLATFORM_NAME := xilinx_vck190_base_dfx_202420_1
-else
-PLATFORM_NAME := xilinx_vek280_base_202420_1
-endif
-endif
-
-ifneq ($(findstring 2024.1, $(XILINX_VITIS)), )
-ifneq ($(findstring vck190, $(DEVICE)), )
-PLATFORM_NAME := xilinx_vck190_base_dfx_202410_1
-else
-PLATFORM_NAME := xilinx_vek280_base_202410_1
-endif
-endif
-
 TEST_HARNESS_PLATFORM := ${TEST_HARNESS_PLATFORM_PATH}/${PLATFORM_NAME}/${PLATFORM_NAME}.xpfm
