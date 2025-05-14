@@ -6,6 +6,7 @@
     ],
     "testinfo": {
         "disable": false,
+        "retry":3,
         "jobs": [
             {
                 "index": 0,
