@@ -40,18 +40,30 @@ DEBUG ?= 0
 #################### Test Harness XSA ############################ 
 xsa:
 ifeq ($(DEVICE), vck190)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness.mk vck190_xsa
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_dfx.mk xsa
 else ifeq ($(DEVICE), vek280)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness.mk vek280_xsa
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk xsa
+else ifeq ($(DEVICE), vrk160)
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk xsa
+else ifeq ($(DEVICE), vek385)
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk xsa
+else
+	$(error Invalid DEVICE specified. Please use vck190, vek280, vrk160, or vek385.)
 endif
 
 ####################### PAKCAGING  ################################
 
 sd_card:
 ifeq ($(DEVICE), vck190)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness.mk vck190_sd_card
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_dfx.mk sd_card DEVICE=$(DEVICE)
 else ifeq ($(DEVICE), vek280)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness.mk vek280_sd_card
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk sd_card DEVICE=$(DEVICE)
+else ifeq ($(DEVICE), vrk160)
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk sd_card DEVICE=$(DEVICE)
+else ifeq ($(DEVICE), vek385)
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk sd_card DEVICE=$(DEVICE)
+else
+	$(error Invalid DEVICE specified. Please use vck190, vek280, vrk160, or vek385.)
 endif
 
 matlab:
@@ -62,6 +74,6 @@ python:
 
 ####################### Clean Section ############################
 clean:
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness.mk clean
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk clean
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/matlab.mk clean
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/python.mk clean

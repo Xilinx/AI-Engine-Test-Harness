@@ -31,7 +31,7 @@
 
 // for vck190 performance mode
 template <int NUM_CHANNELS, int URAM_DEPTH, int STREAM_WIDTH, int MEM_WIDTH>
-void vck190_load_store_stream(test_harness<NUM_CHANNELS, URAM_DEPTH, STREAM_WIDTH, MEM_WIDTH>& test_harness,
+void load_store_stream_36x36(test_harness<NUM_CHANNELS, URAM_DEPTH, STREAM_WIDTH, MEM_WIDTH>& test_harness,
                               ap_uint<MEM_WIDTH>* to_aie_mem,
                               ap_uint<MEM_WIDTH>* from_aie_mem,
                               hls::stream<ap_axiu<STREAM_WIDTH, 0, 0, 0> >& to_aie_strm0,
@@ -357,7 +357,7 @@ extern "C" void vck190_test_harness(uint64_t* cfg,
     test_harness<PARAM_CHANNELS, PARAM_DEPTH, STREAM_WIDTH, MEM_WIDTH> inst;
     inst.load_cfg(cfg);
     inst.load_buffs(to_aie_mem);
-    vck190_load_store_stream(
+    load_store_stream_36x36(
         inst, to_aie_mem, from_aie_mem, //
         to_aie_strm0, to_aie_strm1, to_aie_strm2, to_aie_strm3, to_aie_strm4, to_aie_strm5, to_aie_strm6, to_aie_strm7,
         to_aie_strm8, to_aie_strm9, to_aie_strm10, to_aie_strm11, to_aie_strm12, to_aie_strm13, to_aie_strm14,

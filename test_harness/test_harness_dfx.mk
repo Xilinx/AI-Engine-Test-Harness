@@ -14,7 +14,6 @@
 # ############################### Variable Section ###################################
 
 # Setting up Project Variables
-# Setting up Project Variables
 MK_PATH 			   := $(abspath $(lastword $(MAKEFILE_LIST)))
 TEST_HARNESS_REPO_PATH ?= $(shell bash -c 'export MK_PATH=$(MK_PATH); echo $${MK_PATH%/test_harness/*}')
 
@@ -49,37 +48,20 @@ endif
 ${BUILD_DIR}:
 	mkdir -p ${BUILD_DIR}
 
-####################### Vck190 Test Harness #######################
-${BUILD_DIR}/vck190_libadf.a: ${TEST_HARNESS_REPO_PATH}/src/aie/vck190_dummy_graph.cpp
+####################### ${DEVICE} Test Harness #######################
+${BUILD_DIR}/${DEVICE}_libadf.a: ${TEST_HARNESS_REPO_PATH}/src/aie/${DEVICE}_dummy_graph.cpp
 	mkdir -p ${BUILD_DIR}
-	v++ -c -o $@ $^ ${AIE_COMPILE_FLAGS} --aie.constraints ${TEST_HARNESS_REPO_PATH}/cfg/vck190_aie_constraints.json --aie.workdir ${BUILD_DIR}/Work_vck190
+	v++ -c -o $@ $^ ${AIE_COMPILE_FLAGS} --aie.constraints ${TEST_HARNESS_REPO_PATH}/cfg/${DEVICE}_aie_constraints.json --aie.workdir ${BUILD_DIR}/Work_${DEVICE}
 
-${BUILD_DIR}/vck190_test_harness.xo: ${TEST_HARNESS_REPO_PATH}/src/pl/vck190_test_harness.cpp
+${BUILD_DIR}/${DEVICE}_test_harness.xo: ${TEST_HARNESS_REPO_PATH}/src/pl/${DEVICE}_test_harness.cpp
 	mkdir -p ${BUILD_DIR}/
-	v++ -c -o $@ $^ ${TEST_HARNESS_COMPILE_FLAGS} -k vck190_test_harness --hls.clock ${CLOCK}:vck190_test_harness
+	v++ -c -o $@ $^ ${TEST_HARNESS_COMPILE_FLAGS} -k ${DEVICE}_test_harness --hls.clock ${CLOCK}:${DEVICE}_test_harness
 
-${BUILD_DIR}/vck190_test_harness.xsa: ${BUILD_DIR}/vck190_libadf.a ${BUILD_DIR}/vck190_test_harness.xo
-	v++ -l -o $@ $^ ${TEST_HARNESS_LINK_FLAGS} --config ${TEST_HARNESS_REPO_PATH}/cfg/vck190_system.cfg
+${BUILD_DIR}/${DEVICE}_test_harness.xsa: ${BUILD_DIR}/${DEVICE}_libadf.a ${BUILD_DIR}/${DEVICE}_test_harness.xo
+	v++ -l -o $@ $^ ${TEST_HARNESS_LINK_FLAGS} --config ${TEST_HARNESS_REPO_PATH}/cfg/${DEVICE}_system.cfg
 
-vck190_xsa: check_vitis ${BUILD_DIR}/vck190_test_harness.xsa
-	cp ${BUILD_DIR}/vck190_test_harness.xsa ${TEST_HARNESS_REPO_PATH}/bin
-
-
-####################### Vek280 Test Harness #######################
-${BUILD_DIR}/vek280_libadf.a: ${TEST_HARNESS_REPO_PATH}/src/aie/vek280_dummy_graph.cpp
-	mkdir -p ${BUILD_DIR}
-	v++ -c -o $@ $^ ${AIE_COMPILE_FLAGS} --aie.constraints ${TEST_HARNESS_REPO_PATH}/cfg/vek280_aie_constraints.json --aie.workdir ${BUILD_DIR}/Work_vek280
-
-${BUILD_DIR}/vek280_test_harness.xo: ${TEST_HARNESS_REPO_PATH}/src/pl/vek280_test_harness.cpp
-	mkdir -p ${BUILD_DIR}
-	v++ -c -o $@ $^ ${TEST_HARNESS_COMPILE_FLAGS} -k vek280_test_harness --hls.clock ${CLOCK}:vek280_test_harness
-
-${BUILD_DIR}/vek280_test_harness.xsa: ${BUILD_DIR}/vek280_libadf.a ${BUILD_DIR}/vek280_test_harness.xo
-	v++ -l -o $@ $^ ${TEST_HARNESS_LINK_FLAGS} --config ${TEST_HARNESS_REPO_PATH}/cfg/vek280_system.cfg
-
-vek280_xsa: check_vitis ${BUILD_DIR}/vek280_test_harness.xsa
-	cp ${BUILD_DIR}/vek280_test_harness.xsa ${TEST_HARNESS_REPO_PATH}/bin
-
+${DEVICE}_xsa: check_vitis ${BUILD_DIR}/${DEVICE}_test_harness.xsa
+	cp ${BUILD_DIR}/${DEVICE}_test_harness.xsa ${TEST_HARNESS_REPO_PATH}/bin
 
 ############################## SD CARD  ##############################
 
@@ -119,7 +101,7 @@ ${BUILD_DIR}/vek280_test_harness.xclbin: ${BUILD_DIR}/vek280_test_harness.xsa
 	v++ -p -o $@ $^ ${TEST_HARNESS_PACKAGE_FLAGS}
 
 ####################### PAKCAGING  ###########################
-vck190_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_session} ${test_harness_server} \
+${DEVICE}_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_session} ${test_harness_server} \
 								${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh
 	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} \
 		--package.rootfs ${ROOTFS} --package.kernel_image ${IMAGE} --package.boot_mode=sd --package.image_format=ext4 \
@@ -131,21 +113,8 @@ vck190_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_ha
 	cp ${BUILD_DIR}/sd_card.img.zip ${SD_IMAGE_PATH}
 	cp ${test_harness_server} ${test_harness_session} ${SERVER_FILE_PATH}
 
-vek280_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
-									${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
-									${BUILD_DIR}/vek280_test_harness.xclbin ${BUILD_DIR}/vek280_libadf.a \
-									${BUILD_DIR}/vek280_test_harness.xsa
-	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} \
-		--package.rootfs ${ROOTFS} --package.kernel_image ${IMAGE} --package.boot_mode=sd --package.image_format=ext4 \
-		--package.sd_file ${test_harness_session} \
-		--package.sd_file ${test_harness_server} \
-		--package.sd_file ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
-		--package.sd_file ${BUILD_DIR}/vek280_test_harness.xclbin \
-		--temp_dir ${BUILD_DIR} \
-		${BUILD_DIR}/vek280_test_harness.xsa ${BUILD_DIR}/vek280_libadf.a
-	zip -j ${BUILD_DIR}/sd_card.img.zip ${BUILD_DIR}/sd_card.img
-	cp ${BUILD_DIR}/sd_card.img.zip ${SD_IMAGE_PATH}
-	cp ${BUILD_DIR}/vek280_test_harness.xclbin ${test_harness_server} ${test_harness_session} ${BUILD_DIR}/vek280_libadf.a ${SERVER_FILE_PATH}
+sd_card: ${DEVICE}_sd_card
+xsa: ${DEVICE}_xsa
 
 clean:
 	rm -rf build_* *.log *.csv *.xcl *.xclbin *.xsa *.xo *.a *.img.zip \

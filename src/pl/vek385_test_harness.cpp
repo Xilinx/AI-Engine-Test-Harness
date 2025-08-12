@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
+ * Copyright (C) 2025 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the “Software”), to deal in the Software without restriction, including without limitation the
@@ -29,7 +29,7 @@
 
 #define BURST_LENGTH_EACH_CHANNEL 16
 
-// For vek280 with 16 streams
+// For vek385 with 16 streams
 template <int NUM_CHANNELS, int STREAM_WIDTH, int URAM_DEPTH, int MEM_WIDTH>
 void load_store_stream_16x16(test_harness<NUM_CHANNELS, URAM_DEPTH, STREAM_WIDTH, MEM_WIDTH>& test_harness,
                               ap_uint<MEM_WIDTH>* to_aie_mem,
@@ -109,7 +109,7 @@ void load_store_stream_16x16(test_harness<NUM_CHANNELS, URAM_DEPTH, STREAM_WIDTH
 #define MEM_WIDTH (PARAM_MEM_WIDTH * 8)
 #define STREAM_WIDTH (PARAM_WIDTH * 8)
 
-extern "C" void vek280_test_harness(uint64_t* cfg,
+extern "C" void vek385_test_harness(uint64_t* cfg,
                                     uint64_t* perf,
                                     ap_uint<MEM_WIDTH>* to_aie_mem,
                                     ap_uint<MEM_WIDTH>* from_aie_mem,

@@ -52,11 +52,15 @@ ifeq (,$(wildcard $(XILINX_XRT)/lib/libxilinxopencl.so))
 endif
 
 ##################### Platform Setup ######################
-TEST_HARNESS_PLATFORM_PATH := ${XILINX_VITIS}/base_platforms/
+TEST_HARNESS_PLATFORM_PATH := ${LATEST_VERSION_PATH}/internal_platforms
 
 ifeq ($(DEVICE), vck190)
 COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=36 -DPARAM_DEPTH=4096
 else ifeq ($(DEVICE), vek280)
+COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=16 -DPARAM_DEPTH=8192
+else ifeq ($(DEVICE), vrk160)
+COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=16 -DPARAM_DEPTH=8192
+else ifeq ($(DEVICE), vek385)
 COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=16 -DPARAM_DEPTH=8192
 else
 $(error ERROR: DEVICE should be set to either vck190 or vek280)
@@ -64,12 +68,21 @@ endif
 COMMON_CONFIG_FLAGS += -DPARAM_DEVICE=${DEVICE} -DPARAM_MEM_WIDTH=16 -DPARAM_WIDTH=16 
 HOST_CONFIG_FLAGS += ${COMMON_CONFIG_FLAGS} -std=c++17
 
-ifneq ($(findstring 2025.1, $(XILINX_VITIS)), )
-ifneq ($(findstring vck190, $(DEVICE)), )
-PLATFORM_NAME := xilinx_vck190_base_dfx_202510_1
+ifneq ($(findstring 2025.2, $(XILINX_VITIS)), )
+ifeq ($(DEVICE), vck190)
+PLATFORM_NAME := xilinx_vck190_base_dfx_202520_1
+else ifeq ($(DEVICE), vek280)
+PLATFORM_NAME := xilinx_vek280_base_202520_1
+else ifeq ($(DEVICE), vrk160)
+PLATFORM_NAME := vrk160_base_202520_1
+else ifeq ($(DEVICE), vek385)
+PLATFORM_NAME := vek385_base_202520_1
 else
-PLATFORM_NAME := xilinx_vek280_base_202510_1
+$(error ERROR: DEVICE should be set to either vck190, vek280, vrk160 or vek385)
 endif
+else
+$(error ERROR: XILINX_VITIS version 2025.2 is required for this project)
 endif
+
 
 TEST_HARNESS_PLATFORM := ${TEST_HARNESS_PLATFORM_PATH}/${PLATFORM_NAME}/${PLATFORM_NAME}.xpfm
