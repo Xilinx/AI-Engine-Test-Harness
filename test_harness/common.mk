@@ -52,8 +52,6 @@ ifeq (,$(wildcard $(XILINX_XRT)/lib/libxilinxopencl.so))
 endif
 
 ##################### Platform Setup ######################
-TEST_HARNESS_PLATFORM_PATH := ${LATEST_VERSION_PATH}/internal_platforms
-
 ifeq ($(DEVICE), vck190)
 COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=36 -DPARAM_DEPTH=4096
 else ifeq ($(DEVICE), vek280)
@@ -84,5 +82,4 @@ else
 $(error ERROR: XILINX_VITIS version 2025.2 is required for this project)
 endif
 
-
-TEST_HARNESS_PLATFORM := ${TEST_HARNESS_PLATFORM_PATH}/${PLATFORM_NAME}/${PLATFORM_NAME}.xpfm
+TEST_HARNESS_PLATFORM := ${PLATFORM_REPO_PATHS}/${PLATFORM_NAME}/${PLATFORM_NAME}.xpfm
