@@ -11,7 +11,6 @@
 # 
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
-set -xe
 
 vitis_ver=$1
 ver=$(echo "$vitis_ver" | awk -F'_' '{print $1}')
@@ -41,6 +40,7 @@ build() {
     # source <path to XRT installation>/setup.sh # VITIS_XRT
     source $VITIS_TOOL
     source $VITIS_XRT
+    set -xe
     make xsa DEVICE=vck190 TARGET=hw
     make xsa DEVICE=vek280 TARGET=hw
     make sd_card DEVICE=vek280 TARGET=hw
