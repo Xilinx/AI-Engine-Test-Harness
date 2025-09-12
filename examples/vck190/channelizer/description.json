@@ -2,7 +2,7 @@
     "name": "Channelizer Kernel", 
     "flow": "system",
     "platform_allowlist": [
-        "xilinx_vck190_base_dfx_202510_1"
+        "xilinx_vck190_base_dfx_202520_1"
     ],
     "testinfo": {
         "disable": false,

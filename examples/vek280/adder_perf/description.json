@@ -2,7 +2,7 @@
     "name": "Adder Kernel", 
     "flow": "system",
     "platform_allowlist": [
-        "xilinx_vek280_base_202510_1"
+        "xilinx_vek280_base_202520_1"
     ],
     "testinfo": {
         "disable": false,
