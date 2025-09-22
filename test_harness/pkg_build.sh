@@ -45,7 +45,7 @@ build() {
     make sd_card DEVICE=vck190 TARGET=hw
     make xsa DEVICE=vek280 TARGET=hw
     make sd_card DEVICE=vek280 TARGET=hw
-    make xsa DEVICE=vek386 TARGET=hw
+    make xsa DEVICE=vek385 TARGET=hw
     make xsa DEVICE=vrk160 TARGET=hw
 
     bin=""
