@@ -59,6 +59,7 @@ HOST_LD_FLAGS   := -lpthread
 ifeq ($(DEBUG), 1)
 	HOST_CXX_FLAGS += -g -DDEBUG
 endif
+
 # Host settings according to TARGET selection 
 HOST_EFL         	:= $(TEMP_DIR)/host_elf
 XCLBIN				:= $(TEMP_DIR)/vck190_test_harness.xclbin
@@ -77,6 +78,7 @@ $(HOST_EFL): ps/host.cpp
 	${CXX} -o $@ $^ $(HOST_CXX_FLAGS) ${HOST_LD_FLAGS}
 
 # ########################## Build Flow ############################ #
+
 # Step 1. Download XSA
 download_xsa: $(TEST_HARNESS_XSA)
 
@@ -85,11 +87,15 @@ $(AIE_ADF): ./aie/m16_ssr8_app.cpp ${TEST_HARNESS_REPO_PATH}/bin/vck190_test_har
 	@echo "Compiling: $(TEMP_DIR)/libadf.a"
 	v++ -c --mode aie $(AIE_CXX_FLAGS) $^
 
-# Step 3. Build Package
-${XCLBIN}: $(TEST_HARNESS_XSA) ${AIE_ADF}
+# Step 3. Build Host 
+build_host_elf: $(HOST_EFL)
+
+# Step 4. Build Package
+${XCLBIN}: ${AIE_ADF}
 ifeq ($(TARGET), hw)
 	v++ -p -t ${TARGET} -f ${TEST_HARNESS_PLATFORM} -o $@ $^ \
-		--package.defer_aie_run \
+ 		--config ${TEST_HARNESS_REPO_PATH}/cfg/package_aie_only.cfg \
+ 		--package.defer_aie_run \
 		--advanced.param package.enableAiePartitionDrc=0 \
 		--package.out_dir ${TEMP_DIR}
 endif

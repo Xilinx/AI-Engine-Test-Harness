@@ -68,13 +68,13 @@ HOST_CONFIG_FLAGS += ${COMMON_CONFIG_FLAGS} -std=c++17
 
 ifneq ($(findstring 2025.2, $(XILINX_VITIS)), )
 ifeq ($(DEVICE), vck190)
-PLATFORM_NAME := xilinx_vck190_base_dfx_202520_1
+PLATFORM_NAME := xilinx_vck190_base_202520_1
 else ifeq ($(DEVICE), vek280)
 PLATFORM_NAME := xilinx_vek280_base_202520_1
 else ifeq ($(DEVICE), vrk160)
-PLATFORM_NAME := vrk160_base_202520_1
+PLATFORM_NAME := vrk160_base
 else ifeq ($(DEVICE), vek385)
-PLATFORM_NAME := vek385_base_202520_1
+PLATFORM_NAME := vek385_base
 else
 $(error ERROR: DEVICE should be set to either vck190, vek280, vrk160 or vek385)
 endif

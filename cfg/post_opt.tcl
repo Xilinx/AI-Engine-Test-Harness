@@ -13,4 +13,4 @@
 
 [vivado]
 impl.jobs=1
-# impl.strategies=All
+impl.strategies=Performance_Explore

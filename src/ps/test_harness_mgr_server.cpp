@@ -54,6 +54,10 @@ test_harness_mgr_server::test_harness_mgr_server(test_harness_server* server,
 
 void test_harness_mgr_server::verifyDevice() {
     try {
+        if((this->device.compare("vek280") != 0 && this->device.compare("vck190") != 0  && this->device.compare("vek385") != 0  && this->device.compare("vrk160") != 0)) {
+            throw TestHarnessException(TestHarnessStatus::INVALID_ARGUMENTS,
+                    "The device " + this->device + " is not supported in the server.");
+        }
         // verify PL configuration
         std::string client_req_device;
         server->recvData(client_req_device);
@@ -94,19 +98,16 @@ void test_harness_mgr_server::init() {
         server->recvData(user_xclbin_path);
         received_files.push_back(user_xclbin_path);
 
-        if(this->device.compare("vek280") == 0) {
-            fs::path pl_xclbin_path;
-            // check if envrionment variable SERVER_ROOT is set
-            char* server_root = std::getenv("SERVER_ROOT");
-            if(server_root == nullptr) {
-                pl_xclbin_path = "/run/media/mmcblk0p1/vek280_test_harness.xclbin";
-            } else {
-                pl_xclbin_path = fs::path(server_root) / fs::path("vek280_test_harness.xclbin");
-            }
-            fastObj = std::make_unique<fastXM>(device_index, pl_xclbin_path, user_xclbin_path, pl_kernel_names, graph_names);
-        } else if (this->device.compare("vck190") == 0) {
-            fastObj = std::make_unique<fastXM>(device_index, user_xclbin_path, pl_kernel_names, graph_names);
+        fs::path pl_xclbin_path;
+        // check if envrionment variable SERVER_ROOT is set
+        char* server_root = std::getenv("SERVER_ROOT");
+        if(server_root == nullptr) {
+            pl_xclbin_path = "/run/media/mmcblk0p1/" + this->device + "_test_harness.xclbin";
+        } else {
+            pl_xclbin_path = fs::path(server_root) / fs::path(this->device + "_test_harness.xclbin");
         }
+        fastObj = std::make_unique<fastXM>(device_index, pl_xclbin_path, user_xclbin_path, pl_kernel_names, graph_names);
+        
         server->sendData(memorySizeMax);
     } catch (const SocketException& e) {
         throw TestHarnessException(TestHarnessStatus::TEST_HARNESS_CREATION_FAILURE,

@@ -31,6 +31,7 @@ BUILD_DIR := ./build_${TARGET}_${PLATFORM_NAME}
 AIE_COMPILE_FLAGS := --mode aie --platform ${TEST_HARNESS_PLATFORM} --target ${AIETARGET} 
 AIE_COMPILE_FLAGS += -I ./ -I ${TEST_HARNESS_REPO_PATH}/include/aie -I ${TEST_HARNESS_REPO_PATH}/src/aie -I ${XILINX_VITIS}/aietools/include 
 AIE_COMPILE_FLAGS += --aie.event-trace runtime --aie.event-trace-port gmio --aie.pl-freq=312.5
+AIE_COMPILE_FLAGS += --aie.Xmapper=disableautostamprepeat
 
 CLOCK := 312500000
 COMMON_BUILD_FLAGS := ${COMMON_CONFIG_FLAGS} -t ${TARGET} --save-temps --temp_dir ${BUILD_DIR}
@@ -103,12 +104,14 @@ ${BUILD_DIR}/${DEVICE}_test_harness.xclbin: ${BUILD_DIR}/${DEVICE}_test_harness.
 
 ####################### PAKCAGING  ###########################
 
-${DEVICE}_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
+{DEVICE}_server.zip: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
 									${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
-									${BUILD_DIR}/${DEVICE}_test_harness.xclbin ${BUILD_DIR}/${DEVICE}_libadf.a \
-									${BUILD_DIR}/${DEVICE}_test_harness.xsa
+									${BUILD_DIR}/${DEVICE}_test_harness.xclbin
+	@echo "Packaging SD Card Image..."
+	zip -j ${BUILD_DIR}/{DEVICE}_server.zip ${test_harness_server} ${test_harness_session} ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh ${BUILD_DIR}/${DEVICE}_test_harness.xclbin
+	cp ${BUILD_DIR}/server.zip ${SD_IMAGE_PATH}
 
-sd_card: ${DEVICE}_sd_card
+server: {DEVICE}_server.zip
 xsa: ${DEVICE}_xsa
 
 clean:

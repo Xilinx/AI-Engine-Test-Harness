@@ -53,8 +53,8 @@ AIE_CXX_FLAGS     += --aie.workdir=$(TEMP_DIR)/Work --aie.output-archive=$(TEMP_
 
 # host compilation flags
 # Compilation settings according to TARGET selection
-HOST_CXX_FLAGS 	:= ${HOST_CONFIG_FLAGS} -I ./ -I ./aie -I ./ps -I${TEST_HARNESS_REPO_PATH}/include/ps 
-HOST_LD_FLAGS   := -lpthread 
+HOST_CXX_FLAGS 	:= ${HOST_CONFIG_FLAGS} -I ./ -I ./aie -I ./ps -I${TEST_HARNESS_REPO_PATH}/include/ps
+HOST_LD_FLAGS   := -lpthread
 
 ifeq ($(DEBUG), 1)
 	HOST_CXX_FLAGS += -g -DDEBUG
@@ -83,15 +83,19 @@ $(HOST_EFL): ps/host.cpp
 download_xsa: $(TEST_HARNESS_XSA)
 
 # Step 2. Build AIE
-$(AIE_ADF): ./aie/graph.cpp $(TEST_HARNESS_XSA)
-	@echo "Compiling: $(TEMP_DIR)/libadf.a"
+$(AIE_ADF): ./aie/graph.cpp ${TEST_HARNESS_XSA}
+	@echo "Compiling: $(AIE_ADF)"
 	v++ -c --mode aie $(AIE_CXX_FLAGS) $^
 
-# Step 3. Build Package
-${XCLBIN}: $(TEST_HARNESS_XSA) ${AIE_ADF}
+# Step 3. Build Host 
+build_host_elf: $(HOST_EFL)
+
+# Step 4. Build Package
+${XCLBIN}: ${AIE_ADF}
 ifeq ($(TARGET), hw)
 	v++ -p -t ${TARGET} -f ${TEST_HARNESS_PLATFORM} -o $@ $^ \
-		--package.defer_aie_run \
+ 		--config ${TEST_HARNESS_REPO_PATH}/cfg/package_aie_only.cfg \
+ 		--package.defer_aie_run \
 		--advanced.param package.enableAiePartitionDrc=0 \
 		--package.out_dir ${TEMP_DIR}
 endif

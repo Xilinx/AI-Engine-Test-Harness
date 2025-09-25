@@ -14,10 +14,10 @@
 # ############################### Help Section ###################################
 help:
 	@echo "Makefile Usage:"
-	@echo "  make sd_card DEVICE=vck190/vek280"
-	@echo "      Command to generate the sd_card image for specified DEVICE."
+	@echo "  make server DEVICE=vck190/vek280/vek385/vrk160"
+	@echo "      Command to generate the server applications and images for specified DEVICE."
 	@echo ""
-	@echo "  make xsa DEVICE=vck190/vek280"
+	@echo "  make xsa DEVICE=vck190/vek280/vek385/vrk160"
 	@echo "      Command to generate the xsa for specified DEVICE."
 	@echo ""
 	@echo "  make python"
@@ -40,7 +40,7 @@ DEBUG ?= 0
 #################### Test Harness XSA ############################ 
 xsa:
 ifeq ($(DEVICE), vck190)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_dfx.mk xsa
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk xsa
 else ifeq ($(DEVICE), vek280)
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk xsa
 else ifeq ($(DEVICE), vrk160)
@@ -53,15 +53,15 @@ endif
 
 ####################### PAKCAGING  ################################
 
-sd_card:
+server:
 ifeq ($(DEVICE), vck190)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_dfx.mk sd_card DEVICE=$(DEVICE)
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk server DEVICE=$(DEVICE)
 else ifeq ($(DEVICE), vek280)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk sd_card DEVICE=$(DEVICE)
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk server DEVICE=$(DEVICE)
 else ifeq ($(DEVICE), vrk160)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk sd_card DEVICE=$(DEVICE)
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk server DEVICE=$(DEVICE)
 else ifeq ($(DEVICE), vek385)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk sd_card DEVICE=$(DEVICE)
+	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk server DEVICE=$(DEVICE)
 else
 	$(error Invalid DEVICE specified. Please use vck190, vek280, vrk160, or vek385.)
 endif

@@ -33,22 +33,22 @@ The following command lines build the xsa on the given device.
 ```
 # setup the vitis environment
 cd ${TEST_HARNESS_REPO}/test_harness
-make xsa DEVICE=vek280 TARGET=hw  # build xsa on vek280
+make xsa DEVICE=vek280 TARGET=hw  # build xsa for the vek280
 ```
 
-### Build the SD card images for the test harness server
+### Build the test harness server applications and SD card images
 The following command lines build the server SD card image on the given device.
 ```
 # setup the vitis and the xrt
 cd ${TEST_HARNESS_REPO}/test_harness
-make sd_card DEVICE=vek280 TARGET=hw  # build the sd card images for vek280
+make server DEVICE=vek280 TARGET=hw  # build the server application and sd_card image for the vek280
 ```
 
 ### Supported Devices
 
 | Device   | XSA Build Command                      | SD Card Image Command                     |
 |----------|----------------------------------------|-------------------------------------------|
-| vek280   | `make xsa DEVICE=vek280 TARGET=hw`     | `make sd_card DEVICE=vek280 TARGET=hw`    |
-| vck190   | `make xsa DEVICE=vck190 TARGET=hw`     | `make sd_card DEVICE=vck190 TARGET=hw`    |
-| vrk160   | `make xsa DEVICE=vrk160 TARGET=hw`     | `make sd_card DEVICE=vrk160 TARGET=hw`    |
-| vek385   | `make xsa DEVICE=vek385 TARGET=hw`     | `make sd_card DEVICE=vek385 TARGET=hw`    |
+| vek280   | `make xsa DEVICE=vek280 TARGET=hw`     | `make server DEVICE=vek280 TARGET=hw`    |
+| vck190   | `make xsa DEVICE=vck190 TARGET=hw`     | `make server DEVICE=vck190 TARGET=hw`    |
+| vrk160   | `make xsa DEVICE=vrk160 TARGET=hw`     | `make server DEVICE=vrk160 TARGET=hw`    |
+| vek385   | `make xsa DEVICE=vek385 TARGET=hw`     | `make server DEVICE=vek385 TARGET=hw`    |

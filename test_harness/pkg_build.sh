@@ -41,10 +41,8 @@ build() {
     source $VITIS_TOOL
     source $VITIS_XRT
     set -xe
-    make xsa DEVICE=vck190 TARGET=hw
-    make sd_card DEVICE=vck190 TARGET=hw
-    make xsa DEVICE=vek280 TARGET=hw
-    make sd_card DEVICE=vek280 TARGET=hw
+    make xsa server DEVICE=vck190 TARGET=hw
+    make xsa server DEVICE=vek280 TARGET=hw
     make xsa DEVICE=vek385 TARGET=hw
     make xsa DEVICE=vrk160 TARGET=hw
 

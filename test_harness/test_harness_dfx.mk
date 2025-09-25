@@ -113,7 +113,7 @@ ${DEVICE}_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test
 	cp ${BUILD_DIR}/sd_card.img.zip ${SD_IMAGE_PATH}
 	cp ${test_harness_server} ${test_harness_session} ${SERVER_FILE_PATH}
 
-sd_card: ${DEVICE}_sd_card
+server: ${DEVICE}_sd_card
 xsa: ${DEVICE}_xsa
 
 clean:

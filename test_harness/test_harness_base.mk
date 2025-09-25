@@ -31,6 +31,7 @@ BUILD_DIR := ./build_${TARGET}_${PLATFORM_NAME}
 AIE_COMPILE_FLAGS := --mode aie --platform ${TEST_HARNESS_PLATFORM} --target ${AIETARGET} 
 AIE_COMPILE_FLAGS += -I ./ -I ${TEST_HARNESS_REPO_PATH}/include/aie -I ${TEST_HARNESS_REPO_PATH}/src/aie -I ${XILINX_VITIS}/aietools/include 
 AIE_COMPILE_FLAGS += --aie.event-trace runtime --aie.event-trace-port gmio --aie.pl-freq=312.5
+AIE_COMPILE_FLAGS += --aie.Xmapper=disableautostamprepeat
 
 CLOCK := 312500000
 COMMON_BUILD_FLAGS := ${COMMON_CONFIG_FLAGS} -t ${TARGET} --save-temps --temp_dir ${BUILD_DIR}
@@ -107,19 +108,20 @@ ${DEVICE}_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test
 									${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
 									${BUILD_DIR}/${DEVICE}_test_harness.xclbin ${BUILD_DIR}/${DEVICE}_libadf.a \
 									${BUILD_DIR}/${DEVICE}_test_harness.xsa
-	v++ -p -t hw --platform ${BUILD_DIR}/${DEVICE}_test_harness.xsa --package.out_dir ${BUILD_DIR} \
-		--package.rootfs ${ROOTFS} --package.kernel_image ${IMAGE} --package.boot_mode=sd --package.image_format=ext4 --package.defer_aie_run \
+	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} \
+		--package.boot_mode=sd --package.image_format=ext4 --package.defer_aie_run \
+		--package.rootfs ${ROOTFS} --package.kernel_image ${IMAGE} \
 		--package.sd_file ${test_harness_session} \
 		--package.sd_file ${test_harness_server} \
 		--package.sd_file ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
 		--package.sd_file ${BUILD_DIR}/${DEVICE}_test_harness.xclbin \
 		--save-temps --temp_dir ${BUILD_DIR} \
-		${BUILD_DIR}/${DEVICE}_libadf.a
+		${BUILD_DIR}/${DEVICE}_libadf.a ${BUILD_DIR}/${DEVICE}_test_harness.xsa
 	zip -j ${BUILD_DIR}/sd_card.img.zip ${BUILD_DIR}/sd_card.img
 	cp ${BUILD_DIR}/sd_card.img.zip ${SD_IMAGE_PATH}
 	cp ${BUILD_DIR}/${DEVICE}_test_harness.xclbin ${test_harness_server} ${test_harness_session} ${BUILD_DIR}/${DEVICE}_libadf.a ${SERVER_FILE_PATH}
 
-sd_card: ${DEVICE}_sd_card
+server: ${DEVICE}_sd_card
 xsa: ${DEVICE}_xsa
 
 clean:

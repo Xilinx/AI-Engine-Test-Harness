@@ -1,8 +1,63 @@
 {
     "name": "Adder Kernel", 
     "flow": "system",
+    "description": ["Adder kernel."],
+    "keywords": [],
+    "key_concepts": [],
+    "os": ["linux", "aie_runtime"],
     "platform_allowlist": [
-        "xilinx_vck190_base_dfx_202520_1"
+        "xilinx_vck190_base_202520_1"
+    ],
+    "gui": true,
+    "vitis_flow" : "sw-test-harness",
+    "input_value" : "vck190_test_harness.xsa",
+    "v++": {
+      "package": {
+        "cflags": [
+            "--package.defer_aie_run",
+            "--advanced.param package.enableAiePartitionDrc=0"
+        ]
+      }
+    },
+    "host": {
+      "compiler": {
+        "sources": [
+          "ps/host.cpp"
+        ],
+        "includepaths": [
+          "REPO_DIR/include/ps"
+        ],
+        "options": "-std=c++17"
+      }
+    },
+    "aiecompiler": {
+      "compiler": {
+        "includepaths": [
+          "./aie",
+          "REPO_DIR/include/aie"
+        ]
+      }
+    },
+    "aiecontainers": [
+      {
+        "accelerators": [
+          {
+            "location": "aie/graph.cpp",
+            "option": "-log-level=1 --stacksize=1024 --heapsize=1024 --pl-freq=312.5 --event-trace=runtime --event-trace-port=gmio",
+            "name": "libadf.a",
+              "aie_kernel_files": [
+                  "aie/adder.cc"
+              ]
+          }
+        ]
+      }
+    ],
+    "launch": [],
+    "contributors": [
+      {
+        "url": "http://www.xilinx.com",
+        "group": "Xilinx"
+      }
     ],
     "testinfo": {
         "disable": false,

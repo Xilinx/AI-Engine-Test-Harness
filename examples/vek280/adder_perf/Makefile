@@ -33,6 +33,7 @@ export TEST_HARNESS_REPO_PATH ?= $(shell bash -c 'export MK_PATH=$(MK_PATH); ech
 
 # Setting common configurations
 DEVICE ?= vek280
+TARGET ?= hw
 DEBUG ?= 0
 
 include ${TEST_HARNESS_REPO_PATH}/test_harness/common.mk
