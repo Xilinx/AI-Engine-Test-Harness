@@ -62,10 +62,10 @@ ifeq ($(DEBUG), 1)
 endif
 
 # Host settings according to TARGET selection 
-HOST_EFL         	:= $(TEMP_DIR)/host_elf
+CLIENT_EXE         	:= $(TEMP_DIR)/client_exe
 XCLBIN				:= $(TEMP_DIR)/vek280_test_harness.xclbin
 AIE_ADF				:= $(TEMP_DIR)/libadf.a
-RUN_DEPS 		   	:= $(HOST_EFL) ${XCLBIN} run_script.sh
+RUN_DEPS 		   	:= $(CLIENT_EXE) ${XCLBIN} run_script.sh
 
 # pre_build & compilations
 ${PKG_DIR}:
@@ -74,7 +74,7 @@ ${PKG_DIR}:
 $(TEST_HARNESS_XSA):
 	cd ${TEST_HARNESS_REPO_PATH}/bin && ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/download.sh
 
-$(HOST_EFL): ps/host.cpp 
+$(CLIENT_EXE): client/tb.cpp 
 	mkdir -p $(dir $@)
 	${CXX} -o $@ $^ $(HOST_CXX_FLAGS) ${HOST_LD_FLAGS}
 
@@ -89,7 +89,7 @@ $(AIE_ADF): ./aie/graph.cpp ${TEST_HARNESS_XSA}
 	v++ -c --mode aie $(AIE_CXX_FLAGS) $^
 
 # Step 3. Build Host 
-build_host_elf: $(HOST_EFL)
+build_client_exe: $(CLIENT_EXE)
 
 # Step 4. Build Package
 ${XCLBIN}: ${AIE_ADF}

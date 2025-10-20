@@ -50,10 +50,10 @@ AIE_CXX_FLAGS     += --platform=${TEST_HARNESS_XSA}
 AIE_CXX_FLAGS     += --aie.workdir=$(TEMP_DIR)/Work --aie.output-archive=$(TEMP_DIR)/libadf.a
 
 # Host settings according to TARGET selection 
-HOST_EFL         	:= ./host.py
+CLIENT_EXE         	:= ./client/tb.py
 XCLBIN				:= $(TEMP_DIR)/vck190_test_harness.xclbin
 AIE_ADF				:= $(TEMP_DIR)/libadf.a
-RUN_DEPS 		   	:= $(HOST_EFL) ${XCLBIN} run_script.sh
+RUN_DEPS 		   	:= $(CLIENT_EXE) ${XCLBIN} run_script.sh
 
 # pre_build & compilations
 ${PKG_DIR}:

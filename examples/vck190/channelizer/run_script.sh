@@ -16,7 +16,7 @@ if [ -z "$SERVER_IP_PORT" ]; then
     #set default value 127.0.0.1:8080
     export SERVER_IP_PORT=127.0.0.1:8080
 fi
-./host_elf vck190_test_harness.xclbin "./data"
+./client_exe vck190_test_harness.xclbin "./data"
 return_code=$?
 if [ $return_code -ne 0 ]; then
         echo "ERROR: TEST FAILED, RC=$return_code"
