@@ -53,7 +53,7 @@ typedef std::complex<int16_t> cint16_t;
 using namespace test_harness;
 using namespace std;
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
     // Prepare data
     const int in_ch = 16;
     const int out_ch = 16;
@@ -64,6 +64,12 @@ int main(int argc, char** argv) {
     if ((test_mode != FUNC_MODE) && (test_mode != PERF_MODE)) {
         std::cout << "Only FUNC_MODE & PERF_MODE are supported by AIE test harness on VCK190.\n";
         exit(1);
+    }
+
+    if (argc != 3){
+        std::cerr << "Error: Expected 2 arguments, got " << (argc-1) << std::endl;
+        std::cout << "Usage: " << argv[0] << " <xclbin_file> <data_folder>" << std::endl;
+        return 1;
     }
 
     std::string xclbin_path(argv[1]);
