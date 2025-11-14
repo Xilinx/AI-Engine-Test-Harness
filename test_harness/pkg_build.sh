@@ -43,8 +43,8 @@ build() {
     set -xe
     make xsa server DEVICE=vck190 TARGET=hw
     make xsa server DEVICE=vek280 TARGET=hw
-    make xsa DEVICE=vek385 TARGET=hw
-    make xsa DEVICE=vrk160 TARGET=hw
+    make xsa server DEVICE=vek385 TARGET=hw
+    make xsa server DEVICE=vrk160 TARGET=hw
 
     bin=""
     for target in "${targets[@]}"

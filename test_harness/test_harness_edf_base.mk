@@ -104,14 +104,19 @@ ${BUILD_DIR}/${DEVICE}_test_harness.xclbin: ${BUILD_DIR}/${DEVICE}_test_harness.
 
 ####################### PAKCAGING  ###########################
 
-{DEVICE}_server.zip: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
+${DEVICE}_server.zip: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
 									${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
 									${BUILD_DIR}/${DEVICE}_test_harness.xclbin
-	@echo "Packaging SD Card Image..."
-	zip -j ${BUILD_DIR}/{DEVICE}_server.zip ${test_harness_server} ${test_harness_session} ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh ${BUILD_DIR}/${DEVICE}_test_harness.xclbin
+
+	v++ -p -t hw --platform ${BUILD_DIR}/${DEVICE}_test_harness.xsa --package.out_dir ${BUILD_DIR} \
+		--package.defer_aie_run -o ${BUILD_DIR}/${DEVICE}_test_harness.xclbin \
+		--save-temps --temp_dir ${BUILD_DIR} ${BUILD_DIR}/${DEVICE}_libadf.a
+
+	@echo "Packaging AIE Test Harness Server Zipfile..."
+	zip -j ${BUILD_DIR}/server.zip ${test_harness_server} ${test_harness_session} ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh ${BUILD_DIR}/${DEVICE}_test_harness.xclbin ${BUILD_DIR}/${DEVICE}_test_harness.pdi ${BUILD_DIR}/${DEVICE}_test_harness.dtbo
 	cp ${BUILD_DIR}/server.zip ${SD_IMAGE_PATH}
 
-server: {DEVICE}_server.zip
+server: ${DEVICE}_server.zip
 xsa: ${DEVICE}_xsa
 
 clean:
