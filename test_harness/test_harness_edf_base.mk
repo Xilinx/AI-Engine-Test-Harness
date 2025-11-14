@@ -113,7 +113,7 @@ ${DEVICE}_server.zip: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${t
 
 	@echo "Packaging AIE Test Harness Server Zipfile..."
 	zip -j ${BUILD_DIR}/server.zip ${test_harness_server} ${test_harness_session} ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh ${BUILD_DIR}/${DEVICE}_test_harness.xclbin ${BUILD_DIR}/${DEVICE}_test_harness.pdi ${BUILD_DIR}/${DEVICE}_test_harness.dtbo
-	cp ${BUILD_DIR}/server.zip ${SERVER_FILE_PATH}
+	cp ${BUILD_DIR}/server.zip ${SD_IMAGE_PATH}
 
 server: ${DEVICE}_server.zip
 xsa: ${DEVICE}_xsa
