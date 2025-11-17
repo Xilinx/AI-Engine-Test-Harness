@@ -67,7 +67,7 @@ ${DEVICE}_xsa: check_vitis ${BUILD_DIR}/${DEVICE}_test_harness.xsa
 
 ############################## SD CARD  ##############################
 
-SD_IMAGE_PATH := ${TEST_HARNESS_REPO_PATH}/bin/${DEVICE}_sd_card.img.zip
+SD_IMAGE_PATH := ${TEST_HARNESS_REPO_PATH}/bin/${DEVICE}_server.zip
 
 ROOTFS ?= ${SDKTARGETSYSROOT}/../../rootfs.ext4
 IMAGE ?= ${SDKTARGETSYSROOT}/../../Image
