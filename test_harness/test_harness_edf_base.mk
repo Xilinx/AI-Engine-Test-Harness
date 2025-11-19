@@ -108,11 +108,6 @@ ${DEVICE}_server.zip: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${t
 									${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_edf_server.sh \
 									${BUILD_DIR}/${DEVICE}_test_harness.xclbin \
 									${BUILD_DIR}/${DEVICE}_test_harness.pdi ${BUILD_DIR}/${DEVICE}_test_harness.dtbo
-
-	v++ -p -t hw --platform ${BUILD_DIR}/${DEVICE}_test_harness.xsa --package.out_dir ${BUILD_DIR} \
-		--package.defer_aie_run -o ${BUILD_DIR}/${DEVICE}_test_harness.xclbin \
-		--save-temps --temp_dir ${BUILD_DIR} ${BUILD_DIR}/${DEVICE}_libadf.a
-
 	@echo "Packaging AIE Test Harness Server Zipfile..."
 	zip -j ${BUILD_DIR}/${DEVICE}_server.zip ${test_harness_server} ${test_harness_session} ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_edf_server.sh ${BUILD_DIR}/${DEVICE}_test_harness.xclbin ${BUILD_DIR}/${DEVICE}_test_harness.pdi ${BUILD_DIR}/${DEVICE}_test_harness.dtbo
 	cp ${BUILD_DIR}/${DEVICE}_server.zip ${SERVER_ZIP_PATH}
