@@ -10,6 +10,17 @@
 # 
 # Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
 #
+# Parse and validate board type argument
+if [ $# -lt 1 ]; then
+        echo "Usage: $0 <vek385|vrk160>"
+        exit 1
+fi
+
+board_type="$1"
+if [ "$board_type" != "vek385" ] && [ "$board_type" != "vrk160" ]; then
+        echo "Invalid board type: $board_type. Must be 'vek385' or 'vrk160'."
+        exit 1
+fi
 
 # Get the directory of the currently running script
 script_dir=$(dirname "$(readlink -f "$0")")
@@ -31,9 +42,15 @@ if [ -f platform_desc.txt  ]; then
         cp platform_desc.txt /etc/xocl.txt
 fi
 
+echo "Removing overlays"
+fpgautil -R
+
+echo "Programming PDI and DTBO overlays"
+fpgautil -b ${board_type}_test_harness.pdi -o ${board_type}_test_harness.dtbo
+
 pwd=$PWD
-sudo /usr/bin/xrt-smi reset --force -d 0
-exec_path=/home/petalinux/exec_server/
+
+exec_path=/home/amd-edf/exec_server/
 port=8080
 while true
 do

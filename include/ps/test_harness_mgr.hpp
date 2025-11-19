@@ -67,6 +67,13 @@ class test_harness_mgr : public test_harness_mgr_base, public test_harness_mgr_i
                     unsigned int depth = PARAM_DEPTH,
                     unsigned int memWidth = PARAM_MEM_WIDTH);
     
+    test_harness_mgr(const fs::path& pl_xclbin_file_path, const fs::path& aie_xclbin_file_path, const std::vector<std::string>& graph_name, 
+                    const std::string& device_name = mc_stringfy(PARAM_DEVICE),
+                    unsigned int device_index = 0,
+                    unsigned int num_channels = PARAM_CHANNELS, 
+                    unsigned int word_size = PARAM_WIDTH, 
+                    unsigned int depth = PARAM_DEPTH,
+                    unsigned int memWidth = PARAM_MEM_WIDTH);
     void runTestHarness(TestMode mode, const std::vector<test_harness_args>& args, uint32_t timeout = 0) override;
     void runAIEGraph(unsigned int g_idx, unsigned int iters) override;
     void waitForRes(uint32_t timeout_millisec = 0, uint32_t all = 0) override; // @all is not supported in the legacy mode
@@ -88,9 +95,22 @@ inline test_harness_mgr::test_harness_mgr(const fs::path& xclbin_file_path, cons
                     unsigned int num_channels, unsigned int word_size, unsigned int depth, unsigned int memWidth): test_harness_mgr_base(device_name) {
     this->setup(num_channels, depth, word_size, memWidth);
     graph_started = false;
+    test_harness_logger::getLogger().log(test_harness_logger::level::DEBUGGING, "Creating legacy test_harness_mgr for device: " + device_name + " with index: " + std::to_string(device_index));
     std::vector<std::string> pl_kernel_name = {this->device + "_test_harness"};
     fastObj = std::make_unique<fastXM>(device_index, xclbin_file_path, pl_kernel_name, graph_name);
 }
+
+// constructor with pl xclbin and aie xclbin
+inline test_harness_mgr::test_harness_mgr(const fs::path& pl_xclbin_file_path, const fs::path& aie_xclbin_file_path, const std::vector<std::string>& graph_name, 
+                    const std::string& device_name, unsigned int device_index,
+                    unsigned int num_channels, unsigned int word_size, unsigned int depth, unsigned int memWidth): test_harness_mgr_base(device_name) {
+    this->setup(num_channels, depth, word_size, memWidth);
+    graph_started = false;
+    test_harness_logger::getLogger().log(test_harness_logger::level::DEBUGGING, "Creating test_harness_mgr with pl xclbin and aie xclbin for device: " 
+        + device_name + " with index: " + std::to_string(device_index) + " and graph names: " + mc_stringfy(graph_name));
+    std::vector<std::string> pl_kernel_name = {this->device + "_test_harness"};
+    fastObj = std::make_unique<fastXM>(device_index, pl_xclbin_file_path, aie_xclbin_file_path, pl_kernel_name, graph_name);
+}   
 
 inline void test_harness_mgr::runAIEGraph(unsigned int g_idx, unsigned int iters)  {
     fastObj->runGraph(g_idx, iters);
