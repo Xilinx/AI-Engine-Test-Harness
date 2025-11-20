@@ -100,20 +100,22 @@ ${test_harness_server}: ${TEST_HARNESS_REPO_PATH}/src/ps/test_harness_server.cpp
 	${CXX} -o $@ $^ ${SERVER_COMPILE_FLAGS} ${SERVER_LINK_FLAGS}
 
 ${BUILD_DIR}/${DEVICE}_test_harness.xclbin: ${BUILD_DIR}/${DEVICE}_test_harness.xsa
-	v++ -p -o $@ --platform $^ ${TEST_HARNESS_PACKAGE_FLAGS}
+	v++ -p -o $@ --platform $^ ${TEST_HARNESS_PACKAGE_FLAGS} 
 
 ####################### PAKCAGING  ###########################
 
-${DEVICE}_server.zip: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
+${BUILD_DIR}/${DEVICE}_server.zip: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_server} ${test_harness_session} \
 									${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_edf_server.sh \
-									${BUILD_DIR}/${DEVICE}_test_harness.xclbin \
-									${BUILD_DIR}/${DEVICE}_test_harness.pdi ${BUILD_DIR}/${DEVICE}_test_harness.dtbo
+									${BUILD_DIR}/${DEVICE}_test_harness.xclbin
+	rm -rf ${SERVER_FILE_PATH}/*
+	v++ -p -o ${BUILD_DIR}/test_harness.xclbin --package.out_dir ${BUILD_DIR} \
+		--platform ${BUILD_DIR}/${DEVICE}_test_harness.xsa ${BUILD_DIR}/${DEVICE}_libadf.a
 	@echo "Packaging AIE Test Harness Server Zipfile..."
-	zip -j ${BUILD_DIR}/${DEVICE}_server.zip ${test_harness_server} ${test_harness_session} ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_edf_server.sh ${BUILD_DIR}/${DEVICE}_test_harness.xclbin ${BUILD_DIR}/${DEVICE}_test_harness.pdi ${BUILD_DIR}/${DEVICE}_test_harness.dtbo
+	zip -j ${BUILD_DIR}/${DEVICE}_server.zip ${test_harness_server} ${test_harness_session} ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_edf_server.sh ${BUILD_DIR}/${DEVICE}_test_harness.xclbin ${BUILD_DIR}/test_harness.pdi ${BUILD_DIR}/test_harness.dtbo
 	cp ${BUILD_DIR}/${DEVICE}_server.zip ${SERVER_ZIP_PATH}
 	unzip -o ${SERVER_ZIP_PATH} -d ${SERVER_FILE_PATH}
 
-server: ${DEVICE}_server.zip
+server: ${BUILD_DIR}/${DEVICE}_server.zip
 xsa: ${DEVICE}_xsa
 
 clean:

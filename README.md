@@ -3,7 +3,7 @@
 ## Introduction
 
 AIE (AI Engine) Test Harness is designed to assist AIE application designers in verifying and benchmarking
-their designs on the **Versal** platforms such as the VCK190, with the ease of a software simulator.
+their designs on the **Versal** platforms such as the VCK190, VEK280, VRK160, and VEK385, with the ease of a software simulator.
 Most importantly, AIE Test Harness allows the developers to conduct testing across diverse host systems, including **x86** and **ARM**, 
 from various development environments like **Matlab** and **Python**. 
 
@@ -52,9 +52,11 @@ The precompiled XSA is provided along with the release of this repository, and i
 The major component of the XSA is the DMA designed on the PL, which feeds data to AIE application or fetch data from AIE application via AXI-streams. 
 It allows the users to skip the time-consuming `v++` link stage and directly go to `v++` package stage to generate the final `.xclbin` file for on-board tests.
 
-- On the Vck190 platform, the PL DMA consists of 72 channels, 36 of them feed data to AIE and the rest 36 fetch data from AIE.
+- On the VCK190 platform, the PL DMA consists of 72 channels, 36 of them feed data to AIE and the rest 36 fetch data from AIE.
 Each channel contains its own URAM buffer which is 128bits x 4096 and its own AXI-stream port for input or output.
-- On the Vek280 platform, the PL DMA consists of 32 channels, 16 for the AIE inputs and 16 for the AIE outputs. Similarly, each channel contains a URAM buffer of 128bits x 8192. 
+- On the VEK280 platform, the PL DMA consists of 32 channels, 16 for the AIE inputs and 16 for the AIE outputs. Similarly, each channel contains a URAM buffer of 128bits x 8192.
+- On the VRK160 platform, the PL DMA consists of 32 channels, 16 for the AIE inputs and 16 for the AIE outputs. Each channel contains a URAM buffer of 128bits x 8192.
+- On the VEK385 platform, the PL DMA consists of 32 channels, 16 for the AIE inputs and 16 for the AIE outputs. Each channel contains a URAM buffer of 128bits x 8192. 
 
 
 ## Setup
@@ -122,6 +124,7 @@ def main(args):
     xclbin_path = args.xclbin                                           
     
     # create test harness client manager, which instructs the server to initialize the device, and load the design to be tested
+    # Supported devices: 'vck190', 'vek280', 'vrk160', 'vek385'
     mgr = test_harness_mgr(xclbin_path, ['gr'], 'vck190')               
     test_modes = [test_mode.FUNC_MODE, test_mode.PERF_MODE]
 
@@ -160,6 +163,8 @@ Following are examples that provided for your references:
 | [testcase_dmafifo_opt](examples/vck190/testcase_dmafifo_opt/) | C++      | vck190 | [AIE Performance Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE/Feature_Tutorials/13-aie-performance-analysis) |
 | [adder_perf](examples/vek280/adder_perf/)               | C++      | vek280 |                                                                                                                      |
 | [normalization_v2](examples/vek280/normalization_v2/)   | C++      | vek280 | [AIE-ML Performance Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE-ML/Feature_Tutorials/13-aie-ml-performance-analysis) |
+| [adder_perf](examples/vrk160/adder_perf/)               | C++      | vrk160 |                                                                                                                      |
+| [adder_perf](examples/vek385/adder_perf/)               | C++      | vek385 |                                                                                                                      |
 | [adder](examples/matlab/vck190/adder/)                  | MATLAB   | vck190 |                                                                                                                      |
 | [adder](examples/python/vck190/adder/)                  | Python   | vck190 |                                                                                                                      |
 
