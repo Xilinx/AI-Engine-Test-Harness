@@ -1,0 +1,783 @@
+﻿
+
+
+<!DOCTYPE HTML>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+		<link rel="stylesheet" href="https://static.cloud.coveo.com/searchui/v2.4382/css/CoveoFullSearch.css"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<meta name="description"/>
+		<meta name="keywords"/>
+		<meta property="og:title" content=""/>
+		<meta property="og:description"/>
+		<!-- favicon -->
+		<link rel="icon" type="image/vnd.microsoft.icon" href="_static/favicon.ico"/>
+		<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="_static/favicon.ico"/>
+		<!-- Fonts -->
+		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet" type="text/css"/>
+
+	<!-- OneTrust Cookies Consent Notice start for xilinx.github.io -->
+<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-document-language="true" type="text/javascript" charset="UTF-8" data-domain-script="37701bd4-e5c0-4ee3-9329-e7475d0b13a7" ></script>
+<script type="text/javascript">
+function OptanonWrapper() { }
+</script>
+<!-- OneTrust Cookies Consent Notice end for xilinx.github.io -->
+		<!-- Google Tag Manager -->
+	<script type="text/plain" class="optanon-category-C0002">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-5RHQV7');</script>
+	<!-- End Google Tag Manager -->
+	
+        <!-- Google Tag Manager -->
+        <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5RHQV7" height="0" width="0" style="display:none;visibility:hidden" class="optanon-category-C0002"></iframe></noscript>
+        <!-- End Google Tag Manager -->	
+
+  
+  
+  
+  
+
+  
+      <script type="text/javascript" src="_static/js/jquery.min.js"></script>
+	  <script type="text/javascript" src="_static/js/gtm.js"></script>
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+    <script type="text/javascript" src="_static/js/d3dd8c60ed.js"></script>
+    <script type="text/javascript" src="_static/js/common-ui-all.min.js"></script>
+    <script type="text/javascript" src="_static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="_static/js/CoveoJsSearch.Lazy.min.js"></script>
+    <script type="text/javascript" src="_static/js/linkid.js"></script>
+    <script type="text/javascript" src="_static/js/Searchbox.min.js"></script>
+    <script type="text/javascript" src="_static/js/header-footer.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/common-ui-all.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/header-footer.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/pro.min.css" media="all" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Step by Step Example" href="step_by_step_example.html" />
+    <link rel="prev" title="Software APIs" href="sw_apis.html" /> 
+	</head>
+	<body>
+		<div class="xilinx-bs3"/>
+		<div class="root responsivegrid">
+			<div class="aem-Grid aem-Grid--16 aem-Grid--default--16 aem-Grid--large--16 aem-Grid--xlarge--16 aem-Grid--xxlarge--16 aem-Grid--xxxlarge--16 ">
+ <div class="xilinxExperienceFragments experiencefragment aem-GridColumn aem-GridColumn--default--12">
+
+    
+    
+
+    
+
+
+
+<div class="xf-content-height">
+    
+
+<div class="aem-Grid aem-Grid--16 aem-Grid--default--16 ">
+    
+    <div class="header parbase aem-GridColumn aem-GridColumn--default--12"><noindex>
+	<header data-component="header" class="site-header">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid main-nav">
+				<div class="row">
+					<div class="navbar-column col-xs-4 col-sm-5">
+						<ul class="nav navbar-nav hidden-xs">
+							<li>
+									<button onclick="window.location.href=&#39;https://www.xilinx.com/applications.html&#39;;">Solutions</button>
+								</li>
+							<li>
+									<button onclick="window.location.href=&#39;https://www.xilinx.com/products/silicon-devices.html&#39;;">Products</button>
+								</li>
+							<li>
+									<button onclick="window.location.href=&#39;https://www.xilinx.com/about/company-overview.html&#39;;">Company</button>
+								</li>
+							</ul>
+							
+						<ul class="nav navbar-nav hidden-sm hidden-md hidden-lg">
+							<li>
+									<button data-target="#header-container-0" data-function="toggle">Solutions</button>
+								</li>
+							<li>
+									<button data-target="#header-container-1" data-function="toggle">Products</button>
+								</li>
+							<li>
+									<button data-target="#header-container-2" data-function="toggle">Company</button>
+								</li>
+							</ul>
+							
+						<div id="header-container-0" class="menu-container">
+								<div class="navbar-nav-container">
+									<ul class="nav navbar-nav">
+										<li>
+												<button onclick="window.location.href=&#39;https://www.xilinx.com/applications.html&#39;;">Solutions</button>
+												</li>
+										<li>
+												<button onclick="window.location.href=&#39;https://www.xilinx.com/products/silicon-devices.html&#39;;">Products</button>
+												</li>
+										<li>
+												<button onclick="window.location.href=&#39;https://www.xilinx.com/about/company-overview.html&#39;;">Company</button>
+												</li>
+										</ul>
+									<button data-function="close-menu">
+										<span class="fal fa-times" aria-hidden="true"></span>
+									</button>
+								</div>
+							</div>
+							<div id="header-container-1" class="menu-container">
+								<div class="navbar-nav-container">
+									<ul class="nav navbar-nav">
+										<li>
+												<button onclick="window.location.href=&#39;https://www.xilinx.com/applications.html&#39;;">Solutions</button>
+												</li>
+										<li>
+												<button onclick="window.location.href=&#39;https://www.xilinx.com/products/silicon-devices.html&#39;;">Products</button>
+												</li>
+										<li>
+												<button onclick="window.location.href=&#39;https://www.xilinx.com/about/company-overview.html&#39;;">Company</button>
+												</li>
+										</ul>
+									<button data-function="close-menu">
+										<span class="fal fa-times" aria-hidden="true"></span>
+									</button>
+								</div>
+							</div>
+							<div id="header-container-2" class="menu-container">
+								<div class="navbar-nav-container">
+									<ul class="nav navbar-nav">
+										<li>
+												<button onclick="window.location.href=&#39;https://www.xilinx.com/applications.html&#39;;">Solutions</button>
+												</li>
+										<li>
+												<button onclick="window.location.href=&#39;https://www.xilinx.com/products/silicon-devices.html&#39;;">Products</button>
+												</li>
+										<li>
+												<button onclick="window.location.href=&#39;https://www.xilinx.com/about/company-overview.html&#39;;">Company</button>
+												</li>
+										</ul>
+									<button data-function="close-menu">
+										<span class="fal fa-times" aria-hidden="true"></span>
+									</button>
+								</div>
+							</div>
+							</div>
+					<div class="logo-column col-xs-4 col-sm-2">
+						<div class="logo">
+							<a target="_blank" href="https://www.xilinx.com/">
+								<img src="https://github.com/Xilinx/Image-Collateral/blob/main/xilinx-header-logo.svg?raw=true" title="Xilinx Inc"/>
+							</a>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			</nav></header></noindex></div>
+		
+	
+</div>
+
+    
+</div>
+</div>
+
+<div class="calloutBanner parbase aem-GridColumn--default--none aem-GridColumn aem-GridColumn--offset--default--0 aem-GridColumn--default--16"><div class="callout-banner">
+    Xilinx is now a part of <a target="_blank" href="https://www.amd.com/en/corporate/xilinx-acquisition">AMD</a> |  <a target="_blank" href="https://www.amd.com/en/corporate/privacy">Learn More</a>
+</div>
+</div>
+				<div class="parsys aem-GridColumn--xxxlarge--none aem-GridColumn--xlarge--none aem-GridColumn--xxlarge--none aem-GridColumn--default--none aem-GridColumn--offset--large--1 aem-GridColumn--xlarge--12 aem-GridColumn--offset--default--0 aem-GridColumn--xxlarge--10 aem-GridColumn--offset--xlarge--2 aem-GridColumn--offset--xxlarge--3 aem-GridColumn--offset--xxxlarge--4 aem-GridColumn--large--none aem-GridColumn aem-GridColumn--large--14 aem-GridColumn--xxxlarge--8 aem-GridColumn--default--16">
+						<div class="container-fluid">
+							<div class="row">
+							<div class="col-xs-12">
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> AIE Test Harness
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2025.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+      
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+            
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="hw_features.html">Hardware Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sw_apis.html">Software APIs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Test Harness</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#delopying-pre-built-sd-card-on-the-board">Delopying Pre-built SD Card on the Board</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-setup">Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#instrumenting-the-ai-engine-graph">Instrumenting the AI Engine Graph</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#test-harness-header-file">Test Harness Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mapping-plios">Mapping PLIOs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-the-sw-application">Creating the SW Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-on-hardware">Testing on Hardware</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-the-ai-engine-graph">Building the AI Engine Graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-the-sw-application">Building the SW Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#packaging-the-test">Packaging the Test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#launching-client-application-and-getting-performance-result">Launching Client Application and Getting Performance Result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-matlab-apis">Building the Matlab APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-python-apis">Building the Python APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debuggability">Debuggability</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#event-trace">Event Trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aie-status-report">AIE Status Report</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#aie-compilation">AIE Compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hw-testing">HW Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="step_by_step_example.html">Step by Step Example</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Additional Topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trademark.html">Trademark Notice</a></li>
+</ul>
+
+            
+			
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AIE Test Harness</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Using the Test Harness</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="toctree-wrapper compound">
+</div>
+<div class="section" id="using-the-test-harness">
+<h1>Using the Test Harness<a class="headerlink" href="#using-the-test-harness" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="delopying-pre-built-sd-card-on-the-board">
+<h2>Delopying Pre-built SD Card on the Board<a class="headerlink" href="#delopying-pre-built-sd-card-on-the-board" title="Permalink to this headline">¶</a></h2>
+<p>The test harness server has been built already for deploying on the VCK190 or VEK280 board. You can download the pre-built image by :</p>
+<pre class="highlight literal-block">
+<span></span><span class="nb">cd</span> bin
+<span class="nb">source</span> download.sh
+tar xzvf vck190_sd_card.img.zip
+&lt;or&gt;
+tar xzvf vek280_sd_card.img.zip
+</pre>
+<p>Burn and boot with the <code class="docutils literal notranslate"><span class="pre">sd_card.img</span></code>. In the board, get the IP address and launch the server by:</p>
+<pre class="highlight literal-block">
+<span></span>ifconfig
+<span class="nb">cd</span> /run/media/mmcblk0p1
+./run_server.sh
+</pre>
+<p>Note that by default, if there’s no data transaction between the server and client for 60 seconds, the server will kill the current connection and wait for new connections. If longer waiting time for the transaction is needed, you can edit <code class="docutils literal notranslate"><span class="pre">run_server.sh</span></code> and then launch it.</p>
+</div>
+<div class="section" id="environment-setup">
+<h2>Environment Setup<a class="headerlink" href="#environment-setup" title="Permalink to this headline">¶</a></h2>
+<p>Before building the design with the AIE test harness, you need to source the <code class="docutils literal notranslate"><span class="pre">setup.sh</span></code> script included in this repository.
+You should also ensure that Vitis, XRT, Versal <code class="docutils literal notranslate"><span class="pre">SDKTARGETSYSROOT</span></code>, and <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> are properly set.</p>
+<pre class="highlight literal-block">
+<span></span><span class="nb">source</span> &lt;path to Versal common image&gt;/environment-setup-cortexa72-cortexa53-xilinx-linux
+<span class="nb">source</span> &lt;path to Vitis installation&gt;/settings64.sh
+<span class="nb">source</span> &lt;path to XRT installation&gt;/setup.sh
+
+<span class="nb">source</span> &lt;<span class="nb">test</span> harness repo root folder&gt;/setup.sh
+<span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>&lt;your gcc installation&gt;/lib64:<span class="nv">$LD_LIBRARY_PATH</span>
+Set up your ROOTFS and IMAGE to point to the rootfs.ext4 and Image files located in the /Common Images Dir/xilinx-versal-common-v2024.2 directory
+Set up your PLATFORM_REPO_PATHS environment variable to <span class="nv">$XILINX_VITIS</span>/base_platforms
+</pre>
+</div>
+<div class="section" id="instrumenting-the-ai-engine-graph">
+<h2>Instrumenting the AI Engine Graph<a class="headerlink" href="#instrumenting-the-ai-engine-graph" title="Permalink to this headline">¶</a></h2>
+<p>The following modifications are required to connect the user AIE graph to the test harness:</p>
+<div class="section" id="test-harness-header-file">
+<h3>Test Harness Header File<a class="headerlink" href="#test-harness-header-file" title="Permalink to this headline">¶</a></h3>
+<p>The test harness graph header must be included in the AIE graph sources:</p>
+<pre class="highlight literal-block">
+<span></span><span class="cp">#include</span> <span class="cpf">&quot;test_harness_graph.hpp&quot;</span>
+</pre>
+</div>
+<div class="section" id="mapping-plios">
+<h3>Mapping PLIOs<a class="headerlink" href="#mapping-plios" title="Permalink to this headline">¶</a></h3>
+<p>The names and width of the available PLIOs are predefined in the test harness.
+The original AIE graph must be mapped to these predefined PLIOs to make sure the PL data mover can be correctly connected to the user AIE graph.</p>
+<p>The user AIE graph must be modified to ensure that all PLIOs are 128 bits wide and use the PLIOs predefined in the test harness.</p>
+<p>The predefined PLIO names are listed in <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/include/aie/test_harness_port_name.hpp">include/aie/test_harness_port_name.hpp</a>.
+The <code class="docutils literal notranslate"><span class="pre">test_harness::in_names</span></code> is the list of PLIO names which can be used to send data to AI Engine
+and <code class="docutils literal notranslate"><span class="pre">test_harness::out_names</span></code> is the list of PLIO names that can be used to receive data from AI Engine.
+These are the <strong>ONLY</strong> valid PLIOs to be built with the test harness.</p>
+<p><strong>Example</strong></p>
+<pre class="highlight literal-block">
+<span></span><span class="n">pl_in0</span> <span class="o">=</span> <span class="n">input_plio</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;PLIO_01_TO_AIE&quot;</span>   <span class="p">,</span> <span class="n">adf</span><span class="o">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s">&quot;DataIn0.txt&quot;</span><span class="p">);</span>
+<span class="n">pl_in1</span> <span class="o">=</span> <span class="n">input_plio</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;PLIO_02_TO_AIE&quot;</span>   <span class="p">,</span> <span class="n">adf</span><span class="o">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s">&quot;DataIn1.txt&quot;</span><span class="p">);</span>
+<span class="n">pl_out</span> <span class="o">=</span> <span class="n">output_plio</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;PLIO_01_FROM_AIE&quot;</span><span class="p">,</span> <span class="n">adf</span><span class="o">::</span><span class="n">plio_128_bits</span><span class="p">,</span> <span class="s">&quot;DataOut0.txt&quot;</span><span class="p">);</span>
+</pre>
+</div>
+</div>
+<div class="section" id="creating-the-sw-application">
+<h2>Creating the SW Application<a class="headerlink" href="#creating-the-sw-application" title="Permalink to this headline">¶</a></h2>
+<p>A SW application running on the client server (x86) or embedded ARM core (PS) of the Versal is necessary to run the test.
+This SW application must be developped using the <a class="reference internal" href="sw_apis.html#sw-apis"><span class="std std-ref">test harness software APIs</span></a>.</p>
+<p>For additional details, refer to the <a class="reference internal" href="step_by_step_example.html#ps-app"><span class="std std-ref">step by step example</span></a> section in this documentation,
+or the example provided in this repo, such as <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/examples/vck190/adder_perf/ps/host.cpp">examples/vck190/adder_perf/ps/host.cpp</a>.</p>
+</div>
+<div class="section" id="testing-on-hardware">
+<h2>Testing on Hardware<a class="headerlink" href="#testing-on-hardware" title="Permalink to this headline">¶</a></h2>
+<p>Once the AIE graph has been modified and the SW application has been created, the test can be built and run with connection to the server on the board.</p>
+<p>Building the test application is done in three simple steps:</p>
+<ol class="arabic simple">
+<li>Building the AIE graph</li>
+<li>Building the SW application</li>
+<li>Packaging the libadf.a, host_elf and other files to create a run directory.</li>
+</ol>
+<div class="section" id="building-the-ai-engine-graph">
+<h3>Building the AI Engine Graph<a class="headerlink" href="#building-the-ai-engine-graph" title="Permalink to this headline">¶</a></h3>
+<p>To build the libadf.a for use with the test harness,
+it must be compiled using the desired prebuilt XSA as the input platform, with the <code class="docutils literal notranslate"><span class="pre">hw</span></code> target.</p>
+<p>The prebuilt XSAs are <code class="docutils literal notranslate"><span class="pre">vck190_test_harness.xsa</span></code> for VCK190 and <code class="docutils literal notranslate"><span class="pre">vek280_test_harness.xsa</span></code> for VEK280.</p>
+<pre class="highlight literal-block">
+<span></span>v++ -c --mode aie --platform<span class="o">=</span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/bin/&lt;vck190_test_harness.xsa/vek280_test_harness.xsa&gt;
+                  --target<span class="o">=</span>hw
+                  --aie.event-trace runtime
+                  --aie.event-trace-port gmio
+                  --I <span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/include/aie
+                  <span class="o">[</span>other options<span class="o">]</span>
+</pre>
+</div>
+<div class="section" id="building-the-sw-application">
+<h3>Building the SW Application<a class="headerlink" href="#building-the-sw-application" title="Permalink to this headline">¶</a></h3>
+<p>The SW application by default is compiled for x86 server. Here, <code class="docutils literal notranslate"><span class="pre">CXX</span></code> points to <code class="docutils literal notranslate"><span class="pre">g++</span></code>:</p>
+<pre class="highlight literal-block">
+<span></span><span class="si">${</span><span class="nv">CXX</span><span class="si">}</span> -o <span class="k">$(</span>TEMP_DIR<span class="k">)</span>/host_elf ps/host.cpp <span class="si">${</span><span class="nv">HOST_CONFIG_FLAGS</span><span class="si">}</span> -I<span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/include/ps
+</pre>
+<p>It can also be compiled with the ARM cross-compiler and using the similar command as above. Here, <code class="docutils literal notranslate"><span class="pre">CXX</span></code> points to the arm cross compiler <code class="docutils literal notranslate"><span class="pre">aarch64-linux-gnu-g++</span></code>.</p>
+</div>
+<div class="section" id="packaging-the-test">
+<h3>Packaging the Test<a class="headerlink" href="#packaging-the-test" title="Permalink to this headline">¶</a></h3>
+<p>The AIE test harness includes utility scripts which can be used to package the test files and generate a bootable SD card image to run the test on the hardware board on either VCK190 or VEK280.</p>
+<p><strong>VCK190</strong></p>
+<pre class="highlight literal-block">
+<span></span>v++ -p -t <span class="si">${</span><span class="nv">TARGET</span><span class="si">}</span> -f <span class="si">${</span><span class="nv">TEST_HARNESS_PLATFORM</span><span class="si">}</span> -o <span class="si">${</span><span class="nv">XCLBIN</span><span class="si">}</span> <span class="k">$(</span>TEST_HARNESS_XSA<span class="k">)</span> <span class="si">${</span><span class="nv">AIE_ADF</span><span class="si">}</span> <span class="se">\</span>
+     --package.defer_aie_run <span class="se">\</span>
+     --advanced.param package.enableAiePartitionDrc<span class="o">=</span><span class="m">0</span> <span class="se">\</span>
+     --package.out_dir <span class="si">${</span><span class="nv">TEMP_DIR</span><span class="si">}</span>
+</pre>
+<p><strong>VEK280</strong></p>
+<pre class="highlight literal-block">
+<span></span>v++ -p -t <span class="si">${</span><span class="nv">TARGET</span><span class="si">}</span> -f <span class="si">${</span><span class="nv">TEST_HARNESS_PLATFORM</span><span class="si">}</span> -o <span class="si">${</span><span class="nv">XCLBIN</span><span class="si">}</span> <span class="k">$(</span>TEST_HARNESS_XSA<span class="k">)</span> <span class="si">${</span><span class="nv">AIE_ADF</span><span class="si">}</span> <span class="se">\</span>
+     --config <span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/cfg/package_aie_only.cfg <span class="se">\</span>
+     --package.defer_aie_run <span class="se">\</span>
+     --advanced.param package.enableAiePartitionDrc<span class="o">=</span><span class="m">0</span> <span class="se">\</span>
+     --package.out_dir <span class="si">${</span><span class="nv">TEMP_DIR</span><span class="si">}</span>
+</pre>
+</div>
+</div>
+<div class="section" id="launching-client-application-and-getting-performance-result">
+<h2>Launching Client Application and Getting Performance Result<a class="headerlink" href="#launching-client-application-and-getting-performance-result" title="Permalink to this headline">¶</a></h2>
+<p>After completing the client packaging, it’s ready to connect to the server on the board and get the functional and performance results. First it needs to set the server IP port and then launch the application. Then the execution result will be transferred back to the client server and the throughputs of the ports are reported. The commands to be used:</p>
+<pre class="highlight literal-block">
+<span></span><span class="nb">export</span> <span class="nv">SERVER_IP_PORT</span><span class="o">=</span>&lt;IP Address of the board&gt;:8080
+./host_elf &lt;XCLBIN Name&gt; &lt;Other Options&gt;
+</pre>
+</div>
+<div class="section" id="building-the-matlab-apis">
+<h2>Building the Matlab APIs<a class="headerlink" href="#building-the-matlab-apis" title="Permalink to this headline">¶</a></h2>
+<p>The Matlab APIs can be built as needed by:</p>
+<pre class="highlight literal-block">
+<span></span><span class="nb">cd</span> test_harness
+make matlab
+</pre>
+</div>
+<div class="section" id="building-the-python-apis">
+<h2>Building the Python APIs<a class="headerlink" href="#building-the-python-apis" title="Permalink to this headline">¶</a></h2>
+<p>The python APIs can built as needed by:</p>
+<pre class="highlight literal-block">
+<span></span><span class="nb">cd</span> test_harness
+pip install -r requirements.txt
+make python
+</pre>
+</div>
+<div class="section" id="debuggability">
+<h2>Debuggability<a class="headerlink" href="#debuggability" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="event-trace">
+<h3>Event Trace<a class="headerlink" href="#event-trace" title="Permalink to this headline">¶</a></h3>
+<p>Event trace can help analyze the performance bottleneck in HW. It can be enabled by adding the <code class="docutils literal notranslate"><span class="pre">xrt.ini</span></code> file in the client server, and then launch the application. The event trace results will be transferred back to the client after it’s running on the board. An example <code class="docutils literal notranslate"><span class="pre">xrt.ini</span></code> file:</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">[</span><span class="n">Debug</span><span class="p">]</span>
+<span class="n">aie_trace</span><span class="o">=</span><span class="nb">true</span>
+<span class="p">[</span><span class="n">AIE_trace_settings</span><span class="p">]</span>
+<span class="n">buffer_size</span><span class="o">=</span><span class="mi">100</span><span class="n">M</span>
+<span class="n">graph_based_aie_tile_metrics</span><span class="o">=</span><span class="nl">all</span><span class="p">:</span><span class="nl">all</span><span class="p">:</span><span class="n">all_stalls</span>
+</pre>
+</div>
+<div class="section" id="aie-status-report">
+<h3>AIE Status Report<a class="headerlink" href="#aie-status-report" title="Permalink to this headline">¶</a></h3>
+<p>When design hangs, the AIE status report can be used to get an visual overview of the AIE status in Vitis Analysis View. This helps analyze where is the cause of the hang. To enable the status report, it needs to set a timeout value in host code (for example: <code class="docutils literal notranslate"><span class="pre">ps/host.cpp</span></code>) to ensure the application exits normally:</p>
+<pre class="highlight literal-block">
+<span></span><span class="n">mgr</span><span class="p">.</span><span class="n">waitForRes</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span> <span class="c1">//Here, set the timeout to 1000us</span>
+</pre>
+<p>And then add <code class="docutils literal notranslate"><span class="pre">xrt.ini</span></code> in the application directory before lauching. The example <code class="docutils literal notranslate"><span class="pre">xrt.ini</span></code>:</p>
+<pre class="highlight literal-block">
+<span></span><span class="p">[</span><span class="n">Debug</span><span class="p">]</span>
+<span class="n">aie_status</span><span class="o">=</span><span class="nb">true</span>
+<span class="n">aie_status_interval_us</span><span class="o">=</span><span class="mi">1000</span>
+</pre>
+<p>Launch the application. After it finishes, open the summary in Vitis:</p>
+<pre class="highlight literal-block">
+<span></span>vitis -a xrt.run_summary
+</pre>
+</div>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="aie-compilation">
+<h3>AIE Compilation<a class="headerlink" href="#aie-compilation" title="Permalink to this headline">¶</a></h3>
+<p><strong>Issue:</strong> The following error message is seen when compiling the AIE graph with the test harness XSA: <code class="docutils literal notranslate"><span class="pre">ERROR:</span> <span class="pre">[aiecompiler</span> <span class="pre">77-4252]</span> <span class="pre">For</span> <span class="pre">application</span> <span class="pre">port</span> <span class="pre">with</span> <span class="pre">annotation</span> <span class="pre">'PLIO_01_TO_AIE'</span> <span class="pre">the</span> <span class="pre">buswidth</span> <span class="pre">is</span> <span class="pre">32-bits,</span> <span class="pre">which</span> <span class="pre">is</span> <span class="pre">different</span> <span class="pre">than</span> <span class="pre">the</span> <span class="pre">buswidth</span> <span class="pre">of</span> <span class="pre">128-bits</span> <span class="pre">as</span> <span class="pre">specified</span> <span class="pre">in</span> <span class="pre">incoming</span> <span class="pre">logical</span> <span class="pre">architecture</span></code></p>
+<ul class="simple">
+<li>The width of the PLIOs in the prebuilt XSA is set to 128 bits. The PLIO widths in the AIE graph must match with the XSA. Set all PLIO width in the graph to <code class="docutils literal notranslate"><span class="pre">adf::plio_128_bits</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="hw-testing">
+<h3>HW Testing<a class="headerlink" href="#hw-testing" title="Permalink to this headline">¶</a></h3>
+<p><strong>Issue:</strong> When running on HW, the performance numbers reported by the test harness vary a lot from run to run.</p>
+<ul class="simple">
+<li>Making sure to start the AIE graph before starting the PL DMA engine. The performance counters start at the same time as the PL DMA engine starts. If the graph is not already started and ready to transfer data, the performance counters will be incremented by an arbitrary number of cycles before the application actually starts.</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+<!-- Atalwar: Moved the footer code to layout.html to resolve conflict with the Xilinx template -->
+</footer>
+
+        </div>
+      </div>
+
+
+	  <!-- Sphinx Page Footer block -->
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="step_by_step_example.html" class="btn btn-neutral float-right" title="Step by Step Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="sw_apis.html" class="btn btn-neutral float-left" title="Software APIs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo" class="copyright">
+    <p class="footerinfo">
+      <span class="lastupdated">
+        Last updated on November 20, 2025.
+      </span>
+
+    </p>
+	<br>
+  </div>
+      </div>
+    </section>
+
+
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+   <script type="text/javascript">
+    jQuery(function() { Search.loadIndex("searchindex.js"); });
+  </script>
+
+  <script type="text/javascript" id="searchindexloader"></script>
+
+
+  
+  
+    
+  
+
+
+
+  <!--  Xilinx template footer block -->
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="xilinxExperienceFragments experiencefragment aem-GridColumn--default--none aem-GridColumn aem-GridColumn--offset--default--0 aem-GridColumn--default--16">
+					<div class="xf-content-height">
+						<div class="aem-Grid aem-Grid--16 aem-Grid--default--16 ">
+							<div class="footer parbase aem-GridColumn--default--none aem-GridColumn aem-GridColumn--offset--default--0 aem-GridColumn--default--16">
+								<noindex>
+                  <!-- make footer fixed - NileshP -->
+                  <style>
+                        .footer {
+                        position: fixed;
+                        left: 0;
+                        bottom: 0;
+                        width: 100%;
+                        }
+                  </style>
+                  <!-- make footer fixed NileshP-->
+									<footer>
+										<div class="aem-Grid aem-Grid--16">
+											<div class="aem-GridColumn aem-GridColumn--xxxlarge--none aem-GridColumn--xsmall--16 aem-GridColumn--offset--xsmall--0 aem-GridColumn--xlarge--none aem-GridColumn--xxlarge--none aem-GridColumn--default--none aem-GridColumn--offset--large--1 aem-GridColumn--xlarge--12 aem-GridColumn--offset--default--0 aem-GridColumn--xxlarge--10 aem-GridColumn--offset--xlarge--2 aem-GridColumn--offset--xxlarge--3 aem-GridColumn--offset--xxxlarge--4 aem-GridColumn--xsmall--none aem-GridColumn--large--none aem-GridColumn aem-GridColumn--large--14 aem-GridColumn--xxxlarge--8 aem-GridColumn--default--16">
+												<div class="container-fluid sub-footer">
+													<div class="row">
+														<div class="footerSocial parbase">
+														
+															<div class="col-md-push-6 col-lg-push-6 col-md-6 col-lg-6">
+																<div class="lang-select dropup hidden-md hidden-lg">
+		<button data-toggle="dropdown">
+			<span class="fas fa-globe" aria-hidden="true"></span>
+			<span>
+				
+					English
+				</span>
+		<span class="far fa-angle-down" aria-hidden="true"></span>
+	</button>
+	<ul class="dropdown-menu">
+		<li>
+				<a target="_blank" href="https://japan.xilinx.com/" target="_self">
+					日本語
+				</a>
+			</li>
+		<li>
+				<a target="_blank" href="https://china.xilinx.com/" target="_self">
+					简体中文
+				</a>
+			</li>
+		</ul>
+	</div>
+																<ul class="list-inline pull-right social-menu">
+																	<li>
+																		<a target="_blank" href="https://www.linkedin.com/company/xilinx">
+																		<span class="linkedin icon"></span>
+																		<span class="sr-only">Connect on LinkedIn</span>
+																		</a>
+																	</li>
+																	<li>
+																		<a target="_blank" href="https://www.twitter.com/XilinxInc">
+																		<span class="twitter icon"></span>
+																		<span class="sr-only">Follow us on Twitter</span>
+																		</a>
+																	</li>
+																	<li>
+																		<a target="_blank" href="https://www.facebook.com/XilinxInc">
+																		<span class="facebook icon"></span>
+																		<span class="sr-only">Connect on Facebook</span>
+																		</a>
+																	</li>
+																	<li>
+																		<a target="_blank" href="https://www.youtube.com/XilinxInc">
+																		<span class="youtube icon"></span>
+																		<span class="sr-only">Watch us on YouTube</span>
+																		</a>
+																	</li>
+																	<li>
+																		<a target="_blank" href="https://www.xilinx.com/registration/subscriber-signup.html">
+																		<span class="newsletter icon"></span>
+																		<span class="sr-only">Subscribe to Newsletter</span>
+																		</a>
+																	</li>
+																</ul>
+																	<div class="lang-select dropup hidden-xs hidden-sm">
+	<button data-toggle="dropdown">
+		<span class="fas fa-globe" aria-hidden="true"></span>
+		<span>
+			
+				English
+			</span>
+		<span class="far fa-angle-down" aria-hidden="true"></span>
+	</button>
+	<ul class="dropdown-menu">
+		<li>
+				<a target="_blank" href="https://japan.xilinx.com/" target="_self">
+					日本語
+				</a>
+			</li>
+		<li>
+				<a target="_blank" href="https://china.xilinx.com/" target="_self">
+					简体中文
+				</a>
+			</li>
+		</ul>
+	</div>
+															</div>
+														</div>
+														<div class="col-md-pull-5 col-lg-pull-5 col-md-5 col-lg-5">
+															<span class="copyright">©2022 Advanced Micro Devices, Inc</span>
+														</div>
+
+													</div>
+													                    <div class="movethisrowtoleft row">
+                        <div class="col-xs-24">
+                            <ul class="sub-menu">
+                                <li><a target="_blank" href="https://www.amd.com/en/corporate/copyright">Terms and Conditions</a></li>
+                                <li><a target="_blank" href="https://www.amd.com/en/corporate/privacy">Privacy</a></li>
+                                <li><a target="_blank" href="https://www.amd.com/en/corporate/cookies">Cookie Policy</a></li>
+                                <li><a target="_blank" href="https://www.amd.com/en/corporate/trademarks">Trademarks</a></li>
+                                <li><a target="_blank" href="https://www.amd.com/system/files/documents/statement-human-trafficking-forced-labor.pdf">Statement on Forced Labor</a></li>
+                                <li><a target="_blank" href="https://www.amd.com/en/corporate/competition">Fair and Open Competition</a></li>
+                                <li><a target="_blank" href="https://www.amd.com/system/files/documents/amd-uk-tax-strategy.pdf">UK Tax Strategy</a></li>
+								<li><a target="_blank" href="https://docs.xilinx.com/v/u/9x6YvZKuWyhJId7y7RQQKA">Inclusive Terminology</a></li>
+                                <li><a href="#cookiessettings" class="ot-sdk-show-settings">Cookies Settings</a></li>
+                            </ul>
+                        </div>
+                    </div>
+												</div>
+											</div>
+										</div>
+									</footer>
+								</noindex>
+							</div>
+						</div>
+					</div>
+				</div>
+<div class="backToTop parbase aem-GridColumn--default--none aem-GridColumn aem-GridColumn--offset--default--0 aem-GridColumn--default--16"><noindex>
+    <span data-component="backToTopButton" class="backToTopButton loaded">
+        <ul>
+            <li>
+                <a href="https://www.author.xilinx.com/xx/rebrand/amd/en-amd-xilinx-header-footer.html#top" class="btn top">
+                    <span class="fas fa-angle-up" aria-hidden="true"></span>
+                </a>
+            </li>
+        </ul>
+    </span>
+</noindex></div>
+			</div>
+		</div>
+
+
+		<script>window.CQ = window.CQ || {}</script>
+		<script src="https://static.cloud.coveo.com/searchui/v2.4382/js/CoveoJsSearch.Lazy.min.js"></script>
+		<script>
+			var underscoreSetup = function () {
+			  _.templateSettings.interpolate = /\{\{=([^-][\S\s]+?)\}\}/g;
+			  _.templateSettings.evaluate = /\{\{([^-=][\S\s]+?)\}\}/g;
+			  _.templateSettings.escape = /\{\{-([^=][\S\s]+?)\}\}/g;
+			}
+
+			underscoreSetup();
+		</script>
+	</body>
+</html>
