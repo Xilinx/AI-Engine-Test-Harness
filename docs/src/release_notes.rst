@@ -19,9 +19,25 @@
 Release Notes
 =============
 
+2025.2
+------
+
+**Summary**
+
+- Support for testing AIE designs on VEK385 boards, in addition to VCK190 and VEK280 boards
+- On VEK385, support for AIE graphs with up to 16 input PLIOs and 16 output PLIOs
+- Pre-built XSAs are provided for the VEK385 boards
+- Pre-build server applications are available for the VEK385 boards based on the AMD Embedded Development Framework (EDF)
 
 
-2025.1
+**Limitations**
+
+- On VEK385, the performance testing mode supports up to 128kB of user-provided data per channel
+- The size (in bytes) of input and output datasets must be a multiple of 16
+- AIE graphs with GMIOs are not supported
+
+
+2025.1, 2024.2, 2024.1
 -------------------------
 
 **Summary**

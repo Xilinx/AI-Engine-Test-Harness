@@ -60,7 +60,7 @@ Installation Instructions
     ./run_edf_server.sh
 
 .. CAUTION::
-   The prebuilt XSAs can only be used with the 2025.1 version of the Vitis tool. 
+   The prebuilt XSAs can only be used with the 2025.2 version of the Vitis tool. 
    To build and test your AI Engine graph using other versions of Vitis, you must first rebuild the XSA with the corresponding version of the Vitis tool, as described in the section below.
 
 Rebuilding from Source

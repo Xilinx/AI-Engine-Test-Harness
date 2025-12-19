@@ -42,9 +42,9 @@ copyright = '2023-2025, Advanced Micro Devices, Inc'
 author = 'Advanced Micro Devices, Inc'
 
 # The short X.Y version
-version = '2025.1'
+version = '2025.2'
 # The full version, including alpha/beta/rc tags
-release = 'v2025.1'
+release = 'v2025.2'
 
 
 # -- General configuration ---------------------------------------------------

@@ -127,13 +127,13 @@ Tx Channels sending data to the AI Engine work as follows:
 
 1. Each channel loads a user-defined quantity of data from DDR and stores it in its own local URAM buffer. 
 2. After all data has been stored in the URAM buffer, each channel starts a countdown based on its 'delay' parameter. This allows Tx channels to start sending data to the AIE at different starting time points.
-3. Once the countdown reaches 0, each channel loads data from the URAM buffer and sends it to AIE. Each channel can repeat this step based on an user-defined number of replays to ensure both result correctness and performance, or in another way which is only supported on VCK190, random sequence can be concatenated to the data that is preloaded to the URAM to supplement the data sequence to the length that is required by the user.
+3. Once the countdown reaches 0, each channel loads data from the URAM buffer and sends it to AIE. Each channel can repeat this step based on an user-defined number of replays to ensure both result correctness and performance, or in another way, a random sequence can be concatenated to the data that is preloaded to the URAM to supplement the data sequence to the length that is required by the user.
 4. Each channel reports the latency (cycle count) between the time it starts to send the first data and it starts to send the last data to the AIE. 
 
 Rx Channels receiving data from the AI Engine work as follows:
 
 1. Each channel starts a countdown based on its 'delay' parameter. This allows Rx channels to start receiving data from the AIE at different time points.
-2. Once the countdown reaches 0, each channel starts receiving an user-defined quantity of data from the AIE through PLIOs and stores it in its local URAM buffer. Each channel can repeat this step based on an user-specified number of replays, or in another way which is only supported on VCK190, a pre-defined length of data will be received from the AIE and dropped by the PL data mover to ensure the whole system won't be stalled.
+2. Once the countdown reaches 0, each channel starts receiving an user-defined quantity of data from the AIE through PLIOs and stores it in its local URAM buffer. Each channel can repeat this step based on an user-specified number of replays, or in another way, a pre-defined length of data will be received from the AIE and dropped by the PL data mover to ensure the whole system won't be stalled.
 3. After all output channels have finished receiving data from the AIE, they move the output data out from the URAM buffers to DDR.
 4. Each channel reports the latency (cycle count) between the time it receives the first data and the time it receives the last data from the AIE. 
 
