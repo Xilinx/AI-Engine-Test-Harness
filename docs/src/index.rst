@@ -74,7 +74,7 @@ In the performance testing mode, the DMA engine for performance testing is desig
 Test Harness Pre-built XSA
 ++++++++++++++++++++++++++
 
-For each supported platform e.g., VCK190 and VEK280, pre-built xsa is provided along with the release of this repository, 
+For each supported platform e.g., VCK190,VEK280 and VEK385, pre-built xsa is provided along with the release of this repository, 
 and is used as a platform (with necessary hardware information) on which the designers compile the AIE graph. 
 This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image. 
 This saves the most time-consuming part of the build process for on-board tests and allows to fast and predictable iterations.
@@ -86,6 +86,7 @@ generate the final .xclbin file for on-board tests.
 On VCK190, the precompiled .xsa implements a PL DMA engine with 72 independent AXI stream channels. 
 36 channels send data from DDR to AIE and 36 channels receive data from AIE to DDR. 
 On VEK280, it has 32 independent AXI stream channels that 16 channels can send data from DDR to AIE and 16 channels can receive data from AIE to DDR. 
+On VEK385, it has 32 independent AXI stream channels that 16 channels can send data from DDR to AIE and 16 channels can receive data from AIE to DDR. 
 For both of the DMA engines, they are designed to allow a maximum throughput on the PLIO interfaces (128-bit @ 312.5MHz), 
 ensuring that the AIE graph isn't artificially stalled by the DMA channels and thereby allowing accurate performance testing on the hardware.
 
