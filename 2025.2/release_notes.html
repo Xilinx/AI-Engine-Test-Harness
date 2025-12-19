@@ -254,9 +254,10 @@ function OptanonWrapper() { }
               <p class="caption"><span class="caption-text">Introduction</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id2">2025.1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">2023.2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">2023.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2025.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">2025.1, 2024.2, 2024.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">2023.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">2023.1</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
@@ -341,7 +342,23 @@ function OptanonWrapper() { }
 <div class="section" id="id1">
 <h1>Release Notes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id2">
-<h2>2025.1<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>2025.2<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p><strong>Summary</strong></p>
+<ul class="simple">
+<li>Support for testing AIE designs on VEK385 boards, in addition to VCK190 and VEK280 boards</li>
+<li>On VEK385, support for AIE graphs with up to 16 input PLIOs and 16 output PLIOs</li>
+<li>Pre-built XSAs are provided for the VEK385 boards</li>
+<li>Pre-build server applications are available for the VEK385 boards based on the AMD Embedded Development Framework (EDF)</li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul class="simple">
+<li>On VEK385, the performance testing mode supports up to 128kB of user-provided data per channel</li>
+<li>The size (in bytes) of input and output datasets must be a multiple of 16</li>
+<li>AIE graphs with GMIOs are not supported</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>2025.1, 2024.2, 2024.1<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p><strong>Summary</strong></p>
 <ul class="simple">
 <li>Support the client-server mode to use the AIE Test Harness</li>
@@ -368,8 +385,8 @@ function OptanonWrapper() { }
 <li>AIE graphs with GMIOs are not supported</li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2>2023.2<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h2>2023.2<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <p><strong>Summary</strong></p>
 <ul class="simple">
 <li>Support for testing graphs on VEK280 boards</li>
@@ -394,8 +411,8 @@ function OptanonWrapper() { }
 <li>The size (in bytes) of input and output datasets must be a multiple of 16</li>
 </ul>
 </div>
-<div class="section" id="id4">
-<h2>2023.1<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h2>2023.1<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p><strong>Summary</strong></p>
 <p>This is the first release of the AIE Test Harness. This release supports the following:</p>
 <ul class="simple">
