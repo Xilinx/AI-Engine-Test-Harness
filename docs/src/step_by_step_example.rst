@@ -22,19 +22,19 @@
 Step by Step Example
 ********************
 
-This step by step example takes a reference design ``examples/vck190/adder_perf`` and shows the commands to build and launch. And the example output is also shown. 
+This step by step example takes a reference design ``examples/vek385/adder_perf`` and shows the commands to build and launch. And the example output is also shown. 
 The code specific to test harness features is explained. The commands and code can be easily extended to other examples and user own designs.
 
 Launching the Server Session
 ============================
 
-Burn and boot with the ``bin/sd_card.img``. In the board, get the IP address and launch the server by::
+In the board, get the IP address and launch the server by::
 
-    <log in Linux with username / passwd: petalinux / petalinux>
+    <log in to AMD EDF Linux with username / passwd: amd-edf / user-set-password>
     sudo su
-    cd /run/media/mmcblk0p1
-	ifconfig
-    ./run_server.sh
+    cd <location where vek385_server.zip is extracted>
+    ifconfig # get IP Address of the VEK385 board
+    ./run_edf_server.sh
 
 Note that the IP address of the board will be used by client server.
 
@@ -44,7 +44,7 @@ Running an Example in Client Server
 Note: Setup the environment first before launching the commands. It can be referred to :ref:`Using the Test Harness <using_the_harness>`
 The examples have Makefile ready for building and launching::
 
-    cd examples/vck190/adder_perf
+    cd examples/vek385/adder_perf
     make all
     make run
 
@@ -53,26 +53,32 @@ Example Output
 
 Here's the example output::
 
-    Using XCLBIN file: vck190_test_harness.xclbin
+    Using XCLBIN file: vek385_test_harness.xclbin
     Running example ADDER
-     - Number of graph iterations         :     1000
-     - Number of values                   :  1024000 (4000KB)
+     - Number of graph iterations         :        1
+     - Number of values                   :     4096 (16KB)
      - Number of repetitions              :        1
-     - Number of graph iterations (total) :     1000
+     - Number of graph iterations (total) :        1
      - Channel delay                      :        0 cycles
-    [2025-**-** 15:16:21] [INFO] Initializing the test harness manager.
-    [2025-**-** 15:16:21] [INFO] Connecting to the test harness manager server at 172.16.75.168:8080
-    Testing mode: PERF_MODE
-    [2025-**-** 15:16:30] [INFO] Running the AIE graph.
-    [2025-**-** 15:16:31] [INFO] Running the test harness.
-    [2025-**-** 15:16:31] [INFO] Waiting for the result.
-    [2025-**-** 15:16:36] [INFO] PLIO_1_TO_AIE send the first data at cycle[0], ends at cycle[303949], and the throughputs is 4016.14 MBps.
-    
-    [2025-**-** 15:16:36] [INFO] PLIO_1_FROM_AIE received the first data at cycle[631], ends at cycle[304630], and the throughputs is 4015.48 MBps.
-    
-    [INFO]: Result checking is not valid if test size is beyond the capacity of URAM in each channel.
+    [2025-11-19 23:06:06] [INFO] Initializing the test harness manager.
+    [2025-11-19 23:06:06] [INFO] Connecting to the test harness manager server at 10.10.70.1:8080
+    Testing Function mode.
+    [2025-11-19 23:06:06] [INFO] Running the AIE graph.
+    [2025-11-19 23:06:06] [INFO] Running the test harness.
+    [2025-11-19 23:06:06] [INFO] Waiting for the result.
+    [2025-11-19 23:06:08] [INFO] PLIO_1_TO_AIE send the first data at cycle[0], ends at cycle[13009], and the throughputs is 375.341 MBps.
+    [2025-11-19 23:06:08] [INFO] PLIO_3_TO_AIE send the first data at cycle[0], ends at cycle[13110], and the throughputs is 372.449 MBps.
+    [2025-11-19 23:06:08] [INFO] PLIO_2_FROM_AIE received the first data at cycle[13502], ends at cycle[19583], and the throughputs is 802.962 MBps.
     TEST PASSED
-    [2025-**-** 15:16:36] [INFO] Destroying the test harness manager.
+    Testing Performance mode.
+    [2025-11-19 23:06:08] [INFO] Running the AIE graph.
+    [2025-11-19 23:06:08] [INFO] Running the test harness.
+    [2025-11-19 23:06:08] [INFO] Waiting for the result.
+    [2025-11-19 23:06:09] [INFO] PLIO_1_TO_AIE send the first data at cycle[0], ends at cycle[1030], and the throughputs is 4740.59 MBps.
+    [2025-11-19 23:06:09] [INFO] PLIO_3_TO_AIE send the first data at cycle[0], ends at cycle[1030], and the throughputs is 4740.59 MBps.
+    [2025-11-19 23:06:09] [INFO] PLIO_2_FROM_AIE received the first data at cycle[1424], ends at cycle[2449], and the throughputs is 4763.72 MBps.
+    TEST PASSED
+    [2025-11-19 23:06:09] [INFO] Destroying the test harness manager.
     INFO: TEST PASSED, RC=0
 
 Here, the throughput of every port is reported.

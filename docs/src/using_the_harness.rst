@@ -22,15 +22,15 @@
 Using the Test Harness
 **********************
 
-Delopying Pre-built SD Card on the Board
-========================================
+Delopying Pre-built SD Card on the VCK190 and VEK280 Board
+==========================================================
 
 The test harness server has been built already for deploying on the VCK190 or VEK280 board. You can download the pre-built image by :
 
 .. code-block:: shell
 
     cd bin
-    source download.sh
+    ./download.sh
     tar xzvf vck190_sd_card.img.zip
     <or>
     tar xzvf vek280_sd_card.img.zip
@@ -42,6 +42,17 @@ Burn and boot with the ``sd_card.img``. In the board, get the IP address and lau
     ifconfig
     cd /run/media/mmcblk0p1
     ./run_server.sh
+
+Starting the server on VEK385 Board
+===================================
+
+Login to AMD EDF Linux on VEK385 board. Get the IP address and launch the server by:
+
+.. code-block:: shell
+
+    ifconfig # get IP Address of the VEK385 board
+    cd <location where vek385_server.zip is extracted>
+    ./run_edf_server.sh
 
 Note that by default, if there's no data transaction between the server and client for 60 seconds, the server will kill the current connection and wait for new connections. If longer waiting time for the transaction is needed, you can edit ``run_server.sh`` and then launch it.
 
@@ -124,11 +135,11 @@ Building the AI Engine Graph
 To build the libadf.a for use with the test harness, 
 it must be compiled using the desired prebuilt XSA as the input platform, with the ``hw`` target.
 
-The prebuilt XSAs are ``vck190_test_harness.xsa`` for VCK190 and ``vek280_test_harness.xsa`` for VEK280.
+The prebuilt XSAs are ``vck190_test_harness.xsa`` for VCK190, ``vek280_test_harness.xsa`` for VEK280 and ``vek385_test_harness.xsa`` for VEK385.
 
 .. code-block:: shell
 
-    v++ -c --mode aie --platform=${TEST_HARNESS_REPO_PATH}/bin/<vck190_test_harness.xsa/vek280_test_harness.xsa>
+    v++ -c --mode aie --platform=${TEST_HARNESS_REPO_PATH}/bin/<vck190_test_harness.xsa/vek280_test_harness.xsa/vek385_test_harness.xsa>
                       --target=hw 
                       --aie.event-trace runtime 
                       --aie.event-trace-port gmio 
@@ -164,6 +175,16 @@ The AIE test harness includes utility scripts which can be used to package the t
         --package.out_dir ${TEMP_DIR}
 
 **VEK280**
+
+.. code-block:: shell
+
+   v++ -p -t ${TARGET} -f ${TEST_HARNESS_PLATFORM} -o ${XCLBIN} $(TEST_HARNESS_XSA) ${AIE_ADF} \
+        --config ${TEST_HARNESS_REPO_PATH}/cfg/package_aie_only.cfg \
+        --package.defer_aie_run \
+        --advanced.param package.enableAiePartitionDrc=0 \
+        --package.out_dir ${TEMP_DIR}
+
+**VEK385**
 
 .. code-block:: shell
 

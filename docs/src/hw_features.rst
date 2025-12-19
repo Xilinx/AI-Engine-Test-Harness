@@ -38,6 +38,9 @@ On VCK190, the precompiled .xsa implements a PL DMA engine with 72 independent c
 On VEK280, the precompiled .xsa implements a PL DMA engine with 32 independent channels. 
 16 Tx channels send data from DDR to AIE and 16 Rx channels receive data from AIE to DDR. 
 
+On VEK385, the precompiled .xsa implements a PL DMA engine with 32 independent channels. 
+16 Tx channels send data from DDR to AIE and 16 Rx channels receive data from AIE to DDR. 
+
 Each channel is connected to an unique AIE PLIO port using 128-bit wide AXI-Stream clocked at 312.5MHz. 
 This delivers an effective throughput of 5GB/sec (32-bits @ 1.25GHz from AIE view)
 
@@ -51,12 +54,12 @@ The AIE Test Harness supports two testing modes: Performance testing and Functio
 
 **Performance Testing Mode**
 
-On both VCK190 and VEK280, the DMA engine for performance testing is designed to allow a maximum throughput on the PLIO interfaces 
+On VCK190, VEK280 and VEK385, the DMA engine for performance testing is designed to allow a maximum throughput on the PLIO interfaces 
 (128-bit @ 312.5MHz from PL view), 
 ensuring that the data transfer between AIE and PL isn't artificially stalled by the DMA channels 
 and thereby allowing accurate performance testing in hardware.
 
-Each channel contains its own URAM memory (64kB for VCK190 / 128kB for VEK280) used to buffer data. 
+Each channel contains its own URAM memory (64kB for VCK190 / 128kB for VEK280 and VEK385) used to buffer data. 
 For datasets exceeding the size of the local URAM memory, the DMA engine automatically generates pseudo-random data 
 and appends it to the data sequence sent to the AIE.
 
@@ -64,7 +67,7 @@ This allows transferring data to or from the AIE without unwanted external perfo
 
 **Functional Testing Mode**
 
-On both VCK190 and VEK280, the DMA engine for functional testing is designed to allow testing the graph with very large datasets of 
+On VCK190, VEK280 and VEK385, the DMA engine for functional testing is designed to allow testing the graph with very large datasets of 
 user-provided data. 
 In this mode, the user-provided data is directly transferred between the DDR and the AIE without being buffered in the local URAM memory. 
 
@@ -78,7 +81,7 @@ Data Size
 The data size parameter specifies the size in bytes of the dataset to be transferred (sent or received). 
 The size must be a multiple of 16 bytes.
 
-In performance testing mode, the amount of user-provided data is limited by the size of the local buffer (64kB on VCK190 and 128kB on VEK280). 
+In performance testing mode, the amount of user-provided data is limited by the size of the local buffer (64kB on VCK190 and 128kB on VEK280 and VEK385). 
 If the data size specified by the user exceeds the size of the local buffer, 
 the DMA engine will insert pseudo-random data after transfering the user-provided data to ensure that specified data size gets transfered.
 
@@ -262,6 +265,42 @@ The placement for VCK190 of the PLIOs both ``TO_AIE`` and ``FROM_AIE`` can be se
     "PLIO_36_FROM_AIE":   {"shim": {"column": 23, "channel": 4 } }
 
 The placement for VEK280 of the PLIOs both ``TO_AIE`` and ``FROM_AIE`` can be seen in :url_to_repo:`cfg/vek280_aie_constraints.json`::
+
+    "PLIO_01_TO_AIE":     {"shim": {"column": 12, "channel": 0 } },
+    "PLIO_02_TO_AIE":     {"shim": {"column": 13, "channel": 0 } },
+    "PLIO_03_TO_AIE":     {"shim": {"column": 14, "channel": 0 } },
+    "PLIO_04_TO_AIE":     {"shim": {"column": 15, "channel": 0 } },
+    "PLIO_05_TO_AIE":     {"shim": {"column": 16, "channel": 0 } },
+    "PLIO_06_TO_AIE":     {"shim": {"column": 17, "channel": 0 } },
+    "PLIO_07_TO_AIE":     {"shim": {"column": 18, "channel": 0 } },
+    "PLIO_08_TO_AIE":     {"shim": {"column": 19, "channel": 0 } },
+    "PLIO_09_TO_AIE":     {"shim": {"column": 20, "channel": 0 } },
+    "PLIO_10_TO_AIE":     {"shim": {"column": 21, "channel": 0 } },
+    "PLIO_11_TO_AIE":     {"shim": {"column": 22, "channel": 0 } },
+    "PLIO_12_TO_AIE":     {"shim": {"column": 23, "channel": 0 } },
+    "PLIO_13_TO_AIE":     {"shim": {"column": 24, "channel": 0 } },
+    "PLIO_14_TO_AIE":     {"shim": {"column": 25, "channel": 0 } },
+    "PLIO_15_TO_AIE":     {"shim": {"column": 26, "channel": 0 } },
+    "PLIO_16_TO_AIE":     {"shim": {"column": 27, "channel": 0 } },
+
+    "PLIO_01_FROM_AIE":   {"shim": {"column": 12, "channel": 0 } },
+    "PLIO_02_FROM_AIE":   {"shim": {"column": 13, "channel": 0 } },
+    "PLIO_03_FROM_AIE":   {"shim": {"column": 14, "channel": 0 } },
+    "PLIO_04_FROM_AIE":   {"shim": {"column": 15, "channel": 0 } },
+    "PLIO_05_FROM_AIE":   {"shim": {"column": 16, "channel": 0 } },
+    "PLIO_06_FROM_AIE":   {"shim": {"column": 17, "channel": 0 } },
+    "PLIO_07_FROM_AIE":   {"shim": {"column": 18, "channel": 0 } },
+    "PLIO_08_FROM_AIE":   {"shim": {"column": 19, "channel": 0 } },
+    "PLIO_09_FROM_AIE":   {"shim": {"column": 20, "channel": 0 } },
+    "PLIO_10_FROM_AIE":   {"shim": {"column": 21, "channel": 0 } },
+    "PLIO_11_FROM_AIE":   {"shim": {"column": 22, "channel": 0 } },
+    "PLIO_12_FROM_AIE":   {"shim": {"column": 23, "channel": 0 } },
+    "PLIO_13_FROM_AIE":   {"shim": {"column": 24, "channel": 0 } },
+    "PLIO_14_FROM_AIE":   {"shim": {"column": 25, "channel": 0 } },
+    "PLIO_15_FROM_AIE":   {"shim": {"column": 26, "channel": 0 } },
+    "PLIO_16_FROM_AIE":   {"shim": {"column": 27, "channel": 0 } }
+
+The placement for VEK385 of the PLIOs both ``TO_AIE`` and ``FROM_AIE`` can be seen in :url_to_repo:`cfg/vek385_aie_constraints.json`::
 
     "PLIO_01_TO_AIE":     {"shim": {"column": 12, "channel": 0 } },
     "PLIO_02_TO_AIE":     {"shim": {"column": 13, "channel": 0 } },

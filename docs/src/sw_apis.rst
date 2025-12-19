@@ -187,9 +187,9 @@ The server application is responsible for the following tasks:
 
 Usage of server application
 ---------------------------
-A script named ``run_server.sh`` is provided to run the server application on the target board, refer to the :ref:`step by step example <step_by_step>`.
-The script is located in the repo :url_to_repo:`test_harness/scripts/run_server.sh`.
-The pre-built application named ``test_harness_server`` is included in the SD card image. 
+A script named ``run_server.sh`` for VCK190 and VEK280 boards and ``run_edf_server.sh`` for VEK385 board is provided to run the server application on the target board, refer to the :ref:`step by step example <step_by_step>`.
+The script are located in the repo :url_to_repo:`test_harness/scripts/run_server.sh` and :url_to_repo:`test_harness/scripts/run_edf_server.sh`.
+The pre-built application named ``test_harness_server`` is included in the SD card image for VCK190 and VEK280 boards and in the ``vek385_server.zip`` for VEK385 board. 
 The source code is located in the repo :url_to_repo:`src/ps/test_harness_main.cpp`::
 
    test_harness_server <port> <timeout_in_seconds > <reset_flag> <max_num_sessions>

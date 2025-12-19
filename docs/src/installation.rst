@@ -49,10 +49,15 @@ Installation Instructions
 
 4. Boot the VCK190 or VEK280 board with the SD card
 
-5. Run the test harness server on the board by following the instructions::
+5. Run the test harness server on either VCK190 or VEK280 board using following the instructions::
 
     cd /run/media/mmcblk0p1
     ./run_server.sh
+
+6. Run the test harness server on VEK385 board using following instructions::
+
+    cd <location where vek385_server.zip is extracted>
+    ./run_edf_server.sh
 
 .. CAUTION::
    The prebuilt XSAs can only be used with the 2025.1 version of the Vitis tool. 
@@ -70,8 +75,10 @@ The prebuilt test harness XSA can optionally be rebuilt from source as follows::
    make xsa TARGET=hw DEVICE=vck190
    # Or to build functional/performance testing mode XSA for VEK280
    make xsa TARGET=hw DEVICE=vek280
-   # To build the sd card image for VCK190
-   make sd_card TARGET=hw DEVICE=vck190
-    # Or to build the sd card image for VEK280
-   make sd_card TARGET=hw DEVICE=vek280
+   # To build the server application and sd card image for VCK190
+   make server TARGET=hw DEVICE=vck190
+    # Or to build the server application and sd card image for VEK280
+   make server TARGET=hw DEVICE=vek280
+    # Or to build the server application for VEK385
+   make server TARGET=hw DEVICE=vek385
 
