@@ -261,7 +261,8 @@ function OptanonWrapper() { }
 <li class="toctree-l1"><a class="reference internal" href="hw_features.html">Hardware Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sw_apis.html">Software APIs</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Test Harness</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#delopying-pre-built-sd-card-on-the-board">Delopying Pre-built SD Card on the Board</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#delopying-pre-built-sd-card-on-the-vck190-and-vek280-board">Delopying Pre-built SD Card on the VCK190 and VEK280 Board</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starting-the-server-on-vek385-board">Starting the server on VEK385 Board</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#environment-setup">Environment Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#instrumenting-the-ai-engine-graph">Instrumenting the AI Engine Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#test-harness-header-file">Test Harness Header File</a></li>
@@ -364,12 +365,12 @@ function OptanonWrapper() { }
 </div>
 <div class="section" id="using-the-test-harness">
 <h1>Using the Test Harness<a class="headerlink" href="#using-the-test-harness" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="delopying-pre-built-sd-card-on-the-board">
-<h2>Delopying Pre-built SD Card on the Board<a class="headerlink" href="#delopying-pre-built-sd-card-on-the-board" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="delopying-pre-built-sd-card-on-the-vck190-and-vek280-board">
+<h2>Delopying Pre-built SD Card on the VCK190 and VEK280 Board<a class="headerlink" href="#delopying-pre-built-sd-card-on-the-vck190-and-vek280-board" title="Permalink to this headline">¶</a></h2>
 <p>The test harness server has been built already for deploying on the VCK190 or VEK280 board. You can download the pre-built image by :</p>
 <pre class="highlight literal-block">
 <span></span><span class="nb">cd</span> bin
-<span class="nb">source</span> download.sh
+./download.sh
 tar xzvf vck190_sd_card.img.zip
 &lt;or&gt;
 tar xzvf vek280_sd_card.img.zip
@@ -379,6 +380,15 @@ tar xzvf vek280_sd_card.img.zip
 <span></span>ifconfig
 <span class="nb">cd</span> /run/media/mmcblk0p1
 ./run_server.sh
+</pre>
+</div>
+<div class="section" id="starting-the-server-on-vek385-board">
+<h2>Starting the server on VEK385 Board<a class="headerlink" href="#starting-the-server-on-vek385-board" title="Permalink to this headline">¶</a></h2>
+<p>Login to AMD EDF Linux on VEK385 board. Get the IP address and launch the server by:</p>
+<pre class="highlight literal-block">
+<span></span>ifconfig <span class="c1"># get IP Address of the VEK385 board</span>
+<span class="nb">cd</span> &lt;location where vek385_server.zip is extracted&gt;
+./run_edf_server.sh
 </pre>
 <p>Note that by default, if there’s no data transaction between the server and client for 60 seconds, the server will kill the current connection and wait for new connections. If longer waiting time for the transaction is needed, you can edit <code class="docutils literal notranslate"><span class="pre">run_server.sh</span></code> and then launch it.</p>
 </div>
@@ -444,9 +454,9 @@ or the example provided in this repo, such as <a class="reference external" href
 <h3>Building the AI Engine Graph<a class="headerlink" href="#building-the-ai-engine-graph" title="Permalink to this headline">¶</a></h3>
 <p>To build the libadf.a for use with the test harness,
 it must be compiled using the desired prebuilt XSA as the input platform, with the <code class="docutils literal notranslate"><span class="pre">hw</span></code> target.</p>
-<p>The prebuilt XSAs are <code class="docutils literal notranslate"><span class="pre">vck190_test_harness.xsa</span></code> for VCK190 and <code class="docutils literal notranslate"><span class="pre">vek280_test_harness.xsa</span></code> for VEK280.</p>
+<p>The prebuilt XSAs are <code class="docutils literal notranslate"><span class="pre">vck190_test_harness.xsa</span></code> for VCK190, <code class="docutils literal notranslate"><span class="pre">vek280_test_harness.xsa</span></code> for VEK280 and <code class="docutils literal notranslate"><span class="pre">vek385_test_harness.xsa</span></code> for VEK385.</p>
 <pre class="highlight literal-block">
-<span></span>v++ -c --mode aie --platform<span class="o">=</span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/bin/&lt;vck190_test_harness.xsa/vek280_test_harness.xsa&gt;
+<span></span>v++ -c --mode aie --platform<span class="o">=</span><span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/bin/&lt;vck190_test_harness.xsa/vek280_test_harness.xsa/vek385_test_harness.xsa&gt;
                   --target<span class="o">=</span>hw
                   --aie.event-trace runtime
                   --aie.event-trace-port gmio
@@ -473,6 +483,14 @@ it must be compiled using the desired prebuilt XSA as the input platform, with t
      --package.out_dir <span class="si">${</span><span class="nv">TEMP_DIR</span><span class="si">}</span>
 </pre>
 <p><strong>VEK280</strong></p>
+<pre class="highlight literal-block">
+<span></span>v++ -p -t <span class="si">${</span><span class="nv">TARGET</span><span class="si">}</span> -f <span class="si">${</span><span class="nv">TEST_HARNESS_PLATFORM</span><span class="si">}</span> -o <span class="si">${</span><span class="nv">XCLBIN</span><span class="si">}</span> <span class="k">$(</span>TEST_HARNESS_XSA<span class="k">)</span> <span class="si">${</span><span class="nv">AIE_ADF</span><span class="si">}</span> <span class="se">\</span>
+     --config <span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/cfg/package_aie_only.cfg <span class="se">\</span>
+     --package.defer_aie_run <span class="se">\</span>
+     --advanced.param package.enableAiePartitionDrc<span class="o">=</span><span class="m">0</span> <span class="se">\</span>
+     --package.out_dir <span class="si">${</span><span class="nv">TEMP_DIR</span><span class="si">}</span>
+</pre>
+<p><strong>VEK385</strong></p>
 <pre class="highlight literal-block">
 <span></span>v++ -p -t <span class="si">${</span><span class="nv">TARGET</span><span class="si">}</span> -f <span class="si">${</span><span class="nv">TEST_HARNESS_PLATFORM</span><span class="si">}</span> -o <span class="si">${</span><span class="nv">XCLBIN</span><span class="si">}</span> <span class="k">$(</span>TEST_HARNESS_XSA<span class="k">)</span> <span class="si">${</span><span class="nv">AIE_ADF</span><span class="si">}</span> <span class="se">\</span>
      --config <span class="si">${</span><span class="nv">TEST_HARNESS_REPO_PATH</span><span class="si">}</span>/cfg/package_aie_only.cfg <span class="se">\</span>
@@ -586,7 +604,7 @@ make python
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on December 02, 2025.
+        Last updated on December 19, 2025.
       </span>
 
     </p>

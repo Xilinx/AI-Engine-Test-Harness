@@ -368,9 +368,15 @@ source setup.sh
 </li>
 <li><p class="first">Boot the VCK190 or VEK280 board with the SD card</p>
 </li>
-<li><p class="first">Run the test harness server on the board by following the instructions:</p>
+<li><p class="first">Run the test harness server on either VCK190 or VEK280 board using following the instructions:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd /run/media/mmcblk0p1
 ./run_server.sh
+</pre></div>
+</div>
+</li>
+<li><p class="first">Run the test harness server on VEK385 board using following instructions:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd &lt;location where vek385_server.zip is extracted&gt;
+./run_edf_server.sh
 </pre></div>
 </div>
 </li>
@@ -391,10 +397,12 @@ make clean
 make xsa TARGET=hw DEVICE=vck190
 # Or to build functional/performance testing mode XSA for VEK280
 make xsa TARGET=hw DEVICE=vek280
-# To build the sd card image for VCK190
-make sd_card TARGET=hw DEVICE=vck190
- # Or to build the sd card image for VEK280
-make sd_card TARGET=hw DEVICE=vek280
+# To build the server application and sd card image for VCK190
+make server TARGET=hw DEVICE=vck190
+ # Or to build the server application and sd card image for VEK280
+make server TARGET=hw DEVICE=vek280
+ # Or to build the server application for VEK385
+make server TARGET=hw DEVICE=vek385
 </pre></div>
 </div>
 </div>
@@ -430,7 +438,7 @@ make sd_card TARGET=hw DEVICE=vek280
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on December 02, 2025.
+        Last updated on December 19, 2025.
       </span>
 
     </p>

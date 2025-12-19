@@ -529,9 +529,9 @@ The server application is responsible for the following tasks:</p>
 </ul>
 <div class="section" id="usage-of-server-application">
 <h3>Usage of server application<a class="headerlink" href="#usage-of-server-application" title="Permalink to this headline">¶</a></h3>
-<p>A script named <code class="docutils literal notranslate"><span class="pre">run_server.sh</span></code> is provided to run the server application on the target board, refer to the <a class="reference internal" href="step_by_step_example.html#step-by-step"><span class="std std-ref">step by step example</span></a>.
-The script is located in the repo <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/test_harness/scripts/run_server.sh">test_harness/scripts/run_server.sh</a>.
-The pre-built application named <code class="docutils literal notranslate"><span class="pre">test_harness_server</span></code> is included in the SD card image.
+<p>A script named <code class="docutils literal notranslate"><span class="pre">run_server.sh</span></code> for VCK190 and VEK280 boards and <code class="docutils literal notranslate"><span class="pre">run_edf_server.sh</span></code> for VEK385 board is provided to run the server application on the target board, refer to the <a class="reference internal" href="step_by_step_example.html#step-by-step"><span class="std std-ref">step by step example</span></a>.
+The script are located in the repo <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/test_harness/scripts/run_server.sh">test_harness/scripts/run_server.sh</a> and <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/test_harness/scripts/run_edf_server.sh">test_harness/scripts/run_edf_server.sh</a>.
+The pre-built application named <code class="docutils literal notranslate"><span class="pre">test_harness_server</span></code> is included in the SD card image for VCK190 and VEK280 boards and in the <code class="docutils literal notranslate"><span class="pre">vek385_server.zip</span></code> for VEK385 board.
 The source code is located in the repo <a class="reference external" href="https://github.com/Xilinx/AI-Engine-Test-Harness/tree/main/src/ps/test_harness_main.cpp">src/ps/test_harness_main.cpp</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_harness_server</span> <span class="o">&lt;</span><span class="n">port</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">timeout_in_seconds</span> <span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">reset_flag</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">max_num_sessions</span><span class="o">&gt;</span>
 
@@ -574,7 +574,7 @@ The source code is located in the repo <a class="reference external" href="https
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on December 02, 2025.
+        Last updated on December 19, 2025.
       </span>
 
     </p>
