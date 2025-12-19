@@ -345,16 +345,16 @@ function OptanonWrapper() { }
 </div>
 <div class="section" id="step-by-step-example">
 <h1>Step by Step Example<a class="headerlink" href="#step-by-step-example" title="Permalink to this headline">¶</a></h1>
-<p>This step by step example takes a reference design <code class="docutils literal notranslate"><span class="pre">examples/vck190/adder_perf</span></code> and shows the commands to build and launch. And the example output is also shown.
+<p>This step by step example takes a reference design <code class="docutils literal notranslate"><span class="pre">examples/vek385/adder_perf</span></code> and shows the commands to build and launch. And the example output is also shown.
 The code specific to test harness features is explained. The commands and code can be easily extended to other examples and user own designs.</p>
 <div class="section" id="launching-the-server-session">
 <h2>Launching the Server Session<a class="headerlink" href="#launching-the-server-session" title="Permalink to this headline">¶</a></h2>
-<p>Burn and boot with the <code class="docutils literal notranslate"><span class="pre">bin/sd_card.img</span></code>. In the board, get the IP address and launch the server by:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;log in Linux with username / passwd: petalinux / petalinux&gt;
+<p>In the board, get the IP address and launch the server by:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;log in to AMD EDF Linux with username / passwd: amd-edf / user-set-password&gt;
 sudo su
-cd /run/media/mmcblk0p1
-    ifconfig
-./run_server.sh
+cd &lt;location where vek385_server.zip is extracted&gt;
+ifconfig # get IP Address of the VEK385 board
+./run_edf_server.sh
 </pre></div>
 </div>
 <p>Note that the IP address of the board will be used by client server.</p>
@@ -363,7 +363,7 @@ cd /run/media/mmcblk0p1
 <h2>Running an Example in Client Server<a class="headerlink" href="#running-an-example-in-client-server" title="Permalink to this headline">¶</a></h2>
 <p>Note: Setup the environment first before launching the commands. It can be referred to <a class="reference internal" href="using_the_harness.html#using-the-harness"><span class="std std-ref">Using the Test Harness</span></a>
 The examples have Makefile ready for building and launching:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd examples/vck190/adder_perf
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd examples/vek385/adder_perf
 make all
 make run
 </pre></div>
@@ -372,26 +372,32 @@ make run
 <div class="section" id="example-output">
 <h2>Example Output<a class="headerlink" href="#example-output" title="Permalink to this headline">¶</a></h2>
 <p>Here’s the example output:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Using XCLBIN file: vck190_test_harness.xclbin
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Using XCLBIN file: vek385_test_harness.xclbin
 Running example ADDER
- - Number of graph iterations         :     1000
- - Number of values                   :  1024000 (4000KB)
+ - Number of graph iterations         :        1
+ - Number of values                   :     4096 (16KB)
  - Number of repetitions              :        1
- - Number of graph iterations (total) :     1000
+ - Number of graph iterations (total) :        1
  - Channel delay                      :        0 cycles
-[2025-**-** 15:16:21] [INFO] Initializing the test harness manager.
-[2025-**-** 15:16:21] [INFO] Connecting to the test harness manager server at 172.16.75.168:8080
-Testing mode: PERF_MODE
-[2025-**-** 15:16:30] [INFO] Running the AIE graph.
-[2025-**-** 15:16:31] [INFO] Running the test harness.
-[2025-**-** 15:16:31] [INFO] Waiting for the result.
-[2025-**-** 15:16:36] [INFO] PLIO_1_TO_AIE send the first data at cycle[0], ends at cycle[303949], and the throughputs is 4016.14 MBps.
-
-[2025-**-** 15:16:36] [INFO] PLIO_1_FROM_AIE received the first data at cycle[631], ends at cycle[304630], and the throughputs is 4015.48 MBps.
-
-[INFO]: Result checking is not valid if test size is beyond the capacity of URAM in each channel.
+[2025-11-19 23:06:06] [INFO] Initializing the test harness manager.
+[2025-11-19 23:06:06] [INFO] Connecting to the test harness manager server at 10.10.70.1:8080
+Testing Function mode.
+[2025-11-19 23:06:06] [INFO] Running the AIE graph.
+[2025-11-19 23:06:06] [INFO] Running the test harness.
+[2025-11-19 23:06:06] [INFO] Waiting for the result.
+[2025-11-19 23:06:08] [INFO] PLIO_1_TO_AIE send the first data at cycle[0], ends at cycle[13009], and the throughputs is 375.341 MBps.
+[2025-11-19 23:06:08] [INFO] PLIO_3_TO_AIE send the first data at cycle[0], ends at cycle[13110], and the throughputs is 372.449 MBps.
+[2025-11-19 23:06:08] [INFO] PLIO_2_FROM_AIE received the first data at cycle[13502], ends at cycle[19583], and the throughputs is 802.962 MBps.
 TEST PASSED
-[2025-**-** 15:16:36] [INFO] Destroying the test harness manager.
+Testing Performance mode.
+[2025-11-19 23:06:08] [INFO] Running the AIE graph.
+[2025-11-19 23:06:08] [INFO] Running the test harness.
+[2025-11-19 23:06:08] [INFO] Waiting for the result.
+[2025-11-19 23:06:09] [INFO] PLIO_1_TO_AIE send the first data at cycle[0], ends at cycle[1030], and the throughputs is 4740.59 MBps.
+[2025-11-19 23:06:09] [INFO] PLIO_3_TO_AIE send the first data at cycle[0], ends at cycle[1030], and the throughputs is 4740.59 MBps.
+[2025-11-19 23:06:09] [INFO] PLIO_2_FROM_AIE received the first data at cycle[1424], ends at cycle[2449], and the throughputs is 4763.72 MBps.
+TEST PASSED
+[2025-11-19 23:06:09] [INFO] Destroying the test harness manager.
 INFO: TEST PASSED, RC=0
 </pre></div>
 </div>
@@ -475,7 +481,7 @@ As seen in step #1, the inputs of the graph are mapped to PLIO <code class="docu
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on December 02, 2025.
+        Last updated on December 19, 2025.
       </span>
 
     </p>
