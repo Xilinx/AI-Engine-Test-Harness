@@ -382,7 +382,7 @@ ensuring a streamlined and user-friendly testing experience.</p>
 </div>
 <div class="section" id="test-harness-pre-built-xsa">
 <h2>Test Harness Pre-built XSA<a class="headerlink" href="#test-harness-pre-built-xsa" title="Permalink to this headline">¶</a></h2>
-<p>For each supported platform e.g., VCK190 and VEK280, pre-built xsa is provided along with the release of this repository,
+<p>For each supported platform e.g., VCK190,VEK280 and VEK385, pre-built xsa is provided along with the release of this repository,
 and is used as a platform (with necessary hardware information) on which the designers compile the AIE graph.
 This allows skipping the v++ link step after compiling the libadf.a and directly go to the v++ package step to generate the hardware boot image.
 This saves the most time-consuming part of the build process for on-board tests and allows to fast and predictable iterations.
@@ -393,6 +393,7 @@ generate the final .xclbin file for on-board tests.</p>
 <p>On VCK190, the precompiled .xsa implements a PL DMA engine with 72 independent AXI stream channels.
 36 channels send data from DDR to AIE and 36 channels receive data from AIE to DDR.
 On VEK280, it has 32 independent AXI stream channels that 16 channels can send data from DDR to AIE and 16 channels can receive data from AIE to DDR.
+On VEK385, it has 32 independent AXI stream channels that 16 channels can send data from DDR to AIE and 16 channels can receive data from AIE to DDR.
 For both of the DMA engines, they are designed to allow a maximum throughput on the PLIO interfaces (128-bit &#64; 312.5MHz),
 ensuring that the AIE graph isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing on the hardware.</p>
 <div class="toctree-wrapper compound">
@@ -431,7 +432,7 @@ ensuring that the AIE graph isn’t artificially stalled by the DMA channels and
   <div role="contentinfo" class="copyright">
     <p class="footerinfo">
       <span class="lastupdated">
-        Last updated on December 19, 2025.
+        Last updated on December 23, 2025.
       </span>
 
     </p>
