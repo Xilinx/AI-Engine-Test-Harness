@@ -14,10 +14,10 @@
 # ############################### Help Section ###################################
 help:
 	@echo "Makefile Usage:"
-	@echo "  make server DEVICE=vck190/vek280/vek385/vrk160"
+	@echo "  make server DEVICE=vck190/vek280/vek385"
 	@echo "      Command to generate the server applications and images for specified DEVICE."
 	@echo ""
-	@echo "  make xsa DEVICE=vck190/vek280/vek385/vrk160"
+	@echo "  make xsa DEVICE=vck190/vek280/vek385"
 	@echo "      Command to generate the xsa for specified DEVICE."
 	@echo ""
 	@echo "  make python"
@@ -43,12 +43,10 @@ ifeq ($(DEVICE), vck190)
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk xsa
 else ifeq ($(DEVICE), vek280)
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk xsa
-else ifeq ($(DEVICE), vrk160)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk xsa
 else ifeq ($(DEVICE), vek385)
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk xsa
 else
-	$(error Invalid DEVICE specified. Please use vck190, vek280, vrk160, or vek385.)
+	$(error Invalid DEVICE specified. Please use vck190, vek280, or vek385.)
 endif
 
 ####################### PAKCAGING  ################################
@@ -58,12 +56,10 @@ ifeq ($(DEVICE), vck190)
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk server DEVICE=$(DEVICE)
 else ifeq ($(DEVICE), vek280)
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_base.mk server DEVICE=$(DEVICE)
-else ifeq ($(DEVICE), vrk160)
-	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk server DEVICE=$(DEVICE)
 else ifeq ($(DEVICE), vek385)
 	make -f ${TEST_HARNESS_REPO_PATH}/test_harness/test_harness_edf_base.mk server DEVICE=$(DEVICE)
 else
-	$(error Invalid DEVICE specified. Please use vck190, vek280, vrk160, or vek385.)
+	$(error Invalid DEVICE specified. Please use vck190, vek280, or vek385.)
 endif
 
 matlab:

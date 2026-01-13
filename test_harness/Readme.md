@@ -50,5 +50,4 @@ make server DEVICE=vek280 TARGET=hw  # build the server application and sd_card 
 |----------|----------------------------------------|-------------------------------------------|
 | vek280   | `make xsa DEVICE=vek280 TARGET=hw`     | `make server DEVICE=vek280 TARGET=hw`    |
 | vck190   | `make xsa DEVICE=vck190 TARGET=hw`     | `make server DEVICE=vck190 TARGET=hw`    |
-| vrk160   | `make xsa DEVICE=vrk160 TARGET=hw`     | `make server DEVICE=vrk160 TARGET=hw`    |
 | vek385   | `make xsa DEVICE=vek385 TARGET=hw`     | `make server DEVICE=vek385 TARGET=hw`    |

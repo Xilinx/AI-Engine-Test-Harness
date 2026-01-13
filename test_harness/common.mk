@@ -56,8 +56,6 @@ ifeq ($(DEVICE), vck190)
 COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=36 -DPARAM_DEPTH=4096
 else ifeq ($(DEVICE), vek280)
 COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=16 -DPARAM_DEPTH=8192
-else ifeq ($(DEVICE), vrk160)
-COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=16 -DPARAM_DEPTH=8192
 else ifeq ($(DEVICE), vek385)
 COMMON_CONFIG_FLAGS := -DPARAM_CHANNELS=16 -DPARAM_DEPTH=8192
 else
@@ -71,12 +69,10 @@ ifeq ($(DEVICE), vck190)
 PLATFORM_NAME := xilinx_vck190_base_202520_1
 else ifeq ($(DEVICE), vek280)
 PLATFORM_NAME := xilinx_vek280_base_202520_1
-else ifeq ($(DEVICE), vrk160)
-PLATFORM_NAME := vrk160_base
 else ifeq ($(DEVICE), vek385)
 PLATFORM_NAME := vek385_base
 else
-$(error ERROR: DEVICE should be set to either vck190, vek280, vrk160 or vek385)
+$(error ERROR: DEVICE should be set to either vck190, vek280, or vek385)
 endif
 else
 $(error ERROR: XILINX_VITIS version 2025.2 is required for this project)
