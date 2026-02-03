@@ -1,7 +1,11 @@
 # Usage of the Test Harness
 
 ## Build Essential Libraries
-In order to drive the test harness from Matlab and Python, users need to build the libraries on the local machines with the following command lines. 
+In order to drive the test harness from Matlab and Python, users need to build the libraries on the local machines with the following command lines.
+
+### Requirements
+- **MATLAB**: Version R2024b or later
+- **Python**: Version 3.10 or later
 
 ### Build the Python library
 ```
@@ -50,5 +54,4 @@ make server DEVICE=vek280 TARGET=hw  # build the server application and sd_card 
 |----------|----------------------------------------|-------------------------------------------|
 | vek280   | `make xsa DEVICE=vek280 TARGET=hw`     | `make server DEVICE=vek280 TARGET=hw`    |
 | vck190   | `make xsa DEVICE=vck190 TARGET=hw`     | `make server DEVICE=vck190 TARGET=hw`    |
-| vrk160   | `make xsa DEVICE=vrk160 TARGET=hw`     | `make server DEVICE=vrk160 TARGET=hw`    |
 | vek385   | `make xsa DEVICE=vek385 TARGET=hw`     | `make server DEVICE=vek385 TARGET=hw`    |

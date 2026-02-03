@@ -80,6 +80,7 @@ python_api:
 ${XCLBIN}: $(TEST_HARNESS_XSA) ${AIE_ADF}
 ifeq ($(TARGET), hw)
 	v++ -p -t ${TARGET} -f ${TEST_HARNESS_PLATFORM} -o $@ $^ \
+ 		--config ${TEST_HARNESS_REPO_PATH}/cfg/package_aie_only.cfg \
 		--package.defer_aie_run \
 		--advanced.param package.enableAiePartitionDrc=0 \
 		--package.out_dir ${TEMP_DIR}

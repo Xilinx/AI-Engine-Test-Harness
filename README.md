@@ -123,7 +123,7 @@ def main(args):
     xclbin_path = args.xclbin                                           
     
     # create test harness client manager, which instructs the server to initialize the device, and load the design to be tested
-    # Supported devices: 'vck190', 'vek280', 'vrk160', 'vek385'
+    # Supported devices: 'vck190', 'vek280', 'vek385'
     mgr = test_harness_mgr(xclbin_path, ['gr'], 'vck190')               
     test_modes = [test_mode.FUNC_MODE, test_mode.PERF_MODE]
 

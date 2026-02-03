@@ -54,7 +54,7 @@ test_harness_mgr_server::test_harness_mgr_server(test_harness_server* server,
 
 void test_harness_mgr_server::verifyDevice() {
     try {
-        if((this->device.compare("vek280") != 0 && this->device.compare("vck190") != 0  && this->device.compare("vek385") != 0  && this->device.compare("vrk160") != 0)) {
+        if((this->device.compare("vek280") != 0 && this->device.compare("vck190") != 0  && this->device.compare("vek385") != 0)) {
             throw TestHarnessException(TestHarnessStatus::INVALID_ARGUMENTS,
                     "The device " + this->device + " is not supported in the server.");
         }
