@@ -505,7 +505,7 @@ void test_harness_mgr_client::writeGraphPort(unsigned int g_idx, const std::stri
     unsigned int d_size = sizeof(ArgType) * arg.size();
     std::vector<uint8_t> data;
     data.resize(d_size);
-    std::memcpy(data.data(), &arg, d_size);
+    std::memcpy(data.data(), arg.data(), d_size);
     client->sendVec(data);
 }
 
