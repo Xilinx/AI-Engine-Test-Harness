@@ -151,12 +151,13 @@ namespace test_harness {
         *
         * @param port_name
         *  Hierarchical name of RTP port.
-        * @param arg
-        *  The argument to set.
+        * @param data
+        *  The data to write.
+        * @param data_size
+        *  The size of the data to write.
         */
-        template<typename ArgType>
-        void writeGraphPort(unsigned int g_idx, const std::string& port_name, ArgType&& arg) {
-            g_hdl[g_idx].update(port_name, arg);
+        void writeGraphPort(unsigned int g_idx, const std::string& port_name, const void *data, size_t data_size) {
+            g_hdl[g_idx].update(port_name, data, data_size);
         }
 
         /**

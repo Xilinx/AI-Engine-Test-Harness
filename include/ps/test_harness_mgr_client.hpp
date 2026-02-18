@@ -103,8 +103,11 @@ class test_harness_mgr_client : public test_harness_mgr_base, public test_harnes
     uint64_t getServerTimeOut();
     void setServerTimeOut(uint64_t timeout_seconds);
 
-    template<typename ArgType>
+    template<typename ArgType, typename Enable = std::enable_if_t<std::is_scalar<ArgType>::value>>
     void writeGraphPort(unsigned int g_idx, const std::string& port_name, ArgType& arg);
+    template<typename ArgType, typename Allocator = std::allocator<ArgType>>
+    void writeGraphPort(unsigned int g_idx, const std::string& port_name, const std::vector<ArgType, Allocator>& arg);
+
     template<typename ArgType>
     void readGraphPort(unsigned int g_idx, const std::string& port_name, ArgType& arg);
 
@@ -480,20 +483,30 @@ inline int32_t test_harness_mgr_client::sanctifyTransIdx(int32_t idx) {
     return idx;
 }
 
-template<typename ArgType>
+template<typename ArgType, typename Enable>
 void test_harness_mgr_client::writeGraphPort(unsigned int g_idx, const std::string& port_name, ArgType& arg) {
     std::lock_guard<std::mutex> lock(req_mtx);
     client->sendReq("update port");
     client->sendData(g_idx);
     client->sendData(port_name);
     unsigned int d_size = sizeof(ArgType);
-    if(d_size < 1 || d_size > 8)
-        throw TestHarnessException(TestHarnessStatus::INVALID_ARGUMENTS,
-                                "The data size is out of range.");
     std::vector<uint8_t> data;
     data.resize(d_size);
     std::memcpy(data.data(), &arg, sizeof(ArgType));
-    client->sendData(data);
+    client->sendVec(data);
+}
+
+template<typename ArgType, typename Allocator>
+void test_harness_mgr_client::writeGraphPort(unsigned int g_idx, const std::string& port_name, const std::vector<ArgType, Allocator>& arg) {
+    std::lock_guard<std::mutex> lock(req_mtx);
+    client->sendReq("update port");
+    client->sendData(g_idx);
+    client->sendData(port_name);
+    unsigned int d_size = sizeof(ArgType) * arg.size();
+    std::vector<uint8_t> data;
+    data.resize(d_size);
+    std::memcpy(data.data(), &arg, d_size);
+    client->sendVec(data);
 }
 
 template<typename ArgType>
