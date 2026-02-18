@@ -162,6 +162,11 @@ void test_harness_session::run() {
             } else if (request == "getTimeOut") {
                 test_harness_logger::getLogger().debug("Getting the timeout");
                 server->sendData(monitorInterval);
+            } else if (request == "update port") {
+                if (!mgr) throw TestHarnessException(TestHarnessStatus::TEST_HARNESS_NOT_CREATED_FAILURE, "test harness manager is not created.");
+                test_harness_logger::getLogger().info("Waiting for update port");
+                setActive(true);
+                mgr->writeGraphPort();
             } else {
                 test_harness_logger::getLogger().log(test_harness_logger::level::ERROR, "Unknown request: " + request);
                 unknownReqCount++;
