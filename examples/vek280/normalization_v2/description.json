@@ -22,7 +22,7 @@
     "host": {
       "compiler": {
         "sources": [
-          "ps/host.cpp"
+          "client/tb.cpp"
         ],
         "includepaths": [
           "REPO_DIR/include/ps"
