@@ -104,7 +104,7 @@ ${BUILD_DIR}/vek280_test_harness.xclbin: ${BUILD_DIR}/vek280_test_harness.xsa
 ${DEVICE}_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test_harness_session} ${test_harness_server} \
 								${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh
 	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} \
-		--package.rootfs ${ROOTFS} --package.kernel_image ${IMAGE} --package.boot_mode=sd --package.image_format=ext4 \
+		--package.rootfs ${ROOTFS} --package.kernel_image ${IMAGE} --package.boot_mode=sd --package.image_format=ext4 --package.generate_sdcard \
 		--package.sd_file ${test_harness_server} \
 		--package.sd_file ${test_harness_session} \
 		--package.sd_file ${TEST_HARNESS_REPO_PATH}/test_harness/scripts/run_server.sh \
