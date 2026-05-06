@@ -6,7 +6,7 @@
     "key_concepts": [],
     "os": ["linux", "aie_runtime"],
     "platform_allowlist": [
-        "xilinx_vck190_base_202520_1"
+        "xilinx_vck190_base_202610_1"
     ],
     "gui": true,
     "vitis_flow" : "sw-test-harness",
