@@ -64,18 +64,18 @@ endif
 COMMON_CONFIG_FLAGS += -DPARAM_DEVICE=${DEVICE} -DPARAM_MEM_WIDTH=16 -DPARAM_WIDTH=16 
 HOST_CONFIG_FLAGS += ${COMMON_CONFIG_FLAGS} -std=c++17
 
-ifneq ($(findstring 2025.2, $(XILINX_VITIS)), )
+ifneq ($(findstring 2026.1, $(XILINX_VITIS)), )
 ifeq ($(DEVICE), vck190)
-PLATFORM_NAME := xilinx_vck190_base_202520_1
+PLATFORM_NAME := xilinx_vck190_base_202610_1
 else ifeq ($(DEVICE), vek280)
-PLATFORM_NAME := xilinx_vek280_base_202520_1
+PLATFORM_NAME := xilinx_vek280_base_202610_1
 else ifeq ($(DEVICE), vek385)
 PLATFORM_NAME := vek385_base
 else
 $(error ERROR: DEVICE should be set to either vck190, vek280, or vek385)
 endif
 else
-$(error ERROR: XILINX_VITIS version 2025.2 is required for this project)
+$(error ERROR: XILINX_VITIS version 2026.1 is required for this project)
 endif
 
 TEST_HARNESS_PLATFORM := ${PLATFORM_REPO_PATHS}/${PLATFORM_NAME}/${PLATFORM_NAME}.xpfm

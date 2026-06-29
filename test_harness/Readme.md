@@ -1,7 +1,11 @@
 # Usage of the Test Harness
 
 ## Build Essential Libraries
-In order to drive the test harness from Matlab and Python, users need to build the libraries on the local machines with the following command lines. 
+In order to drive the test harness from Matlab and Python, users need to build the libraries on the local machines with the following command lines.
+
+### Requirements
+- **MATLAB**: Version R2024b or later
+- **Python**: Version 3.10 or later
 
 ### Build the Python library
 ```

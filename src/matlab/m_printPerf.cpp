@@ -22,6 +22,7 @@
  */
  
 #include "mex.hpp"
+#include "mexAdapter.hpp"
 #include "test_harness_mgr_client.hpp"
 
 using namespace matlab;

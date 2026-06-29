@@ -109,7 +109,7 @@ ${DEVICE}_sd_card: check_vitis check_xrt ${BUILD_DIR} ${SERVER_FILE_PATH} ${test
 									${BUILD_DIR}/${DEVICE}_test_harness.xclbin ${BUILD_DIR}/${DEVICE}_libadf.a \
 									${BUILD_DIR}/${DEVICE}_test_harness.xsa
 	v++ -p -t hw --platform ${TEST_HARNESS_PLATFORM} --package.out_dir ${BUILD_DIR} \
-		--package.boot_mode=sd --package.image_format=ext4 --package.defer_aie_run \
+		--package.boot_mode=sd --package.image_format=ext4 --package.defer_aie_run --package.generate_sdcard \
 		--package.rootfs ${ROOTFS} --package.kernel_image ${IMAGE} \
 		--package.sd_file ${test_harness_session} \
 		--package.sd_file ${test_harness_server} \
