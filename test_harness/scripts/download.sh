@@ -13,8 +13,9 @@
 #
 
 echo "This is script that lead user to downloading url of pre-compiled .xsa"
-filename=test_harness_xsa_sd_card_2026.1_latest.tar.gz
-remote_url="https://xcoartifactory.xilinx.com/artifactory/vitis-lib-local/test_harness/2026.1/$filename"
+filename=test_harness_xsa_sd_card_2026.1.tar.gz
+remote_url="https://download.amd.com/opendownload/AI_Engine_Test_Harness_2026.1/$filename"
+https://download.amd.com/opendownload/AI_Engine_Test_Harness_2026.1/test_harness_xsa_sd_card_2026.1.tar.gz
 local_path="./$filename"
 wget --no-clobber --no-check-certificate -O "$local_path" "$remote_url"
 tar -xzvf "$local_path"
