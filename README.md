@@ -1,4 +1,9 @@
-# AI Engine Test Harness
+<table width="100%">
+ <tr width="100%">
+    <td align="center"><img src="https://raw.githubusercontent.com/Xilinx/Image-Collateral/main/xilinx-logo.png" width="30%"/><h1>AMD Vitis™ AI Engine Test Harness</h1>
+    </td>
+ </tr>
+</table>
 
 ## Introduction
 
@@ -11,73 +16,131 @@ from various development environments like **Matlab** and **Python**.
 
 ## Features
 ### AIE Test Harness Virtualization
-The virtualization feature of the test harness offers AIE designers a seamless and efficient testing experience by abstracting away the complexities of network communications and hardware specifics, such as device controls. 
-This feature allows designers to focus entirely on their AIE designs without needing to interact directly with the underlying hardware. 
-By leveraging the client APIs available in C++, Python, and MATLAB, designers can create testbenches that operate entirely on local hosts. 
-This setup ensures that all interactions with the test harness server are handled virtually, eliminating the need for manual data exchanges or server modifications during testing. 
-As a result, the virtualization feature streamlines the testing process, making it more accessible and less time-consuming for developers.
+
+The virtualization feature abstracts hardware complexity, allowing designers to focus on AIE designs:
+
+**Key Benefits:**
+- **Hardware abstraction** - No need to interact directly with device controls or network details
+- **Local development** - Create testbenches entirely on local hosts (x86/ARM)
+- **Multi-language support** - Available in C++, Python, and MATLAB
+- **Automated handling** - Virtual server interactions eliminate manual data exchanges
+- **Streamlined workflow** - Reduces time and complexity in testing process
 
 #### Test Harness Server
-The server application, included with the repository, 
-runs continuously on the Versal board and accepts connections from multiple clients on a first-come, first-served basis.
-Once a connection is established, the server processes client requests to perform a series of actions for testing. 
-These actions include initializing the device with AIE designs provided by the clients, 
-running the AIE graphs and DMA with client-supplied data, and waiting for transactions to complete 
-before sending the results back to the clients. 
-If required, the server can also dump AIE event traces and transmit them to the clients. 
-After completing these tasks, the server cleans all user data and resets the board, 
-ensuring a fresh start for subsequent testing sessions.
+
+The server application runs continuously on the Versal board and manages client connections:
+
+**Connection Model:**
+- Accepts multiple client connections on **port 8080**
+- **First-come, first-served** basis
+
+**Workflow per Client:**
+1. **Initialize** - Load AIE design provided by client
+2. **Execute** - Run AIE graphs and DMA with client-supplied data
+3. **Wait** - Transaction completion monitoring
+4. **Return** - Send results back to client
+5. **Trace** (optional) - Dump and transmit AIE event traces
+6. **Reset** - Clean all user data and reset board for next session
 
 #### Test Harness Client APIs
-With the test harness, AIE designers can focus solely on their designs without worrying about network communications or hardware details, such as device controls. 
-The testbench is created using the test harness client APIs, which are available in C++, Python, or MATLAB. 
-These APIs empower designers to efficiently manage the testing process by allowing them to connect to the server, 
-load the AIE design, and run tests in transactions. 
-Designers can also wait for transactions to complete or set a timeout, measure performance, verify functionalities, and request AIE event traces. 
-Additionally, the APIs provide the capability to disconnect from and reset the board, ensuring a streamlined and user-friendly testing experience.
 
-### Testing Mode
-There are two useful testing modes named functional testing mode and performance testing mode. 
+Client APIs (C++, Python, MATLAB) enable designers to focus on AIE designs without hardware concerns.
+
+**Available Operations:**
+- **Connection management** - Connect to/disconnect from server
+- **Design loading** - Load AIE design onto device
+- **Transaction control** - Run tests and wait for completion (with optional timeout)
+- **Performance measurement** - Measure and report throughput/latency
+- **Functional verification** - Verify design correctness
+- **Debug support** - Request AIE event traces
+- **Device control** - Reset board between tests
+
+### Testing Modes
+
+There are two useful testing modes: functional testing mode and performance testing mode.
+
 #### Functional Testing Mode
-In the functional testing mode, it aims to verify functional correctness of the implementation on hardware with a large datasets provided by the users. 
-In this mode, all user-provided data are transferred between the DDR and the AIE with a proper buffering.
-In the this mode, stalls may be introduced due to the bandwidth limitation when accessing DDR. 
-Hence, the measured performance is not representative of the maximum potential throughput of the graph.
+- **Purpose:** Verify functional correctness of the implementation on hardware with large datasets
+- **Data Source:** DDR memory with proper buffering
+- **Stalls:** May occur due to DDR bandwidth limitation
+- **Performance Measurement:** Not representative of maximum potential throughput
+- **Results:** Always valid
+- **Use Case:** Correctness verification with large datasets
 
 #### Performance Testing Mode
-In the performance testing mode, the DMA engine for performance testing is designed to allow a maximum throughput on the PLIO interfaces, ensuring that the data transfer between AIE and PL isn’t artificially stalled by the DMA channels and thereby allowing accurate performance testing on the hardware.
+- **Purpose:** Measure maximum throughput on PLIO interfaces
+- **Data Source:** URAM buffers for direct access
+- **Stalls:** Minimized - ensures data transfer between AIE and PL isn't artificially stalled
+- **Performance Measurement:** Accurate max throughput measurement
+- **Results:** Valid only if data fits in URAM buffer
+- **Use Case:** Accurate hardware benchmarking
 
 ### Precompiled XSA
-The precompiled XSA is provided along with the release of this repository, and is used as a platform on which the designers compile the AIE graph.
-The major component of the XSA is the DMA designed on the PL, which feeds data to AIE application or fetch data from AIE application via AXI-streams. 
-It allows the users to skip the time-consuming `v++` link stage and directly go to `v++` package stage to generate the final `.xclbin` file for on-board tests.
 
-- On the VCK190 platform, the PL DMA consists of 72 channels, 36 of them feed data to AIE and the rest 36 fetch data from AIE.
-Each channel contains its own URAM buffer which is 128bits x 4096 and its own AXI-stream port for input or output.
-- On the VEK280 platform, the PL DMA consists of 32 channels, 16 for the AIE inputs and 16 for the AIE outputs. Similarly, each channel contains a URAM buffer of 128bits x 8192.
-- On the VEK385 platform, the PL DMA consists of 32 channels, 16 for the AIE inputs and 16 for the AIE outputs. Each channel contains a URAM buffer of 128bits x 8192. 
+The precompiled XSA is provided with each release and serves as the platform for compiling AIE graphs.
+
+**Key Benefits:**
+- **Skip v++ link stage** - Eliminates time-consuming PL implementation (saves hours)
+- **Pre-built DMA** - Ready-to-use PL DMA for data transfer via AXI-streams
+- **Fast iteration** - Directly package to `.xclbin` for on-board testing
+
+**Platform Specifications:**
+
+| **Platform** | **Total Channels** | **Input Channels** | **Output Channels** | **URAM Buffer per Channel** |
+|--------------|-------------------:|-------------------:|--------------------:|----------------------------:|
+| VCK190       | 72                 | 36                 | 36                  | 128-bit × 4096              |
+| VEK280       | 32                 | 16                 | 16                  | 128-bit × 8192              |
+| VEK385       | 32                 | 16                 | 16                  | 128-bit × 8192              |
+
+**Note:** Each channel includes its own URAM buffer and dedicated AXI-stream port. 
 
 
 ## Setup
-Using the following commands to downloads the SD card image and the precompiled `xsa` for each supported board under `${TEST_HARNESS_REPO_PATH}/bin/`.
-```
-# under the repository path, run
+
+### Step 1: Download Precompiled Assets
+
+Download the SD card image and precompiled XSA for all supported boards:
+
+```bash
+# Run from repository root
 ./setup.sh
 ```
 
-### Setup the server
-The Versal board requires a simple one-time setup by flashing the SD card with the provided image, booting the board from the SD card, and launching the test harness server application.
+**Downloads to:** `${TEST_HARNESS_REPO_PATH}/bin/`
+- SD card images for VCK190, VEK280
+- Server application for VEK385 (`vek385_server.zip`)
+- Precompiled XSA files for each platform (VCK190, VEK280, VEK385)
 
-### Using Test Harness for Testing
-The repository includes multiple examples to help you learn how to use the test harness for testing AIE graph designs.
-The designers only need to prepare the following three items for each test:
-- AIE designs to be tested.
-- Testing vectors.
-- Testbenches utilizing the test harness client APIs.
+### Step 2: Setup the Server (One-time)
+
+**For VCK190 and VEK280 (PetaLinux-based):**
+1. **Flash SD card** - Use the appropriate image from `bin/`:
+   - `vck190_sd_card.img.zip`
+   - `vek280_sd_card.img.zip`
+2. **Boot board** - Insert SD card and power on
+3. **Launch server** - Launch the test harness server application
+
+**For VEK385 (AMD EDF-based):**
+1. **Extract server** - Extract `vek385_server.zip` from `bin/`
+2. **Login** - Login to AMD EDF Linux on VEK385 board
+3. **Launch server** - Run `./run_edf_server.sh` from the extracted location
+
+### Step 3: Using Test Harness for Testing
+
+The repository includes multiple examples. Prepare these three items for each test:
+
+**Required Items:**
+- **AIE design** - Graph to be tested
+- **Testing vectors** - Input/output data
+- **Testbench** - Client code using test harness APIs
 
 #### AIE Graph Example
-``` C++
 
+**Required constraints for test harness compatibility:**
+- Use predefined PLIO names (e.g., `PLIO_01_TO_AIE`, `PLIO_02_FROM_AIE`)
+- Use 128-bit PLIO width (`adf::plio_128_bits`)
+
+```cpp
 // graph.h
 class test_graph : public graph {
    private:
@@ -108,7 +171,7 @@ class test_graph : public graph {
 
 #### Testbench Example
 
-``` python
+```python
 # example of the client testbench for an adder implemented on the AIE
 
 def main(args):
@@ -153,31 +216,34 @@ def main(args):
 ```
 
 ## Examples
-Following are examples that provided for your references:
 
-| Example                                                 | Language | Board  | External Reference                                                                                                 |
-|---------------------------------------------------------|----------|--------|----------------------------------------------------------------------------------------------------------------------|
-| [adder_perf](examples/vck190/adder_perf/)               | C++      | vck190 |                                                                                                                      |
-| [channelizer](examples/vck190/channelizer/)             | C++      | vck190 | [Channelizer Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE/Design_Tutorials/04-Polyphase-Channelizer) |
-| [testcase_dmafifo_opt](examples/vck190/testcase_dmafifo_opt/) | C++      | vck190 | [AIE Performance Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE/Feature_Tutorials/13-aie-performance-analysis) |
-| [adder_perf](examples/vek280/adder_perf/)               | C++      | vek280 |                                                                                                                      |
-| [normalization_v2](examples/vek280/normalization_v2/)   | C++      | vek280 | [AIE-ML Performance Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE-ML/Feature_Tutorials/13-aie-ml-performance-analysis) |
-| [adder_perf](examples/vek385/adder_perf/)               | C++      | vek385 |                                                                                                                      |
-| [adder](examples/matlab/vck190/adder/)                  | MATLAB   | vck190 |                                                                                                                      |
-| [adder](examples/python/vck190/adder/)                  | Python   | vck190 |                                                                                                                      |
+### By Platform
 
-Note: The examples may not be updated to the newest as the external reference.
+#### VCK190 Examples
 
-## License
+| Example | Language | Description | External Reference |
+|---------|----------|-------------|-------------------|
+| [adder_perf](examples/vck190/adder_perf/) | C++ | Basic adder with performance testing | - |
+| [channelizer](examples/vck190/channelizer/) | C++ | Polyphase channelizer implementation | [Polyphase Channelizer Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE/Design_Tutorials/04-Polyphase-Channelizer) |
+| [testcase_dmafifo_opt](examples/vck190/testcase_dmafifo_opt/) | C++ | DMA FIFO optimization case study | [AIE Performance Analysis Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE/Feature_Tutorials/13-aie-performance-analysis) |
+| [adder](examples/python/vck190/adder/) | Python | Python API demonstration | - |
+| [adder](examples/matlab/vck190/adder/) | MATLAB | MATLAB API demonstration | - |
 
-MIT License
+#### VEK280 Examples
 
-Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
+| Example | Language | Description | External Reference |
+|---------|----------|-------------|-------------------|
+| [adder_perf](examples/vek280/adder_perf/) | C++ | Basic adder with performance testing | - |
+| [normalization_v2](examples/vek280/normalization_v2/) | C++ | AIE-ML normalization | [AIE-ML Performance Analysis Tutorial](https://github.com/Xilinx/Vitis-Tutorials/tree/2024.2/AI_Engine_Development/AIE-ML/Feature_Tutorials/13-aie-ml-performance-analysis) |
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#### VEK385 Examples
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+| Example | Language | Description | External Reference |
+|---------|----------|-------------|-------------------|
+| [adder_perf](examples/vek385/adder_perf/) | C++ | Basic adder with performance testing | - |
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+**Note:** Examples may differ from external references as both evolve independently.
 
-Except as contained in this notice, the name of Advanced Micro Devices, Inc. shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Advanced Micro Devices, Inc.
+<p class="sphinxhide" align="center"><sub>Copyright © 2020–2026 Advanced Micro Devices, Inc</sub></p>
+
+<p class="sphinxhide" align="center"><sup><a href="https://www.amd.com/en/corporate/copyright">Terms and Conditions</a></sup></p>
