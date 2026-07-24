@@ -38,13 +38,13 @@ sys.path.insert(1, os.path.join(tools_dir, 'share/doxyrest_b/sphinx'))
 # -- Project information -----------------------------------------------------
 
 project = 'AIE Test Harness'
-copyright = '2023-2025, Advanced Micro Devices, Inc'
+copyright = '2023-2026, Advanced Micro Devices, Inc'
 author = 'Advanced Micro Devices, Inc'
 
 # The short X.Y version
-version = '2025.2'
+version = '2026.1'
 # The full version, including alpha/beta/rc tags
-release = 'v2025.2'
+release = 'v2026.1'
 
 
 # -- General configuration ---------------------------------------------------
