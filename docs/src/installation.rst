@@ -1,7 +1,7 @@
 .. 
    MIT License
 
-   Copyright (C) 2023 Advanced Micro Devices, Inc.
+   Copyright (C) 2023-2026 Advanced Micro Devices, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -26,11 +26,11 @@ Prerequisites
 
 To use the test harness, up-to-date installations of the following softwares and libraries are required:
 
-- Vitis tools (https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vitis.html)
+- Vitis tools (https://www.amd.com/en/support/downloads/adaptive-socs-and-fpgas/development-tools/2026-1.html)
 
-- Xilinx Runtime (https://www.xilinx.com/products/design-tools/vitis/xrt.html#gettingstarted)
+- FleXible RunTime (XRT) (https://www.amd.com/en/products/software/adaptive-socs-and-fpgas/vitis/vitis-runtime-library.html#gettingstarted)
 
-- Versal common image for Vitis embedded platforms (https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-platforms.html)
+- Versal common image tar file located under **Stand-Alone Tools and Utilities** > **Vitis Embedded Platforms** (https://www.amd.com/en/support/downloads/adaptive-socs-and-fpgas/development-tools/2026-1.html)
 
 
 Installation Instructions
@@ -60,7 +60,7 @@ Installation Instructions
     ./run_edf_server.sh
 
 .. CAUTION::
-   The prebuilt XSAs can only be used with the 2025.2 version of the Vitis tool. 
+   The prebuilt XSAs can only be used with the 2026.1 version of the Vitis tool.
    To build and test your AI Engine graph using other versions of Vitis, you must first rebuild the XSA with the corresponding version of the Vitis tool, as described in the section below.
 
 Rebuilding from Source

@@ -1,7 +1,7 @@
 .. 
    MIT License
 
-   Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
+   Copyright (C) 2023-2026 Advanced Micro Devices, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -18,6 +18,16 @@
 
 Release Notes
 =============
+
+2026.1
+------
+
+**Summary**
+
+- Pre-built XSAs are provided for VCK190, VEK280 and VEK385 boards
+- Pre-built PetaLinux SD card images and server applications are provided for the VCK190 and VEK280 boards
+- Pre-built server applications are provided for VEK385 boards based on the AMD Embedded Development Framework (EDF)
+
 
 2025.2
 ------
