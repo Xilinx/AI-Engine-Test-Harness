@@ -15,7 +15,7 @@ AIE Test Harness
 =================
 
 AIE (AI Engine) Test Harness is designed to assist AIE application designers in verifying and benchmarking their designs 
-on the **Versal** platforms such as the VCK190 and VEK280, with the ease of a software simulator. 
+on the **Versal** platforms such as the VCK190, VEK280 and VEK385, with the ease of a software simulator. 
 Most importantly, AIE Test Harness allows the developers to conduct testing across diverse host systems, including x86 and ARM, 
 from various development environments like Matlab and Python.
 
