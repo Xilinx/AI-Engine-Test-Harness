@@ -345,37 +345,16 @@ void test_harness_mgr_server::readGraphPort() {
 
 void test_harness_mgr_server::writeGraphPort() {
     try {
-        unsigned int g_idx, d_size;
+        unsigned int g_idx;
+        ssize_t d_size = 0;
         std::string port_name;
         server->recvData(g_idx);
         server->recvData(port_name);
+        server->recvData((char *)&d_size, sizeof(d_size));
         std::vector<uint8_t> port_data;
-        server->recvVec(port_data);
-        switch(d_size) {
-            case 1:
-                uint8_t data;
-                memcpy(&data, port_data.data(), d_size);
-                fastObj->writeGraphPort(g_idx, port_name, data);
-                break;
-            case 2:
-                uint16_t data16;
-                memcpy(&data16, port_data.data(), d_size);
-                fastObj->writeGraphPort(g_idx, port_name, data16);
-                break;
-            case 4:
-                uint32_t data32;
-                memcpy(&data32, port_data.data(), d_size);
-                fastObj->writeGraphPort(g_idx, port_name, data32);
-                break;
-            case 8:
-                uint64_t data64;
-                memcpy(&data64, port_data.data(), d_size);
-                fastObj->writeGraphPort(g_idx, port_name, data64);
-                break;
-            default:
-                throw TestHarnessException(TestHarnessStatus::INVALID_ARGUMENTS,
-                                "The data size is out of range.");
-        }
+        port_data.resize(d_size);
+        server->recvData((char *)port_data.data(), d_size);
+        fastObj->writeGraphPort(g_idx, port_name, (const void *)port_data.data(), port_data.size());
     } catch (const SocketException& e) {
         throw TestHarnessException(TestHarnessStatus::TEST_HARNESS_RUN_FAILURE,
                                    "Failed to write AIE graph port on the server due to error " + std::string(e.what()));
